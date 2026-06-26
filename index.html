@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" id="htmlRoot">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,22 +13,111 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   
   <style>
+    /* ================================================================
+       ROOT VARIABLES (LIGHT MODE DEFAULT)
+       ================================================================ */
+    :root {
+      /* Light Mode */
+      --bg-body: #f3f4f6;
+      --bg-header: linear-gradient(135deg, #1e1b4b, #312e81);
+      --bg-card: #ffffff;
+      --bg-tab: #ffffff;
+      --bg-input: #ffffff;
+      --bg-stats: linear-gradient(135deg, #7c3aed, #4f46e5);
+      --bg-upload: #faf5ff;
+      --bg-upload-hover: #ede9fe;
+      --bg-success: #f0fdf4;
+      --bg-gallery-card: #ffffff;
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-white: #ffffff;
+      --text-muted: #9ca3af;
+      --text-purple: #7c3aed;
+      --border-color: #e5e7eb;
+      --border-purple: #ede9fe;
+      --shadow-color: rgba(124, 58, 237, 0.1);
+      --badge-bg: #7c3aed;
+      --badge-text: #ffffff;
+    }
+
+    /* ================================================================
+       DARK MODE
+       ================================================================ */
+    [data-theme="dark"] {
+      --bg-body: #0f0f1a;
+      --bg-header: linear-gradient(135deg, #0a0a1a, #1a1a3e);
+      --bg-card: #1a1a2e;
+      --bg-tab: #1a1a2e;
+      --bg-input: #0f0f1a;
+      --bg-stats: linear-gradient(135deg, #4c1d95, #312e81);
+      --bg-upload: #1a1a3e;
+      --bg-upload-hover: #2a1a4e;
+      --bg-success: #0a1a0a;
+      --bg-gallery-card: #1a1a2e;
+      --text-primary: #f3f4f6;
+      --text-secondary: #d1d5db;
+      --text-white: #ffffff;
+      --text-muted: #6b7280;
+      --text-purple: #a78bfa;
+      --border-color: #374151;
+      --border-purple: #4c1d95;
+      --shadow-color: rgba(124, 58, 237, 0.2);
+      --badge-bg: #7c3aed;
+      --badge-text: #ffffff;
+    }
+
+    /* ================================================================
+       GLOBAL
+       ================================================================ */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
     
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: #f3f4f6;
-      color: #111827;
+      background: var(--bg-body);
+      color: var(--text-primary);
       min-height: 100vh;
     }
     
-    /* HEADER */
+    /* ================================================================
+       THEME TOGGLE BUTTON
+       ================================================================ */
+    .theme-toggle {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #c4b5fd;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+    
+    .theme-toggle:hover {
+      background: rgba(255,255,255,0.2);
+      transform: rotate(20deg);
+    }
+    
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    /* ================================================================
+       HEADER
+       ================================================================ */
     .header {
-      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      background: var(--bg-header);
       padding: 16px 24px;
       display: flex;
       justify-content: space-between;
@@ -36,13 +125,13 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
     }
     
     .logo h1 {
       font-size: 22px;
       font-weight: 900;
-      color: white;
+      color: var(--text-white);
     }
     
     .logo h1 span { color: #a78bfa; }
@@ -57,6 +146,7 @@
       font-weight: 700;
       cursor: pointer;
       transition: all 0.3s;
+      white-space: nowrap;
     }
     
     .wallet-btn:hover {
@@ -71,14 +161,21 @@
       border-color: #7c3aed;
     }
     
-    /* STATS */
+    .wallet-btn.connected:hover {
+      background: #dc2626;
+      border-color: #dc2626;
+    }
+    
+    /* ================================================================
+       STATS BANNER
+       ================================================================ */
     .stats-banner {
-      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      background: var(--bg-stats);
       padding: 24px 20px;
     }
     
     .stats-banner h2 {
-      color: white;
+      color: var(--text-white);
       font-size: 20px;
       font-weight: 900;
       text-transform: uppercase;
@@ -109,15 +206,17 @@
     
     .stat-item .value {
       font-size: 20px;
-      color: white;
+      color: var(--text-white);
       font-weight: 900;
     }
     
-    /* TABS */
+    /* ================================================================
+       TABS
+       ================================================================ */
     .tabs {
       display: flex;
-      background: white;
-      border-bottom: 2px solid #e5e7eb;
+      background: var(--bg-tab);
+      border-bottom: 2px solid var(--border-color);
       position: sticky;
       top: 72px;
       z-index: 40;
@@ -129,7 +228,7 @@
       text-align: center;
       font-size: 13px;
       font-weight: 700;
-      color: #9ca3af;
+      color: var(--text-muted);
       text-transform: uppercase;
       cursor: pointer;
       border-bottom: 3px solid transparent;
@@ -137,14 +236,16 @@
     }
     
     .tab.active {
-      color: #7c3aed;
-      border-bottom-color: #7c3aed;
-      background: #faf5ff;
+      color: var(--text-purple);
+      border-bottom-color: var(--text-purple);
+      background: var(--bg-upload);
     }
     
-    .tab:hover { color: #7c3aed; }
+    .tab:hover { color: var(--text-purple); }
     
-    /* CONTAINER */
+    /* ================================================================
+       CONTAINER
+       ================================================================ */
     .container {
       max-width: 480px;
       margin: 0 auto;
@@ -163,13 +264,15 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
-    /* MINT CARD */
+    /* ================================================================
+       MINT CARD
+       ================================================================ */
     .mint-card {
-      background: white;
+      background: var(--bg-card);
       border-radius: 20px;
       padding: 24px;
-      box-shadow: 0 10px 25px rgba(124,58,237,0.1);
-      border: 2px solid #ede9fe;
+      box-shadow: 0 10px 25px var(--shadow-color);
+      border: 2px solid var(--border-purple);
     }
     
     .mint-card .card-header {
@@ -182,12 +285,12 @@
     .mint-card .card-header h3 {
       font-size: 18px;
       font-weight: 900;
-      color: #4c1d95;
+      color: var(--text-purple);
     }
     
     .badge {
-      background: #7c3aed;
-      color: white;
+      background: var(--badge-bg);
+      color: var(--badge-text);
       padding: 4px 14px;
       border-radius: 20px;
       font-size: 11px;
@@ -197,35 +300,37 @@
     .mint-card input[type="text"] {
       width: 100%;
       padding: 12px 16px;
-      border: 2px solid #e5e7eb;
+      border: 2px solid var(--border-color);
       border-radius: 12px;
       font-size: 14px;
       margin-bottom: 12px;
       transition: all 0.3s;
       outline: none;
+      background: var(--bg-input);
+      color: var(--text-primary);
     }
     
     .mint-card input[type="text"]:focus {
-      border-color: #7c3aed;
+      border-color: var(--text-purple);
       box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
     }
     
     .upload-area {
       width: 100%;
       padding: 20px;
-      border: 2px dashed #7c3aed;
+      border: 2px dashed var(--text-purple);
       border-radius: 12px;
-      background: #faf5ff;
+      background: var(--bg-upload);
       text-align: center;
       cursor: pointer;
       font-weight: 600;
-      color: #7c3aed;
+      color: var(--text-purple);
       transition: all 0.3s;
       margin-bottom: 12px;
     }
     
     .upload-area:hover {
-      background: #ede9fe;
+      background: var(--bg-upload-hover);
       border-color: #5b21b6;
     }
     
@@ -244,7 +349,7 @@
       border-radius: 12px;
       margin-bottom: 12px;
       display: none;
-      border: 3px solid #ede9fe;
+      border: 3px solid var(--border-purple);
     }
     
     /* PROGRESS */
@@ -255,21 +360,21 @@
     
     .progress-bar {
       height: 8px;
-      background: #ede9fe;
+      background: var(--border-purple);
       border-radius: 4px;
       overflow: hidden;
     }
     
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #7c3aed, #f59e0b);
+      background: linear-gradient(90deg, var(--text-purple), #f59e0b);
       width: 0%;
       transition: width 0.5s ease;
     }
     
     .progress-text {
       font-size: 12px;
-      color: #7c3aed;
+      color: var(--text-purple);
       font-weight: 600;
       margin-top: 6px;
       text-align: center;
@@ -277,7 +382,7 @@
     
     /* SUCCESS */
     .success-box {
-      background: #f0fdf4;
+      background: var(--bg-success);
       border: 2px solid #86efac;
       border-radius: 12px;
       padding: 14px;
@@ -294,12 +399,12 @@
     
     .success-box p {
       font-size: 11px;
-      color: #6b7280;
+      color: var(--text-secondary);
       word-break: break-all;
     }
     
     .success-box .tx-link {
-      color: #7c3aed;
+      color: var(--text-purple);
       text-decoration: underline;
       font-weight: 600;
     }
@@ -319,7 +424,7 @@
     }
     
     .btn-mint {
-      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      background: linear-gradient(135deg, var(--text-purple), #4f46e5);
       color: white;
     }
     
@@ -352,10 +457,12 @@
       font-weight: 600;
       margin-top: 10px;
       min-height: 20px;
-      color: #7c3aed;
+      color: var(--text-purple);
     }
     
-    /* GALLERY */
+    /* ================================================================
+       GALLERY
+       ================================================================ */
     .gallery-header {
       display: flex;
       justify-content: space-between;
@@ -366,12 +473,12 @@
     .gallery-header h3 {
       font-size: 16px;
       font-weight: 800;
-      color: #1f2937;
+      color: var(--text-primary);
     }
     
     .gallery-header .count {
-      background: #ede9fe;
-      color: #7c3aed;
+      background: var(--bg-upload);
+      color: var(--text-purple);
       padding: 4px 12px;
       border-radius: 20px;
       font-size: 12px;
@@ -385,24 +492,24 @@
     }
     
     .nft-card {
-      background: white;
+      background: var(--bg-gallery-card);
       border-radius: 16px;
       overflow: hidden;
-      border: 2px solid #e5e7eb;
+      border: 2px solid var(--border-color);
       transition: all 0.3s;
     }
     
     .nft-card:hover {
-      border-color: #7c3aed;
+      border-color: var(--text-purple);
       transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(124,58,237,0.15);
+      box-shadow: 0 10px 25px var(--shadow-color);
     }
     
     .nft-card img {
       width: 100%;
       height: 150px;
       object-fit: cover;
-      background: #ede9fe;
+      background: var(--border-purple);
     }
     
     .nft-card .info {
@@ -410,8 +517,8 @@
     }
     
     .nft-card .token-id {
-      background: #7c3aed;
-      color: white;
+      background: var(--badge-bg);
+      color: var(--badge-text);
       font-size: 10px;
       font-weight: 800;
       padding: 2px 10px;
@@ -423,13 +530,13 @@
     .nft-card .name {
       font-size: 14px;
       font-weight: 800;
-      color: #111827;
+      color: var(--text-primary);
       margin-bottom: 2px;
     }
     
     .nft-card .owner {
       font-size: 11px;
-      color: #9ca3af;
+      color: var(--text-muted);
       font-weight: 500;
     }
     
@@ -437,7 +544,7 @@
       grid-column: span 2;
       text-align: center;
       padding: 50px 20px;
-      color: #9ca3af;
+      color: var(--text-muted);
     }
     
     .empty-gallery .big-icon {
@@ -450,31 +557,45 @@
       grid-column: span 2;
       text-align: center;
       padding: 40px;
-      color: #7c3aed;
+      color: var(--text-purple);
     }
     
+    /* ================================================================
+       RESPONSIVE
+       ================================================================ */
     @media (max-width: 480px) {
-      .header { padding: 12px 16px; }
+      .header { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
       .logo h1 { font-size: 18px; }
       .wallet-btn { font-size: 11px; padding: 8px 14px; }
       .nft-grid { gap: 10px; }
       .nft-card img { height: 120px; }
+      .header-controls { gap: 4px; }
+      .theme-toggle { width: 34px; height: 34px; font-size: 14px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
+  <!-- ================================================================
+       HEADER
+       ================================================================ -->
   <header class="header">
     <div class="logo">
       <h1>🖼️ Lit<span>NFT</span></h1>
     </div>
-    <button class="wallet-btn" id="connectBtn">
-      <i class="fas fa-wallet"></i> Connect Wallet
-    </button>
+    <div class="header-controls">
+      <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button class="wallet-btn" id="connectBtn">
+        <i class="fas fa-wallet"></i> Connect Wallet
+      </button>
+    </div>
   </header>
 
-  <!-- STATS -->
+  <!-- ================================================================
+       STATS BANNER
+       ================================================================ -->
   <section class="stats-banner">
     <h2>✨ Mint NFT, Own The Chain!</h2>
     <div class="stats-grid">
@@ -493,7 +614,9 @@
     </div>
   </section>
 
-  <!-- TABS -->
+  <!-- ================================================================
+       TABS
+       ================================================================ -->
   <div class="tabs">
     <div class="tab active" data-tab="mint" onclick="switchTab('mint')">
       <i class="fas fa-rocket"></i> Mint
@@ -503,7 +626,9 @@
     </div>
   </div>
 
-  <!-- CONTAINER -->
+  <!-- ================================================================
+       CONTAINER
+       ================================================================ -->
   <div class="container">
 
     <!-- TAB MINT -->
@@ -567,12 +692,12 @@
 
   </div>
 
-  <!-- ============================================================ -->
-  <!-- JAVASCRIPT - JWT SUDAH DIISI -->
-  <!-- ============================================================ -->
+  <!-- ================================================================ -->
+  <!-- JAVASCRIPT -->
+  <!-- ================================================================ -->
   <script>
     // =============================================================
-    // 1. KONFIGURASI - JWT SUDAH DIISI!
+    // 1. KONFIGURASI
     // =============================================================
     const CONFIG = {
       contractAddress: "0x893C81FC7B6dD2FACB1c167147209c5F1c342840",
@@ -596,6 +721,7 @@
     let lastTxHash = null;
     let lastNftName = '';
     let isMinting = false;
+    let isConnected = false;
 
     // =============================================================
     // 3. DOM REFS
@@ -619,9 +745,34 @@
     const txDisplay = $('txDisplay');
     const statusEl = $('status');
     const twitterBtn = $('twitterBtn');
+    const themeToggle = $('themeToggle');
+    const htmlRoot = document.getElementById('htmlRoot');
 
     // =============================================================
-    // 4. UTILITY
+    // 4. THEME TOGGLE (Dark/Light Mode)
+    // =============================================================
+    // Cek preferensi dari localStorage
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      htmlRoot.setAttribute('data-theme', 'dark');
+      themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = htmlRoot.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        htmlRoot.removeAttribute('data-theme');
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        localStorage.setItem('theme', 'light');
+      } else {
+        htmlRoot.setAttribute('data-theme', 'dark');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+
+    // =============================================================
+    // 5. UTILITY
     // =============================================================
     function setProgress(pct, text) {
       progressWrap.style.display = 'block';
@@ -636,7 +787,7 @@
 
     function showStatus(msg, isError = false) {
       statusEl.textContent = msg;
-      statusEl.style.color = isError ? '#dc2626' : '#7c3aed';
+      statusEl.style.color = isError ? '#dc2626' : 'var(--text-purple)';
     }
 
     function truncateAddress(addr) {
@@ -647,7 +798,7 @@
     function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
     // =============================================================
-    // 5. READ PROVIDER
+    // 6. READ PROVIDER (TANPA WALLET - PUBLIC)
     // =============================================================
     let readProvider, readContract;
     try {
@@ -661,7 +812,7 @@
     }
 
     // =============================================================
-    // 6. IPFS UPLOAD
+    // 7. IPFS UPLOAD
     // =============================================================
     async function uploadToIPFS(file) {
       try {
@@ -720,7 +871,7 @@
     }
 
     // =============================================================
-    // 7. GALLERY LOAD
+    // 8. GALLERY LOAD (PUBLIC - TANPA WALLET)
     // =============================================================
     async function loadGallery() {
       try {
@@ -826,7 +977,7 @@
     }
 
     // =============================================================
-    // 8. SWITCH TAB
+    // 9. SWITCH TAB
     // =============================================================
     function switchTab(tabName) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -839,7 +990,7 @@
     }
 
     // =============================================================
-    // 9. PREVIEW GAMBAR
+    // 10. PREVIEW GAMBAR
     // =============================================================
     imageFile.addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -856,15 +1007,31 @@
     });
 
     // =============================================================
-    // 10. CONNECT WALLET
+    // 11. CONNECT / DISCONNECT WALLET (TOGGLE)
     // =============================================================
     connectBtn.addEventListener('click', async () => {
+      // Jika sudah connect -> DISCONNECT
+      if (isConnected) {
+        userAddress = null;
+        isConnected = false;
+        signer = null;
+        contract = null;
+        connectBtn.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
+        connectBtn.classList.remove('connected');
+        walletDisplay.textContent = '-';
+        mintBtn.disabled = true;
+        showStatus('👋 Wallet terputus', true);
+        return;
+      }
+
+      // Jika belum connect -> CONNECT
       try {
         if (!window.ethereum) {
           alert('⚠️ Install MetaMask atau wallet Web3!');
           return;
         }
 
+        // Cek network
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         if (parseInt(chainId) !== CONFIG.chainId) {
           try {
@@ -895,8 +1062,9 @@
         signer = provider.getSigner();
         userAddress = await signer.getAddress();
         contract = new ethers.Contract(CONFIG.contractAddress, ABI, signer);
+        isConnected = true;
 
-        connectBtn.innerHTML = '<i class="fas fa-check-circle"></i> ' + truncateAddress(userAddress);
+        connectBtn.innerHTML = '<i class="fas fa-check-circle"></i> ' + truncateAddress(userAddress) + ' ✕';
         connectBtn.classList.add('connected');
         walletDisplay.textContent = truncateAddress(userAddress);
         mintBtn.disabled = false;
@@ -911,7 +1079,7 @@
     });
 
     // =============================================================
-    // 11. MINT NFT
+    // 12. MINT NFT
     // =============================================================
     mintBtn.addEventListener('click', async () => {
       if (isMinting) return;
@@ -1010,7 +1178,7 @@
     });
 
     // =============================================================
-    // 12. SHARE TWITTER
+    // 13. SHARE TWITTER
     // =============================================================
     twitterBtn.addEventListener('click', () => {
       const text = encodeURIComponent(
@@ -1023,15 +1191,19 @@
     });
 
     // =============================================================
-    // 13. AUTO LOAD
+    // 14. AUTO LOAD GALLERY (TANPA WALLET)
     // =============================================================
     loadGallery();
 
+    // =============================================================
+    // 15. AUTO CHECK WALLET CONNECTION
+    // =============================================================
     (async function checkConnection() {
       try {
         if (window.ethereum) {
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
           if (accounts.length > 0) {
+            // Auto connect
             connectBtn.click();
           }
         }
@@ -1041,18 +1213,21 @@
     })();
 
     // =============================================================
-    // 14. EVENT LISTENER WALLET
+    // 16. EVENT LISTENER WALLET (AKUN BERUBAH)
     // =============================================================
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts) => {
         if (accounts.length === 0) {
+          // Logout
           userAddress = null;
+          isConnected = false;
           connectBtn.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
           connectBtn.classList.remove('connected');
           walletDisplay.textContent = '-';
           mintBtn.disabled = true;
           showStatus('👋 Wallet terputus', true);
         } else {
+          // Refresh connection
           connectBtn.click();
         }
       });
@@ -1064,6 +1239,7 @@
 
     console.log('🚀 LitNFT Minter siap!');
     console.log('✅ JWT sudah terisi!');
+    console.log('🌙 Klik ikon bulan/matahari untuk ganti tema!');
   </script>
 
 </body>
