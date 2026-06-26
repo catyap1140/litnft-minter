@@ -1,171 +1,637 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LitNFT Minter</title>
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LitNFT Minter Pro</title>
+  
+  <!-- Ethers.js -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js">
+  </script>
+  
+  <!-- Font Awesome buat icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f0f0f0; color: #1a1a1a; min-height: 100vh; }
-
-    /* HEADER */
-    .header { background: #1a1a2e; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
-    .logo { display: flex; align-items: center; gap: 10px; }
-    .logo span { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -1px; }
-    .logo em { color: #a78bfa; font-style: normal; }
-    .wallet-pill { background: #2a1a4e; border: 1px solid #7c3aed; border-radius: 20px; padding: 8px 16px; font-size: 12px; color: #a78bfa; cursor: pointer; font-weight: 600; }
-    .wallet-pill.connected { background: #7c3aed; color: #fff; border-color: #7c3aed; }
-
-    /* STATS BANNER */
-    .stats-banner { background: linear-gradient(135deg, #7c3aed, #4f46e5); padding: 20px; margin: 0; }
-    .stats-banner h2 { font-size: 22px; font-weight: 900; color: #fff; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 1px; }
-    .stats-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
-    .stat-row { background: rgba(255,255,255,0.15); border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
-    .stat-row span { font-size: 13px; color: #e9d5ff; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    .stat-row strong { font-size: 18px; color: #fff; font-weight: 900; }
-
-    /* TABS */
-    .tabs { display: flex; background: #fff; border-bottom: 2px solid #e5e7eb; }
-    .tab { flex: 1; padding: 14px; text-align: center; font-size: 13px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
-    .tab.active { color: #7c3aed; border-bottom-color: #7c3aed; }
-
-    /* CONTENT */
-    .container { padding: 16px; max-width: 480px; margin: 0 auto; }
-
-    /* MINT CARD */
-    .mint-card { background: #e8e4ff; border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 2px solid #c4b5fd; }
-    .mint-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .mint-card-header h3 { font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: #4c1d95; }
-    .mint-badge { background: #7c3aed; color: #fff; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-    input[type="text"] { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #c4b5fd; background: #fff; color: #1a1a1a; font-size: 14px; margin-bottom: 10px; outline: none; font-weight: 500; }
-    input[type="text"]:focus { border-color: #7c3aed; }
-    .upload-area { width: 100%; padding: 18px; border-radius: 10px; border: 2px dashed #7c3aed; background: #fff; color: #7c3aed; font-size: 13px; text-align: center; cursor: pointer; margin-bottom: 10px; font-weight: 600; }
-    input[type="file"] { display: none; }
-    #previewImg { width: 100%; border-radius: 12px; margin-bottom: 10px; display: none; max-height: 250px; object-fit: cover; border: 2px solid #c4b5fd; }
-
-    /* PROGRESS */
-    .progress { display: none; margin-bottom: 10px; }
-    .progress-bar { height: 8px; background: #c4b5fd; border-radius: 4px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #f59e0b); width: 0%; transition: width 0.3s; }
-    .progress-text { font-size: 12px; color: #7c3aed; margin-top: 6px; text-align: center; font-weight: 600; }
-
-    /* SUCCESS */
-    .success-box { background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px; padding: 14px; margin-bottom: 10px; display: none; }
-    .success-box h3 { color: #16a34a; font-size: 14px; margin-bottom: 6px; font-weight: 800; }
-    .success-box p { font-size: 11px; color: #6b7280; word-break: break-all; }
-
-    /* BUTTONS */
-    .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 15px; cursor: pointer; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; margin-bottom: 8px; }
-    .btn-mint { background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; }
-    .btn-mint:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
-    .btn-twitter { background: #1DA1F2; color: #fff; display: none; }
-    #status { text-align: center; font-size: 13px; color: #7c3aed; font-weight: 600; min-height: 18px; }
-
-    /* NFT GALLERY */
-    .section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-bottom: 12px; }
-    .nft-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .nft-card { background: #fff; border-radius: 14px; overflow: hidden; border: 2px solid #e5e7eb; transition: all 0.2s; }
-    .nft-card:hover { border-color: #7c3aed; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(124,58,237,0.15); }
-    .nft-card img { width: 100%; height: 130px; object-fit: cover; }
-    .nft-card-info { padding: 10px; }
-    .nft-card-info h3 { font-size: 13px; color: #1a1a1a; font-weight: 800; margin-bottom: 3px; }
-    .nft-card-info p { font-size: 11px; color: #9ca3af; font-weight: 500; }
-    .nft-card-number { background: #7c3aed; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
-    .empty-gallery { text-align: center; padding: 40px; color: #9ca3af; grid-column: span 2; }
-    .empty-gallery span { font-size: 36px; display: block; margin-bottom: 8px; }
-    .empty-gallery p { font-size: 13px; font-weight: 600; }
-
-    /* TAB PANELS */
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
+    /* ===== RESET & GLOBAL ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+      min-height: 100vh;
+    }
+    
+    /* ===== HEADER ===== */
+    .header {
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .logo h1 {
+      font-size: 22px;
+      font-weight: 900;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+    
+    .logo h1 span {
+      color: #a78bfa;
+    }
+    
+    .wallet-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid #7c3aed;
+      color: #c4b5fd;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
+    }
+    
+    .wallet-btn:hover {
+      background: #7c3aed;
+      color: white;
+      transform: scale(1.05);
+    }
+    
+    .wallet-btn.connected {
+      background: #7c3aed;
+      color: white;
+      border-color: #7c3aed;
+    }
+    
+    /* ===== STATS BANNER ===== */
+    .stats-banner {
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      padding: 24px 20px;
+    }
+    
+    .stats-banner h2 {
+      color: white;
+      font-size: 20px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    
+    .stat-item {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 12px 16px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .stat-item .label {
+      font-size: 11px;
+      color: #e9d5ff;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 4px;
+    }
+    
+    .stat-item .value {
+      font-size: 20px;
+      color: white;
+      font-weight: 900;
+    }
+    
+    /* ===== TABS ===== */
+    .tabs {
+      display: flex;
+      background: white;
+      border-bottom: 2px solid #e5e7eb;
+      position: sticky;
+      top: 72px;
+      z-index: 40;
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 14px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .tab.active {
+      color: #7c3aed;
+      border-bottom-color: #7c3aed;
+      background: #faf5ff;
+    }
+    
+    .tab:hover {
+      color: #7c3aed;
+    }
+    
+    /* ===== CONTAINER ===== */
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+    
+    /* ===== TAB PANELS ===== */
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    
+    .tab-panel.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* ===== MINT CARD ===== */
+    .mint-card {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(124, 58, 237, 0.1);
+      border: 2px solid #ede9fe;
+    }
+    
+    .mint-card .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .mint-card .card-header h3 {
+      font-size: 18px;
+      font-weight: 900;
+      color: #4c1d95;
+    }
+    
+    .badge {
+      background: #7c3aed;
+      color: white;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    
+    .mint-card input[type="text"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      transition: all 0.3s;
+      outline: none;
+    }
+    
+    .mint-card input[type="text"]:focus {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+    
+    .upload-area {
+      width: 100%;
+      padding: 20px;
+      border: 2px dashed #7c3aed;
+      border-radius: 12px;
+      background: #faf5ff;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: #7c3aed;
+      transition: all 0.3s;
+      margin-bottom: 12px;
+    }
+    
+    .upload-area:hover {
+      background: #ede9fe;
+      border-color: #5b21b6;
+    }
+    
+    .upload-area .icon {
+      font-size: 28px;
+      display: block;
+      margin-bottom: 4px;
+    }
+    
+    input[type="file"] {
+      display: none;
+    }
+    
+    #previewImg {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      display: none;
+      border: 3px solid #ede9fe;
+    }
+    
+    /* Progress Bar */
+    .progress-wrap {
+      display: none;
+      margin-bottom: 12px;
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: #ede9fe;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7c3aed, #f59e0b);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    
+    .progress-text {
+      font-size: 12px;
+      color: #7c3aed;
+      font-weight: 600;
+      margin-top: 6px;
+      text-align: center;
+    }
+    
+    /* Success Box */
+    .success-box {
+      background: #f0fdf4;
+      border: 2px solid #86efac;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    
+    .success-box h4 {
+      color: #16a34a;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    
+    .success-box p {
+      font-size: 11px;
+      color: #6b7280;
+      word-break: break-all;
+    }
+    
+    .success-box .tx-link {
+      color: #7c3aed;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+    
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-mint {
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: white;
+    }
+    
+    .btn-mint:hover:not(:disabled) {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+    }
+    
+    .btn-mint:disabled {
+      background: #d1d5db;
+      color: #9ca3af;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    .btn-twitter {
+      background: #1DA1F2;
+      color: white;
+      margin-top: 8px;
+      display: none;
+    }
+    
+    .btn-twitter:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(29, 161, 242, 0.3);
+    }
+    
+    #status {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 10px;
+      min-height: 20px;
+      color: #7c3aed;
+    }
+    
+    /* ===== GALLERY ===== */
+    .gallery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .gallery-header h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1f2937;
+    }
+    
+    .gallery-header .count {
+      background: #ede9fe;
+      color: #7c3aed;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    
+    .nft-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    
+    .nft-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid #e5e7eb;
+      transition: all 0.3s;
+    }
+    
+    .nft-card:hover {
+      border-color: #7c3aed;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(124, 58, 237, 0.15);
+    }
+    
+    .nft-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      background: #ede9fe;
+    }
+    
+    .nft-card .info {
+      padding: 12px;
+    }
+    
+    .nft-card .token-id {
+      background: #7c3aed;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    
+    .nft-card .name {
+      font-size: 14px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 2px;
+    }
+    
+    .nft-card .owner {
+      font-size: 11px;
+      color: #9ca3af;
+      font-weight: 500;
+    }
+    
+    .empty-gallery {
+      grid-column: span 2;
+      text-align: center;
+      padding: 50px 20px;
+      color: #9ca3af;
+    }
+    
+    .empty-gallery .big-icon {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 8px;
+    }
+    
+    .empty-gallery p {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .loading-gallery {
+      grid-column: span 2;
+      text-align: center;
+      padding: 40px;
+      color: #7c3aed;
+    }
+    
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 480px) {
+      .header {
+        padding: 12px 16px;
+      }
+      .logo h1 {
+        font-size: 18px;
+      }
+      .wallet-btn {
+        font-size: 11px;
+        padding: 8px 14px;
+      }
+      .nft-grid {
+        gap: 10px;
+      }
+      .nft-card img {
+        height: 120px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <div class="header">
+  <!-- ===== HEADER ===== -->
+  <header class="header">
     <div class="logo">
-      <span>🖼️ Lit<em>NFT</em></span>
+      <h1>🖼️ Lit<span>NFT</span></h1>
     </div>
-    <div class="wallet-pill" id="connectBtn">🔗 Connect Wallet</div>
-  </div>
+    <button class="wallet-btn" id="connectBtn">
+      <i class="fas fa-wallet"></i> Connect Wallet
+    </button>
+  </header>
 
-  <!-- STATS BANNER -->
-  <div class="stats-banner">
-    <h2>Mint NFT, Own The Chain!</h2>
+  <!-- ===== STATS BANNER ===== -->
+  <section class="stats-banner">
+    <h2>✨ Mint NFT, Own The Chain!</h2>
     <div class="stats-grid">
-      <div class="stat-row">
-        <span>Total NFT Ter-mint</span>
-        <strong id="totalSupplyBanner">0</strong>
+      <div class="stat-item">
+        <span class="label">Total NFT</span>
+        <span class="value" id="totalSupply">0</span>
       </div>
-      <div class="stat-row">
-        <span>Network</span>
-        <strong>LitVM Testnet</strong>
+      <div class="stat-item">
+        <span class="label">Network</span>
+        <span class="value" style="font-size:14px;">LitVM Testnet</span>
       </div>
-      <div class="stat-row">
-        <span>Wallet</span>
-        <strong id="walletShort">-</strong>
+      <div class="stat-item">
+        <span class="label">Wallet</span>
+        <span class="value" id="walletDisplay" style="font-size:14px;">-</span>
       </div>
+    </div>
+  </section>
+
+  <!-- ===== TABS ===== -->
+  <div class="tabs">
+    <div class="tab active" data-tab="mint" onclick="switchTab('mint')">
+      <i class="fas fa-rocket"></i> Mint
+    </div>
+    <div class="tab" data-tab="gallery" onclick="switchTab('gallery')">
+      <i class="fas fa-images"></i> Galeri
     </div>
   </div>
 
-  <!-- TABS -->
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('mint', this)">🚀 Mint</div>
-    <div class="tab" onclick="switchTab('gallery', this)">🖼️ Galeri</div>
-  </div>
-
+  <!-- ===== CONTAINER ===== -->
   <div class="container">
 
-    <!-- MINT TAB -->
-    <div class="tab-panel active" id="tab-mint">
-      <br>
+    <!-- ===== TAB MINT ===== -->
+    <div class="tab-panel active" id="panel-mint">
       <div class="mint-card">
-        <div class="mint-card-header">
+        <div class="card-header">
           <h3>Buat NFT Kamu</h3>
-          <span class="mint-badge">ERC-721</span>
+          <span class="badge">ERC-721</span>
         </div>
-        <input type="text" id="nftName" placeholder="Nama NFT" />
-        <input type="text" id="nftDesc" placeholder="Deskripsi NFT" />
+
+        <input type="text" id="nftName" placeholder="Nama NFT (contoh: Kucing Keren)" />
+        <input type="text" id="nftDesc" placeholder="Deskripsi (contoh: NFT kucing dari LitVM)" />
+
         <label for="imageFile">
-          <div class="upload-area" id="uploadArea">📁 Tap untuk pilih gambar</div>
+          <div class="upload-area" id="uploadArea">
+            <span class="icon">📁</span>
+            Tap untuk pilih gambar
+          </div>
         </label>
         <input type="file" id="imageFile" accept="image/*" />
-        <img id="previewImg" />
-        <div class="progress" id="progressBox">
-          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-          <p class="progress-text" id="progressText"></p>
+
+        <img id="previewImg" alt="Preview NFT" />
+
+        <!-- Progress -->
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <p class="progress-text" id="progressText">Memulai...</p>
         </div>
+
+        <!-- Success -->
         <div class="success-box" id="successBox">
-          <h3>✅ NFT Berhasil Di-mint!</h3>
-          <p id="txHash"></p>
+          <h4>✅ NFT Berhasil Di-mint!</h4>
+          <p id="txDisplay"></p>
         </div>
-        <button class="btn btn-mint" id="mintBtn" disabled>🚀 Mint NFT Sekarang</button>
-        <button class="btn btn-twitter" id="twitterBtn">🐦 Share ke Twitter</button>
+
+        <button class="btn btn-mint" id="mintBtn" disabled>
+          <i class="fas fa-rocket"></i> Mint NFT Sekarang
+        </button>
+        <button class="btn btn-twitter" id="twitterBtn">
+          <i class="fab fa-twitter"></i> Share ke Twitter
+        </button>
+
         <p id="status"></p>
       </div>
     </div>
 
-    <!-- GALLERY TAB -->
-    <div class="tab-panel" id="tab-gallery">
-      <br>
-      <p class="section-label">Semua NFT di Contract</p>
+    <!-- ===== TAB GALLERY ===== -->
+    <div class="tab-panel" id="panel-gallery">
+      <div class="gallery-header">
+        <h3><i class="fas fa-images"></i> Koleksi NFT</h3>
+        <span class="count" id="galleryCount">0 NFT</span>
+      </div>
       <div class="nft-grid" id="nftGrid">
         <div class="empty-gallery">
-          <span>🖼️</span>
+          <span class="big-icon">🖼️</span>
           <p>Belum ada NFT</p>
+          <span style="font-size:12px;font-weight:400;">Mint pertama kamu!</span>
         </div>
       </div>
     </div>
 
   </div>
 
+  <!-- ============================================================ -->
+  <!-- ===== JAVASCRIPT ===== -->
+  <!-- ============================================================ -->
   <script>
-    const CONTRACT_ADDRESS = "0x893C81FC7B6dD2FACB1c167147209c5F1c342840";
-    const RPC_URL = "https://liteforge.rpc.caldera.xyz/http";
-    const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJiNWE2ODYxZi01NWMwLTQ3ZDktYmM2ZS0zMjBlYWFmMDcyNDYiLCJlbWFpbCI6InJleWhhbmFmaWtyaTExNDBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjIwYjljODBhMmQ2NjBiZDFkODFmIiwic2NvcGVkS2V5U2VjcmV0IjoiYmM4YzdkZmZhOGU4MmQ1MjM0NTA1MDhjNDQ1MzI0ZjY3OGVmOTdjNDZmYzNjMWI3YzJiM2Y3YmFiNjIxMWQ0OSIsImV4cCI6MTgxNDAwNTI5Mn0.W0JQ9feTkAYhi3jNoW8kIrCYNTZDWKz9bfN11KWRRTc";
+    // =============================================================
+    // 1. KONFIGURASI
+    // =============================================================
+    const CONFIG = {
+      contractAddress: "0x893C81FC7B6dD2FACB1c167147209c5F1c342840",
+      rpcUrl: "https://liteforge.rpc.caldera.xyz/http",
+      chainId: 4441,
+      // ⚠️ GANTI PINATA JWT INI DENGAN PUNYA KAMU!
+      pinataJwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJiNWE2ODYxZi01NWMwLTQ3ZDktYmM2ZS0zMjBlYWFmMDcyNDYiLCJlbWFpbCI6InJleWhhbmFmaWtyaTExNDBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjIwYjljODBhMmQ2NjBiZDFkODFmIiwic2NvcGVkS2V5U2VjcmV0IjoiYmM4YzdkZmZhOGU4MmQ1MjM0NTA1MDhjNDQ1MzI0ZjY3OGVmOTdjNDZmYzNjMWI3YzJiM2Y3YmFiNjIxMWQ0OSIsImV4cCI6MTgxNDAwNTI5Mn0.W0JQ9feTkAYhi3jNoW8kIrCYNTZDWKz9bfN11KWRRTc"
+    };
 
+    // ABI Contract (hanya fungsi yang dipakai)
     const ABI = [
       "function mint(address to, string memory tokenURI) public",
       "function totalSupply() public view returns (uint256)",
@@ -173,160 +639,397 @@
       "function ownerOf(uint256 tokenId) public view returns (address)"
     ];
 
-    const readProvider = new ethers.providers.JsonRpcProvider(
-      { url: RPC_URL },
-      { chainId: 4441, name: "LitVM LiteForge" }
-    );
-    const readContract = new ethers.Contract(CONTRACT_ADDRESS, ABI, readProvider);
-    let provider, signer, contract, lastTxHash, lastNftName;
+    // =============================================================
+    // 2. STATE GLOBAL
+    // =============================================================
+    let provider, signer, contract;
+    let userAddress = null;
+    let lastTxHash = null;
+    let lastNftName = '';
 
-    function switchTab(name, el) {
-      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-      el.classList.add("active");
-      document.getElementById("tab-" + name).classList.add("active");
-      if (name === "gallery") loadGallery();
-    }
+    // =============================================================
+    // 3. DOM REFS
+    // =============================================================
+    const $ = id => document.getElementById(id);
+    const connectBtn = $('connectBtn');
+    const walletDisplay = $('walletDisplay');
+    const totalSupplyEl = $('totalSupply');
+    const galleryCount = $('galleryCount');
+    const nftGrid = $('nftGrid');
+    const mintBtn = $('mintBtn');
+    const nftName = $('nftName');
+    const nftDesc = $('nftDesc');
+    const imageFile = $('imageFile');
+    const previewImg = $('previewImg');
+    const uploadArea = $('uploadArea');
+    const progressWrap = $('progressWrap');
+    const progressFill = $('progressFill');
+    const progressText = $('progressText');
+    const successBox = $('successBox');
+    const txDisplay = $('txDisplay');
+    const statusEl = $('status');
+    const twitterBtn = $('twitterBtn');
 
+    // =============================================================
+    // 4. FUNGSI UTILITY
+    // =============================================================
     function setProgress(pct, text) {
-      document.getElementById("progressBox").style.display = "block";
-      document.getElementById("progressFill").style.width = pct + "%";
-      document.getElementById("progressText").innerText = text;
+      progressWrap.style.display = 'block';
+      progressFill.style.width = pct + '%';
+      progressText.textContent = text;
     }
 
-    document.getElementById("imageFile").onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const img = document.getElementById("previewImg");
-          img.src = ev.target.result;
-          img.style.display = "block";
-          document.getElementById("uploadArea").innerText = "✅ " + file.name;
-        };
-        reader.readAsDataURL(file);
-      }
-    };
+    function hideProgress() {
+      progressWrap.style.display = 'none';
+    }
 
+    function showStatus(msg, isError = false) {
+      statusEl.textContent = msg;
+      statusEl.style.color = isError ? '#dc2626' : '#7c3aed';
+    }
+
+    function truncateAddress(addr) {
+      if (!addr) return '-';
+      return addr.slice(0, 6) + '...' + addr.slice(-4);
+    }
+
+    // =============================================================
+    // 5. READ PROVIDER (tanpa wallet)
+    // =============================================================
+    const readProvider = new ethers.providers.JsonRpcProvider(
+      { url: CONFIG.rpcUrl },
+      { chainId: CONFIG.chainId, name: 'LitVM' }
+    );
+    const readContract = new ethers.Contract(CONFIG.contractAddress, ABI, readProvider);
+
+    // =============================================================
+    // 6. IPFS UPLOAD (Pinata)
+    // =============================================================
     async function uploadToIPFS(file) {
       const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${PINATA_JWT}` },
+      formData.append('file', file);
+      const res = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${CONFIG.pinataJwt}` },
         body: formData
       });
+      if (!res.ok) throw new Error('Gagal upload gambar');
       const data = await res.json();
       return `https://ipfs.io/ipfs/${data.IpfsHash}`;
     }
 
     async function uploadMetadata(name, description, imageUrl) {
       const metadata = { name, description, image: imageUrl };
-      const res = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${PINATA_JWT}` },
+      const res = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${CONFIG.pinataJwt}`
+        },
         body: JSON.stringify({ pinataContent: metadata })
       });
+      if (!res.ok) throw new Error('Gagal upload metadata');
       const data = await res.json();
       return `https://ipfs.io/ipfs/${data.IpfsHash}`;
     }
 
+    // =============================================================
+    // 7. GALLERY LOAD
+    // =============================================================
     async function loadGallery() {
       try {
         const total = await readContract.totalSupply();
-        document.getElementById("totalSupplyBanner").innerText = total.toString();
-        const grid = document.getElementById("nftGrid");
-        if (total == 0) {
-          grid.innerHTML = `<div class="empty-gallery"><span>🖼️</span><p>Belum ada NFT</p></div>`;
-          return;
-        }
-        grid.innerHTML = "";
-        for (let i = 0; i < total; i++) {
-          const owner = await readContract.ownerOf(i);
-          let imageUrl = `https://via.placeholder.com/150/7c3aed/ffffff?text=NFT+%23${i}`;
-          let nftName = `LitNFT #${i}`;
-          try {
-            const tokenUri = await readContract.tokenURI(i);
-            const res = await fetch(tokenUri);
-            const meta = await res.json();
-            if (meta.image) imageUrl = meta.image;
-            if (meta.name) nftName = meta.name;
-          } catch(e) {}
-          const card = document.createElement("div");
-          card.className = "nft-card";
-          card.innerHTML = `
-            <img src="${imageUrl}" onerror="this.src='https://via.placeholder.com/150/7c3aed/ffffff?text=NFT'" />
-            <div class="nft-card-info">
-              <div class="nft-card-number">#${i}</div>
-              <h3>${nftName}</h3>
-              <p>👤 ${owner.slice(0,6)}...${owner.slice(-4)}</p>
+        const totalNum = Number(total);
+        totalSupplyEl.textContent = totalNum;
+        galleryCount.textContent = totalNum + ' NFT';
+
+        if (totalNum === 0) {
+          nftGrid.innerHTML = `
+            <div class="empty-gallery">
+              <span class="big-icon">🖼️</span>
+              <p>Belum ada NFT</p>
+              <span style="font-size:12px;font-weight:400;">Mint pertama kamu!</span>
             </div>
           `;
-          grid.appendChild(card);
+          return;
         }
-      } catch (e) {
-        console.error("Gallery error:", e);
+
+        nftGrid.innerHTML = '<div class="loading-gallery"><i class="fas fa-spinner fa-spin"></i> Memuat NFT...</div>';
+
+        let html = '';
+        for (let i = 0; i < totalNum; i++) {
+          try {
+            const owner = await readContract.ownerOf(i);
+            let imageUrl = `https://via.placeholder.com/300/7c3aed/ffffff?text=NFT+%23${i}`;
+            let name = `LitNFT #${i}`;
+            
+            try {
+              let tokenUri = await readContract.tokenURI(i);
+              // Ganti IPFS gateway biar cepat
+              tokenUri = tokenUri.replace('ipfs://', 'https://ipfs.io/ipfs/');
+              const res = await fetch(tokenUri);
+              const meta = await res.json();
+              if (meta.image) imageUrl = meta.image.replace('ipfs://', 'https://ipfs.io/ipfs/');
+              if (meta.name) name = meta.name;
+            } catch (e) {
+              // fallback ke default
+            }
+
+            html += `
+              <div class="nft-card">
+                <img src="${imageUrl}" alt="${name}" onerror="this.src='https://via.placeholder.com/300/7c3aed/ffffff?text=Error'" />
+                <div class="info">
+                  <span class="token-id">#${i}</span>
+                  <div class="name">${name}</div>
+                  <div class="owner">👤 ${truncateAddress(owner)}</div>
+                </div>
+              </div>
+            `;
+          } catch (e) {
+            console.warn('Gagal load NFT #' + i, e);
+          }
+        }
+
+        nftGrid.innerHTML = html || `
+          <div class="empty-gallery">
+            <span class="big-icon">⚠️</span>
+            <p>Gagal memuat NFT</p>
+          </div>
+        `;
+
+      } catch (err) {
+        console.error('Gallery error:', err);
+        nftGrid.innerHTML = `
+          <div class="empty-gallery">
+            <span class="big-icon">⚠️</span>
+            <p>Gagal terhubung ke blockchain</p>
+            <span style="font-size:12px;font-weight:400;">Cek koneksi internet</span>
+          </div>
+        `;
       }
     }
 
-    document.getElementById("connectBtn").onclick = async () => {
-      if (!window.ethereum) return alert("Install MetaMask/Rabby dulu!");
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      signer = provider.getSigner();
-      const address = await signer.getAddress();
-      document.getElementById("connectBtn").innerText = address.slice(0,6) + "..." + address.slice(-4);
-      document.getElementById("connectBtn").classList.add("connected");
-      document.getElementById("walletShort").innerText = address.slice(0,6) + "..." + address.slice(-4);
-      contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-      document.getElementById("mintBtn").disabled = false;
-      loadGallery();
-    };
+    // =============================================================
+    // 8. SWITCH TAB
+    // =============================================================
+    function switchTab(tabName) {
+      // Update tab buttons
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+      
+      // Update panels
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-' + tabName).classList.add('active');
+      
+      // Load gallery kalau dibuka
+      if (tabName === 'gallery') loadGallery();
+    }
 
-    document.getElementById("mintBtn").onclick = async () => {
-      const name = document.getElementById("nftName").value || "LitNFT";
-      const desc = document.getElementById("nftDesc").value || "NFT di LitVM Testnet";
-      const file = document.getElementById("imageFile").files[0];
-      if (!file) return alert("Pilih gambar dulu!");
+    // =============================================================
+    // 9. PREVIEW GAMBAR
+    // =============================================================
+    imageFile.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          previewImg.src = ev.target.result;
+          previewImg.style.display = 'block';
+          uploadArea.innerHTML = '<span class="icon">✅</span> ' + file.name;
+        };
+        reader.readAsDataURL(file);
+        // Enable mint button only if wallet connected
+        if (userAddress) mintBtn.disabled = false;
+      }
+    });
 
-      document.getElementById("mintBtn").disabled = true;
-      document.getElementById("successBox").style.display = "none";
-      document.getElementById("twitterBtn").style.display = "none";
+    // =============================================================
+    // 10. CONNECT WALLET
+    // =============================================================
+    connectBtn.addEventListener('click', async () => {
+      try {
+        if (!window.ethereum) {
+          alert('⚠️ Install MetaMask atau wallet yang support Web3!');
+          return;
+        }
+
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send('eth_requestAccounts', []);
+        signer = provider.getSigner();
+        userAddress = await signer.getAddress();
+        contract = new ethers.Contract(CONFIG.contractAddress, ABI, signer);
+
+        // Update UI
+        connectBtn.innerHTML = '<i class="fas fa-check-circle"></i> ' + truncateAddress(userAddress);
+        connectBtn.classList.add('connected');
+        walletDisplay.textContent = truncateAddress(userAddress);
+        mintBtn.disabled = false;
+
+        // Load data
+        loadGallery();
+
+        // Auto-switch ke network LitVM
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x' + CONFIG.chainId.toString(16) }],
+          });
+        } catch (e) {
+          // Kalau network belum ada, user bisa switch manual
+          console.log('Network switch skipped:', e.message);
+        }
+
+        showStatus('✅ Wallet terhubung!');
+
+      } catch (err) {
+        console.error(err);
+        showStatus('❌ Gagal konek wallet: ' + err.message, true);
+      }
+    });
+
+    // =============================================================
+    // 11. MINT NFT
+    // =============================================================
+    mintBtn.addEventListener('click', async () => {
+      const name = nftName.value.trim() || 'LitNFT';
+      const desc = nftDesc.value.trim() || 'NFT dari LitVM Testnet';
+      const file = imageFile.files[0];
+
+      if (!file) {
+        showStatus('⚠️ Pilih gambar dulu!', true);
+        return;
+      }
+      if (!userAddress) {
+        showStatus('⚠️ Konek wallet dulu!', true);
+        return;
+      }
+
+      // Disable button
+      mintBtn.disabled = true;
+      successBox.style.display = 'none';
+      twitterBtn.style.display = 'none';
+      showStatus('');
 
       try {
-        setProgress(20, "⏳ Upload gambar ke IPFS...");
+        // Step 1: Upload gambar
+        setProgress(15, '⏳ Upload gambar ke IPFS...');
         const imageUrl = await uploadToIPFS(file);
+        setProgress(45, '✅ Gambar terupload!');
 
-        setProgress(50, "⏳ Upload metadata...");
+        // Step 2: Upload metadata
+        setProgress(50, '⏳ Upload metadata...');
         const metadataUrl = await uploadMetadata(name, desc, imageUrl);
+        setProgress(75, '✅ Metadata terupload!');
 
-        setProgress(75, "⏳ Minting NFT ke blockchain...");
-        const address = await signer.getAddress();
-        const tx = await contract.mint(address, metadataUrl);
+        // Step 3: Mint ke blockchain
+        setProgress(80, '⏳ Minting ke blockchain...');
+        
+        // Estimasi gas
+        const gasEstimate = await contract.estimateGas.mint(userAddress, metadataUrl);
+        const gasLimit = gasEstimate.mul(120).div(100); // +20% safety
+
+        const tx = await contract.mint(userAddress, metadataUrl, {
+          gasLimit: gasLimit
+        });
+        
+        setProgress(90, '⏳ Menunggu konfirmasi...');
         await tx.wait();
-
-        setProgress(100, "✅ Selesai!");
+        
+        setProgress(100, '✅ Selesai!');
         lastTxHash = tx.hash;
         lastNftName = name;
 
-        document.getElementById("successBox").style.display = "block";
-        document.getElementById("txHash").innerText = "TX: " + tx.hash;
-        document.getElementById("twitterBtn").style.display = "block";
-        document.getElementById("mintBtn").disabled = false;
+        // Success display
+        successBox.style.display = 'block';
+        txDisplay.innerHTML = `
+          TX: <a href="https://litvm.calderaexplorer.xyz/tx/${tx.hash}" 
+               target="_blank" class="tx-link">${tx.hash.slice(0,20)}...</a>
+        `;
+        twitterBtn.style.display = 'block';
+        showStatus('🎉 NFT berhasil di-mint!');
+
+        // Refresh gallery
         loadGallery();
+
+        // Reset form
+        nftName.value = '';
+        nftDesc.value = '';
+        imageFile.value = '';
+        previewImg.style.display = 'none';
+        uploadArea.innerHTML = '<span class="icon">📁</span> Tap untuk pilih gambar';
+
       } catch (err) {
-        document.getElementById("progressBox").style.display = "none";
-        document.getElementById("status").innerText = "❌ Error: " + err.message;
-        document.getElementById("mintBtn").disabled = false;
+        console.error('Mint error:', err);
+        hideProgress();
+        showStatus('❌ ' + err.message, true);
+      } finally {
+        mintBtn.disabled = false;
+        if (!userAddress) mintBtn.disabled = true;
+        setTimeout(hideProgress, 3000);
       }
-    };
+    });
 
-    document.getElementById("twitterBtn").onclick = () => {
-      const text = encodeURIComponent(`Baru aja mint NFT "${lastNftName}" di LitVM Testnet! 🎉\n\nTX: ${lastTxHash}\n\nMint juga di: https://catyap1140.github.io/litnft-minter\n\n#LitVM #NFT #Web3`);
-      window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank");
-    };
+    // =============================================================
+    // 12. SHARE TWITTER
+    // =============================================================
+    twitterBtn.addEventListener('click', () => {
+      const text = encodeURIComponent(
+        `Baru aja mint NFT "${lastNftName}" di LitVM Testnet! 🎉\n\n` +
+        `TX: ${lastTxHash}\n\n` +
+        `Mint juga di: ${window.location.href}\n\n` +
+        `#LitVM #NFT #Web3`
+      );
+      window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+    });
 
+    // =============================================================
+    // 13. AUTO LOAD GALLERY
+    // =============================================================
     loadGallery();
+
+    // =============================================================
+    // 14. AUTO CHECK WALLET CONNECTION (jika sudah terkonek)
+    // =============================================================
+    (async function checkConnection() {
+      try {
+        if (window.ethereum) {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts.length > 0) {
+            // Auto connect
+            connectBtn.click();
+          }
+        }
+      } catch (e) {
+        // silent
+      }
+    })();
+
+    // =============================================================
+    // 15. LISTENER PERUBAHAN AKUN
+    // =============================================================
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts.length === 0) {
+          // Logout
+          userAddress = null;
+          connectBtn.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
+          connectBtn.classList.remove('connected');
+          walletDisplay.textContent = '-';
+          mintBtn.disabled = true;
+          showStatus('👋 Wallet terputus', true);
+        } else {
+          // Refresh connection
+          connectBtn.click();
+        }
+      });
+
+      window.ethereum.on('chainChanged', () => {
+        window.location.reload();
+      });
+    }
+
+    console.log('🚀 LitNFT Minter siap!');
+    console.log('📝 Ganti PINATA_JWT di CONFIG kalau mau upload sendiri');
   </script>
 
 </body>
