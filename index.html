@@ -46,6 +46,7 @@
 
   <script>
     const CONTRACT_ADDRESS = "0xb315b699A226a044F39800e50c8bAf748daA43bd";
+    const RPC_URL = "https://liteforge.rpc.caldera.xyz/http";
     const ABI = [
       "function mint(address to, string memory tokenURI) public",
       "function totalSupply() public view returns (uint256)",
@@ -54,16 +55,19 @@
     ];
     const TOKEN_URI = "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/I/0.json";
 
+    const readProvider = new ethers.providers.JsonRpcProvider(RPC_URL);
+    const readContract = new ethers.Contract(CONTRACT_ADDRESS, ABI, readProvider);
+
     let provider, signer, contract;
 
     async function loadGallery() {
       try {
-        const total = await contract.totalSupply();
+        const total = await readContract.totalSupply();
         document.getElementById("totalSupply").innerText = total.toString();
         const grid = document.getElementById("nftGrid");
         grid.innerHTML = "";
         for (let i = 0; i < total; i++) {
-          const owner = await contract.ownerOf(i);
+          const owner = await readContract.ownerOf(i);
           const card = document.createElement("div");
           card.className = "nft-card";
           card.innerHTML = `
@@ -74,7 +78,7 @@
           grid.appendChild(card);
         }
       } catch (e) {
-        console.error(e);
+        console.error("Gallery error:", e);
       }
     }
 
@@ -102,6 +106,9 @@
         document.getElementById("status").innerText = "❌ Error: " + err.message;
       }
     };
+
+    // Load gallery on page load
+    loadGallery();
   </script>
 
 </body>
