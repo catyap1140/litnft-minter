@@ -17,7 +17,6 @@
        ROOT VARIABLES (LIGHT MODE DEFAULT)
        ================================================================ */
     :root {
-      /* Light Mode */
       --bg-body: #f3f4f6;
       --bg-header: linear-gradient(135deg, #1e1b4b, #312e81);
       --bg-card: #ffffff;
@@ -40,9 +39,6 @@
       --badge-text: #ffffff;
     }
 
-    /* ================================================================
-       DARK MODE
-       ================================================================ */
     [data-theme="dark"] {
       --bg-body: #0f0f1a;
       --bg-header: linear-gradient(135deg, #0a0a1a, #1a1a3e);
@@ -66,9 +62,6 @@
       --badge-text: #ffffff;
     }
 
-    /* ================================================================
-       GLOBAL
-       ================================================================ */
     * {
       margin: 0;
       padding: 0;
@@ -83,9 +76,6 @@
       min-height: 100vh;
     }
     
-    /* ================================================================
-       THEME TOGGLE BUTTON
-       ================================================================ */
     .theme-toggle {
       background: rgba(255,255,255,0.1);
       border: 1px solid rgba(255,255,255,0.2);
@@ -113,9 +103,6 @@
       gap: 8px;
     }
     
-    /* ================================================================
-       HEADER
-       ================================================================ */
     .header {
       background: var(--bg-header);
       padding: 16px 24px;
@@ -166,9 +153,6 @@
       border-color: #dc2626;
     }
     
-    /* ================================================================
-       STATS BANNER
-       ================================================================ */
     .stats-banner {
       background: var(--bg-stats);
       padding: 24px 20px;
@@ -210,9 +194,11 @@
       font-weight: 900;
     }
     
-    /* ================================================================
-       TABS
-       ================================================================ */
+    .stat-item .value .dim {
+      opacity: 0.5;
+      font-weight: 400;
+    }
+    
     .tabs {
       display: flex;
       background: var(--bg-tab);
@@ -243,9 +229,6 @@
     
     .tab:hover { color: var(--text-purple); }
     
-    /* ================================================================
-       CONTAINER
-       ================================================================ */
     .container {
       max-width: 480px;
       margin: 0 auto;
@@ -264,9 +247,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
-    /* ================================================================
-       MINT CARD
-       ================================================================ */
     .mint-card {
       background: var(--bg-card);
       border-radius: 20px;
@@ -352,7 +332,6 @@
       border: 3px solid var(--border-purple);
     }
     
-    /* PROGRESS */
     .progress-wrap {
       display: none;
       margin-bottom: 12px;
@@ -380,7 +359,6 @@
       text-align: center;
     }
     
-    /* SUCCESS */
     .success-box {
       background: var(--bg-success);
       border: 2px solid #86efac;
@@ -409,7 +387,6 @@
       font-weight: 600;
     }
     
-    /* BUTTONS */
     .btn {
       width: 100%;
       padding: 14px;
@@ -460,9 +437,6 @@
       color: var(--text-purple);
     }
     
-    /* ================================================================
-       GALLERY
-       ================================================================ */
     .gallery-header {
       display: flex;
       justify-content: space-between;
@@ -483,6 +457,11 @@
       border-radius: 20px;
       font-size: 12px;
       font-weight: 700;
+    }
+    
+    .gallery-header .count .dim {
+      opacity: 0.5;
+      font-weight: 400;
     }
     
     .nft-grid {
@@ -560,9 +539,26 @@
       color: var(--text-purple);
     }
     
-    /* ================================================================
-       RESPONSIVE
-       ================================================================ */
+    .wallet-required {
+      grid-column: span 2;
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 2px dashed var(--text-purple);
+    }
+    
+    .wallet-required .big-icon {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 8px;
+    }
+    
+    .wallet-required p {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    
     @media (max-width: 480px) {
       .header { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
       .logo h1 { font-size: 18px; }
@@ -576,9 +572,7 @@
 </head>
 <body>
 
-  <!-- ================================================================
-       HEADER
-       ================================================================ -->
+  <!-- HEADER -->
   <header class="header">
     <div class="logo">
       <h1>🖼️ Lit<span>NFT</span></h1>
@@ -593,15 +587,13 @@
     </div>
   </header>
 
-  <!-- ================================================================
-       STATS BANNER
-       ================================================================ -->
+  <!-- STATS BANNER -->
   <section class="stats-banner">
     <h2>✨ Mint NFT, Own The Chain!</h2>
     <div class="stats-grid">
       <div class="stat-item">
         <span class="label">Total NFT</span>
-        <span class="value" id="totalSupply">0</span>
+        <span class="value" id="totalSupply">?</span>
       </div>
       <div class="stat-item">
         <span class="label">Network</span>
@@ -614,9 +606,7 @@
     </div>
   </section>
 
-  <!-- ================================================================
-       TABS
-       ================================================================ -->
+  <!-- TABS -->
   <div class="tabs">
     <div class="tab active" data-tab="mint" onclick="switchTab('mint')">
       <i class="fas fa-rocket"></i> Mint
@@ -626,9 +616,7 @@
     </div>
   </div>
 
-  <!-- ================================================================
-       CONTAINER
-       ================================================================ -->
+  <!-- CONTAINER -->
   <div class="container">
 
     <!-- TAB MINT -->
@@ -683,9 +671,9 @@
       </div>
       <div class="nft-grid" id="nftGrid">
         <div class="empty-gallery">
-          <span class="big-icon">🖼️</span>
-          <p>Belum ada NFT</p>
-          <span style="font-size:12px;font-weight:400;">Mint pertama kamu!</span>
+          <span class="big-icon">🔗</span>
+          <p>Connect wallet dulu untuk lihat koleksi</p>
+          <span style="font-size:12px;font-weight:400;">Klik "Connect Wallet" di atas</span>
         </div>
       </div>
     </div>
@@ -749,9 +737,8 @@
     const htmlRoot = document.getElementById('htmlRoot');
 
     // =============================================================
-    // 4. THEME TOGGLE (Dark/Light Mode)
+    // 4. THEME TOGGLE
     // =============================================================
-    // Cek preferensi dari localStorage
     let currentTheme = localStorage.getItem('theme') || 'light';
     if (currentTheme === 'dark') {
       htmlRoot.setAttribute('data-theme', 'dark');
@@ -798,7 +785,7 @@
     function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
     // =============================================================
-    // 6. READ PROVIDER (TANPA WALLET - PUBLIC)
+    // 6. READ PROVIDER (PUBLIC)
     // =============================================================
     let readProvider, readContract;
     try {
@@ -871,9 +858,23 @@
     }
 
     // =============================================================
-    // 8. GALLERY LOAD (PUBLIC - TANPA WALLET)
+    // 8. GALLERY LOAD (HANYA JIKA WALLET TERHUBUNG)
     // =============================================================
     async function loadGallery() {
+      // Jika wallet belum connect, tampilkan pesan
+      if (!isConnected || !userAddress) {
+        nftGrid.innerHTML = `
+          <div class="wallet-required">
+            <span class="big-icon">🔗</span>
+            <p>Connect wallet dulu untuk lihat koleksi</p>
+            <span style="font-size:12px;color:var(--text-muted);">Klik "Connect Wallet" di header</span>
+          </div>
+        `;
+        totalSupplyEl.textContent = '?';
+        galleryCount.textContent = '? NFT';
+        return;
+      }
+
       try {
         if (!readContract) {
           nftGrid.innerHTML = `
@@ -1020,6 +1021,15 @@
         connectBtn.classList.remove('connected');
         walletDisplay.textContent = '-';
         mintBtn.disabled = true;
+        totalSupplyEl.textContent = '?';
+        galleryCount.textContent = '? NFT';
+        nftGrid.innerHTML = `
+          <div class="wallet-required">
+            <span class="big-icon">🔗</span>
+            <p>Connect wallet dulu untuk lihat koleksi</p>
+            <span style="font-size:12px;color:var(--text-muted);">Klik "Connect Wallet" di header</span>
+          </div>
+        `;
         showStatus('👋 Wallet terputus', true);
         return;
       }
@@ -1069,7 +1079,8 @@
         walletDisplay.textContent = truncateAddress(userAddress);
         mintBtn.disabled = false;
 
-        loadGallery();
+        // Load gallery (sekarang baru muncul total NFT)
+        await loadGallery();
         showStatus('✅ Wallet terhubung!');
 
       } catch (err) {
@@ -1191,12 +1202,7 @@
     });
 
     // =============================================================
-    // 14. AUTO LOAD GALLERY (TANPA WALLET)
-    // =============================================================
-    loadGallery();
-
-    // =============================================================
-    // 15. AUTO CHECK WALLET CONNECTION
+    // 14. AUTO CHECK WALLET CONNECTION
     // =============================================================
     (async function checkConnection() {
       try {
@@ -1204,16 +1210,22 @@
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
           if (accounts.length > 0) {
             // Auto connect
-            connectBtn.click();
+            await connectBtn.click();
+          } else {
+            // Tampilkan pesan "connect wallet" di gallery
+            loadGallery();
           }
+        } else {
+          loadGallery();
         }
       } catch (e) {
         console.log('Auto-connect skipped:', e.message);
+        loadGallery();
       }
     })();
 
     // =============================================================
-    // 16. EVENT LISTENER WALLET (AKUN BERUBAH)
+    // 15. EVENT LISTENER WALLET
     // =============================================================
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts) => {
@@ -1225,6 +1237,15 @@
           connectBtn.classList.remove('connected');
           walletDisplay.textContent = '-';
           mintBtn.disabled = true;
+          totalSupplyEl.textContent = '?';
+          galleryCount.textContent = '? NFT';
+          nftGrid.innerHTML = `
+            <div class="wallet-required">
+              <span class="big-icon">🔗</span>
+              <p>Connect wallet dulu untuk lihat koleksi</p>
+              <span style="font-size:12px;color:var(--text-muted);">Klik "Connect Wallet" di header</span>
+            </div>
+          `;
           showStatus('👋 Wallet terputus', true);
         } else {
           // Refresh connection
@@ -1240,6 +1261,7 @@
     console.log('🚀 LitNFT Minter siap!');
     console.log('✅ JWT sudah terisi!');
     console.log('🌙 Klik ikon bulan/matahari untuk ganti tema!');
+    console.log('🔗 Total NFT hanya muncul setelah connect wallet');
   </script>
 
 </body>
