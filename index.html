@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LitNFT Minter Pro</title>
+  <title>Portal NFT</title>
   
   <!-- Ethers.js -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js">
@@ -575,7 +575,7 @@
   <!-- HEADER -->
   <header class="header">
     <div class="logo">
-      <h1>🖼️ Lit<span>NFT</span></h1>
+      <h1>🖼️ Portal <span>NFT</span></h1>
     </div>
     <div class="header-controls">
       <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
@@ -656,7 +656,7 @@
           <i class="fas fa-rocket"></i> Mint NFT Sekarang
         </button>
         <button class="btn btn-twitter" id="twitterBtn">
-          <i class="fab fa-twitter"></i> Share ke Twitter
+          <i class="fab fa-x-twitter"></i> Share ke X
         </button>
 
         <p id="status"></p>
@@ -691,6 +691,7 @@
       contractAddress: "0x893C81FC7B6dD2FACB1c167147209c5F1c342840",
       rpcUrl: "https://liteforge.rpc.caldera.xyz/http",
       chainId: 4441,
+      explorerUrl: "https://liteforge.explorer.caldera.xyz/tx/",
       pinataJwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJiNWE2ODYxZi01NWMwLTQ3ZDktYmM2ZS0zMjBlYWFmMDcyNDYiLCJlbWFpbCI6InJleWhhbmFmaWtyaTExNDBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6Ijg5ODQ4OTA2ZTVhNDliY2M4ZDEzIiwic2NvcGVkS2V5U2VjcmV0IjoiMDA4NmIwMzljM2NiODE5MmMzYzQ1NzYyM2Y3YzIwNmYyYWQ3Nzg3OWMxNzE4YjJmMjRhZDNiYTQ1MTdmOWViNCIsImV4cCI6MTgxNDAyOTUwMn0.LIWI8NMwgRzLRtumOpKmmv2BHBDJBdmb6_G8dPZvn28"
     };
 
@@ -829,8 +830,8 @@
     async function uploadMetadata(name, description, imageUrl) {
       try {
         const metadata = { 
-          name: name || 'LitNFT', 
-          description: description || 'NFT from LitVM', 
+          name: name || 'Portal NFT', 
+          description: description || 'NFT dari LitVM Testnet', 
           image: imageUrl 
         };
         
@@ -861,7 +862,6 @@
     // 8. GALLERY LOAD (HANYA JIKA WALLET TERHUBUNG)
     // =============================================================
     async function loadGallery() {
-      // Jika wallet belum connect, tampilkan pesan
       if (!isConnected || !userAddress) {
         nftGrid.innerHTML = `
           <div class="wallet-required">
@@ -911,7 +911,7 @@
           try {
             const owner = await readContract.ownerOf(i);
             let imageUrl = `https://via.placeholder.com/300/7c3aed/ffffff?text=NFT+%23${i}`;
-            let name = `LitNFT #${i}`;
+            let name = `Portal NFT #${i}`;
             
             try {
               let tokenUri = await readContract.tokenURI(i);
@@ -1011,7 +1011,6 @@
     // 11. CONNECT / DISCONNECT WALLET (TOGGLE)
     // =============================================================
     connectBtn.addEventListener('click', async () => {
-      // Jika sudah connect -> DISCONNECT
       if (isConnected) {
         userAddress = null;
         isConnected = false;
@@ -1034,14 +1033,12 @@
         return;
       }
 
-      // Jika belum connect -> CONNECT
       try {
         if (!window.ethereum) {
           alert('⚠️ Install MetaMask atau wallet Web3!');
           return;
         }
 
-        // Cek network
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         if (parseInt(chainId) !== CONFIG.chainId) {
           try {
@@ -1058,7 +1055,7 @@
                   chainName: 'LitVM Testnet',
                   rpcUrls: [CONFIG.rpcUrl],
                   nativeCurrency: { name: 'tLit', symbol: 'tLIT', decimals: 18 },
-                  blockExplorerUrls: ['https://litvm.calderaexplorer.xyz'],
+                  blockExplorerUrls: ['https://liteforge.explorer.caldera.xyz'],
                 }],
               });
             } else {
@@ -1079,7 +1076,6 @@
         walletDisplay.textContent = truncateAddress(userAddress);
         mintBtn.disabled = false;
 
-        // Load gallery (sekarang baru muncul total NFT)
         await loadGallery();
         showStatus('✅ Wallet terhubung!');
 
@@ -1095,7 +1091,7 @@
     mintBtn.addEventListener('click', async () => {
       if (isMinting) return;
       
-      const name = nftName.value.trim() || 'LitNFT';
+      const name = nftName.value.trim() || 'Portal NFT';
       const desc = nftDesc.value.trim() || 'NFT dari LitVM Testnet';
       const file = imageFile.files[0];
 
@@ -1150,10 +1146,12 @@
         lastNftName = name;
 
         successBox.style.display = 'block';
+        const explorerLink = CONFIG.explorerUrl + tx.hash;
         txDisplay.innerHTML = `
-          TX: <a href="https://litvm.calderaexplorer.xyz/tx/${tx.hash}" 
-               target="_blank" class="tx-link">${tx.hash.slice(0,20)}...</a>
+          ✅ Transaksi berhasil! 
+          <a href="${explorerLink}" target="_blank" class="tx-link">Lihat di Explorer →</a>
         `;
+        
         twitterBtn.style.display = 'block';
         showStatus('🎉 NFT berhasil di-mint!');
 
@@ -1189,16 +1187,23 @@
     });
 
     // =============================================================
-    // 13. SHARE TWITTER
+    // 13. SHARE KE X (TWITTER) - DIPERBAIKI
     // =============================================================
-    twitterBtn.addEventListener('click', () => {
+    twitterBtn.addEventListener('click', function() {
+      if (!lastTxHash) {
+        showStatus('⚠️ Belum ada transaksi untuk di-share', true);
+        return;
+      }
+      
       const text = encodeURIComponent(
-        `Baru aja mint NFT "${lastNftName}" di LitVM Testnet! 🎉\n\n` +
-        `TX: ${lastTxHash}\n\n` +
-        `Mint juga di: ${window.location.href}\n\n` +
-        `#LitVM #NFT #Web3`
+        `🎉 Baru aja mint NFT "${lastNftName}" di Portal NFT!\n\n` +
+        `🔗 Lihat transaksi: ${CONFIG.explorerUrl}${lastTxHash}\n\n` +
+        `🚀 Mint juga di: ${window.location.href}\n\n` +
+        `#PortalNFT #LitVM #Web3 #NFT`
       );
-      window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+      
+      const url = `https://twitter.com/intent/tweet?text=${text}`;
+      window.open(url, '_blank', 'width=600,height=400');
     });
 
     // =============================================================
@@ -1209,10 +1214,8 @@
         if (window.ethereum) {
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
           if (accounts.length > 0) {
-            // Auto connect
             await connectBtn.click();
           } else {
-            // Tampilkan pesan "connect wallet" di gallery
             loadGallery();
           }
         } else {
@@ -1230,7 +1233,6 @@
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts) => {
         if (accounts.length === 0) {
-          // Logout
           userAddress = null;
           isConnected = false;
           connectBtn.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
@@ -1248,7 +1250,6 @@
           `;
           showStatus('👋 Wallet terputus', true);
         } else {
-          // Refresh connection
           connectBtn.click();
         }
       });
@@ -1258,10 +1259,10 @@
       });
     }
 
-    console.log('🚀 LitNFT Minter siap!');
+    console.log('🚀 Portal NFT siap!');
     console.log('✅ JWT sudah terisi!');
     console.log('🌙 Klik ikon bulan/matahari untuk ganti tema!');
-    console.log('🔗 Total NFT hanya muncul setelah connect wallet');
+    console.log('🔗 Explorer URL: ' + CONFIG.explorerUrl);
   </script>
 
 </body>
