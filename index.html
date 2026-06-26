@@ -53,7 +53,8 @@
       "function tokenURI(uint256 tokenId) public view returns (string)",
       "function ownerOf(uint256 tokenId) public view returns (address)"
     ];
-    const TOKEN_URI = "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/I/0.json";
+    const TOKEN_URI = "https://ipfs.io/ipfs/bafkreif4oo3g3vhonvvd3nb3hhnsmef3hqfwekxzgk3xihublbxo33hk4a";
+    const IMAGE_URL = "https://ipfs.io/ipfs/bafybeigrqs27kd5ruddynelriuyqly5e2sme76kjvxfj5ksboayhjrt7lu";
 
     const readProvider = new ethers.providers.JsonRpcProvider(
       { url: RPC_URL },
@@ -74,7 +75,7 @@
           const card = document.createElement("div");
           card.className = "nft-card";
           card.innerHTML = `
-            <img src="https://via.placeholder.com/150/7c3aed/ffffff?text=NFT+%23${i}" />
+            <img src="${IMAGE_URL}" onerror="this.src='https://via.placeholder.com/150/7c3aed/ffffff?text=NFT+%23${i}'" />
             <h3>LitNFT #${i}</h3>
             <p>Owner: ${owner.slice(0,6)}...${owner.slice(-4)}</p>
           `;
