@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal NFT</title>
   
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+  
   <!-- Ethers.js -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js">
   </script>
@@ -14,198 +19,288 @@
   
   <style>
     /* ================================================================
-       ROOT VARIABLES (LIGHT MODE DEFAULT)
+       RESET & VARIABLES
        ================================================================ */
-    :root {
-      --bg-body: #f3f4f6;
-      --bg-header: linear-gradient(135deg, #1e1b4b, #312e81);
-      --bg-card: #ffffff;
-      --bg-tab: #ffffff;
-      --bg-input: #ffffff;
-      --bg-stats: linear-gradient(135deg, #7c3aed, #4f46e5);
-      --bg-upload: #faf5ff;
-      --bg-upload-hover: #ede9fe;
-      --bg-success: #f0fdf4;
-      --bg-gallery-card: #ffffff;
-      --text-primary: #111827;
-      --text-secondary: #4b5563;
-      --text-white: #ffffff;
-      --text-muted: #9ca3af;
-      --text-purple: #7c3aed;
-      --border-color: #e5e7eb;
-      --border-purple: #ede9fe;
-      --shadow-color: rgba(124, 58, 237, 0.1);
-      --badge-bg: #7c3aed;
-      --badge-text: #ffffff;
-    }
-
-    [data-theme="dark"] {
-      --bg-body: #0f0f1a;
-      --bg-header: linear-gradient(135deg, #0a0a1a, #1a1a3e);
-      --bg-card: #1a1a2e;
-      --bg-tab: #1a1a2e;
-      --bg-input: #0f0f1a;
-      --bg-stats: linear-gradient(135deg, #4c1d95, #312e81);
-      --bg-upload: #1a1a3e;
-      --bg-upload-hover: #2a1a4e;
-      --bg-success: #0a1a0a;
-      --bg-gallery-card: #1a1a2e;
-      --text-primary: #f3f4f6;
-      --text-secondary: #d1d5db;
-      --text-white: #ffffff;
-      --text-muted: #6b7280;
-      --text-purple: #a78bfa;
-      --border-color: #374151;
-      --border-purple: #4c1d95;
-      --shadow-color: rgba(124, 58, 237, 0.2);
-      --badge-bg: #7c3aed;
-      --badge-text: #ffffff;
-    }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
     
+    :root {
+      --bg-body: #0a0a12;
+      --bg-card: rgba(255, 255, 255, 0.05);
+      --bg-card-hover: rgba(255, 255, 255, 0.08);
+      --bg-header: rgba(10, 10, 18, 0.85);
+      --bg-stats: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(79, 70, 229, 0.10));
+      --bg-input: rgba(255, 255, 255, 0.05);
+      --bg-upload: rgba(124, 58, 237, 0.10);
+      --bg-upload-hover: rgba(124, 58, 237, 0.20);
+      --bg-tab: rgba(255, 255, 255, 0.03);
+      --bg-success: rgba(34, 197, 94, 0.10);
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-white: #ffffff;
+      --text-muted: #6b7280;
+      --text-purple: #a78bfa;
+      --text-purple-bright: #8b5cf6;
+      --border-color: rgba(255, 255, 255, 0.06);
+      --border-purple: rgba(124, 58, 237, 0.30);
+      --shadow-color: rgba(124, 58, 237, 0.15);
+      --glow-color: rgba(124, 58, 237, 0.30);
+      --badge-bg: #7c3aed;
+      --badge-text: #ffffff;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.06);
+    }
+    
+    /* ================================================================
+       LIGHT MODE
+       ================================================================ */
+    [data-theme="light"] {
+      --bg-body: #f3f4f6;
+      --bg-card: rgba(255, 255, 255, 0.80);
+      --bg-card-hover: rgba(255, 255, 255, 0.95);
+      --bg-header: rgba(255, 255, 255, 0.85);
+      --bg-stats: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(79, 70, 229, 0.08));
+      --bg-input: rgba(255, 255, 255, 0.80);
+      --bg-upload: rgba(124, 58, 237, 0.06);
+      --bg-upload-hover: rgba(124, 58, 237, 0.12);
+      --bg-tab: rgba(255, 255, 255, 0.50);
+      --bg-success: rgba(34, 197, 94, 0.10);
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-white: #111827;
+      --text-muted: #9ca3af;
+      --text-purple: #7c3aed;
+      --text-purple-bright: #6d28d9;
+      --border-color: rgba(0, 0, 0, 0.06);
+      --border-purple: rgba(124, 58, 237, 0.20);
+      --shadow-color: rgba(124, 58, 237, 0.08);
+      --glow-color: rgba(124, 58, 237, 0.15);
+      --glass-bg: rgba(255, 255, 255, 0.50);
+      --glass-border: rgba(0, 0, 0, 0.06);
+    }
+    
+    /* ================================================================
+       GLOBAL
+       ================================================================ */
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', -apple-system, sans-serif;
       background: var(--bg-body);
       color: var(--text-primary);
       min-height: 100vh;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow-x: hidden;
     }
     
-    .theme-toggle {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: #c4b5fd;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      font-size: 18px;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 10px;
+    /* ================================================================
+       GRID BACKGROUND
+       ================================================================ */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 20% 50%, rgba(124, 58, 237, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(79, 70, 229, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 50% 20%, rgba(124, 58, 237, 0.02) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
     }
     
-    .theme-toggle:hover {
-      background: rgba(255,255,255,0.2);
-      transform: rotate(20deg);
+    /* ================================================================
+       GLASSMORPHISM UTILITY
+       ================================================================ */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      border: 1px solid var(--glass-border);
     }
     
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     }
     
+    /* ================================================================
+       HEADER
+       ================================================================ */
     .header {
       background: var(--bg-header);
-      padding: 16px 24px;
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
-      z-index: 50;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+      z-index: 100;
     }
     
     .logo h1 {
       font-size: 22px;
       font-weight: 900;
       color: var(--text-white);
+      letter-spacing: -0.5px;
     }
     
-    .logo h1 span { color: #a78bfa; }
+    .logo h1 span {
+      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .theme-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .theme-toggle:hover {
+      background: var(--bg-card-hover);
+      transform: rotate(20deg) scale(1.05);
+      color: var(--text-purple);
+    }
     
     .wallet-btn {
-      background: rgba(255,255,255,0.1);
-      border: 2px solid #7c3aed;
-      color: #c4b5fd;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
       padding: 10px 20px;
       border-radius: 50px;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
-      white-space: nowrap;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
     }
     
     .wallet-btn:hover {
-      background: #7c3aed;
-      color: white;
-      transform: scale(1.05);
+      background: var(--bg-card-hover);
+      border-color: var(--border-purple);
+      color: var(--text-primary);
+      transform: scale(1.02);
     }
     
     .wallet-btn.connected {
-      background: #7c3aed;
+      background: var(--text-purple);
+      border-color: var(--text-purple);
       color: white;
-      border-color: #7c3aed;
     }
     
     .wallet-btn.connected:hover {
       background: #dc2626;
       border-color: #dc2626;
+      color: white;
     }
     
+    /* ================================================================
+       STATS BANNER
+       ================================================================ */
     .stats-banner {
       background: var(--bg-stats);
       padding: 24px 20px;
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stats-banner::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.05), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
     }
     
     .stats-banner h2 {
-      color: var(--text-white);
-      font-size: 20px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 16px;
+      color: var(--text-primary);
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
     }
     
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 10px;
+      position: relative;
+      z-index: 1;
     }
     
     .stat-item {
-      background: rgba(255,255,255,0.15);
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
       padding: 12px 16px;
       border-radius: 12px;
+      border: 1px solid var(--border-color);
     }
     
     .stat-item .label {
-      font-size: 11px;
-      color: #e9d5ff;
+      font-size: 10px;
+      color: var(--text-muted);
       font-weight: 600;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
     
     .stat-item .value {
       font-size: 20px;
-      color: var(--text-white);
       font-weight: 900;
+      color: var(--text-primary);
     }
     
     .stat-item .value .dim {
-      opacity: 0.5;
+      opacity: 0.4;
       font-weight: 400;
     }
     
+    /* ================================================================
+       TABS
+       ================================================================ */
     .tabs {
       display: flex;
       background: var(--bg-tab);
-      border-bottom: 2px solid var(--border-color);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
       position: sticky;
       top: 72px;
-      z-index: 40;
+      z-index: 50;
     }
     
     .tab {
@@ -215,44 +310,63 @@
       font-size: 13px;
       font-weight: 700;
       color: var(--text-muted);
-      text-transform: uppercase;
       cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.3px;
+    }
+    
+    .tab:hover {
+      color: var(--text-primary);
     }
     
     .tab.active {
       color: var(--text-purple);
       border-bottom-color: var(--text-purple);
-      background: var(--bg-upload);
+      background: var(--bg-card);
     }
     
-    .tab:hover { color: var(--text-purple); }
-    
+    /* ================================================================
+       CONTAINER
+       ================================================================ */
     .container {
       max-width: 480px;
       margin: 0 auto;
       padding: 20px 16px;
+      position: relative;
+      z-index: 1;
     }
     
     .tab-panel {
       display: none;
-      animation: fadeIn 0.3s ease;
+      animation: fadeSlide 0.4s ease;
     }
     
     .tab-panel.active { display: block; }
     
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
     
+    /* ================================================================
+       MINT CARD
+       ================================================================ */
     .mint-card {
       background: var(--bg-card);
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
       border-radius: 20px;
       padding: 24px;
-      box-shadow: 0 10px 25px var(--shadow-color);
-      border: 2px solid var(--border-purple);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 8px 32px var(--shadow-color);
+      transition: all 0.3s ease;
+    }
+    
+    .mint-card:hover {
+      border-color: var(--border-purple);
+      box-shadow: 0 8px 40px var(--shadow-color), 0 0 60px var(--glow-color);
     }
     
     .mint-card .card-header {
@@ -264,54 +378,60 @@
     
     .mint-card .card-header h3 {
       font-size: 18px;
-      font-weight: 900;
-      color: var(--text-purple);
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
     }
     
     .badge {
-      background: var(--badge-bg);
-      color: var(--badge-text);
+      background: var(--text-purple);
+      color: white;
       padding: 4px 14px;
       border-radius: 20px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
     
     .mint-card input[type="text"] {
       width: 100%;
       padding: 12px 16px;
-      border: 2px solid var(--border-color);
+      border: 1px solid var(--border-color);
       border-radius: 12px;
       font-size: 14px;
+      font-weight: 500;
       margin-bottom: 12px;
-      transition: all 0.3s;
+      transition: all 0.3s ease;
       outline: none;
       background: var(--bg-input);
       color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
     }
     
     .mint-card input[type="text"]:focus {
       border-color: var(--text-purple);
-      box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+      box-shadow: 0 0 0 3px var(--glow-color);
     }
     
     .upload-area {
       width: 100%;
       padding: 20px;
-      border: 2px dashed var(--text-purple);
+      border: 2px dashed var(--border-purple);
       border-radius: 12px;
       background: var(--bg-upload);
       text-align: center;
       cursor: pointer;
       font-weight: 600;
-      color: var(--text-purple);
-      transition: all 0.3s;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
       margin-bottom: 12px;
     }
     
     .upload-area:hover {
       background: var(--bg-upload-hover);
-      border-color: #5b21b6;
+      border-color: var(--text-purple);
+      color: var(--text-primary);
     }
     
     .upload-area .icon {
@@ -329,17 +449,18 @@
       border-radius: 12px;
       margin-bottom: 12px;
       display: none;
-      border: 3px solid var(--border-purple);
+      border: 2px solid var(--border-purple);
     }
     
+    /* PROGRESS */
     .progress-wrap {
       display: none;
       margin-bottom: 12px;
     }
     
     .progress-bar {
-      height: 8px;
-      background: var(--border-purple);
+      height: 6px;
+      background: var(--border-color);
       border-radius: 4px;
       overflow: hidden;
     }
@@ -349,19 +470,22 @@
       background: linear-gradient(90deg, var(--text-purple), #f59e0b);
       width: 0%;
       transition: width 0.5s ease;
+      border-radius: 4px;
+      box-shadow: 0 0 20px var(--glow-color);
     }
     
     .progress-text {
       font-size: 12px;
-      color: var(--text-purple);
+      color: var(--text-secondary);
       font-weight: 600;
       margin-top: 6px;
       text-align: center;
     }
     
+    /* SUCCESS */
     .success-box {
       background: var(--bg-success);
-      border: 2px solid #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.30);
       border-radius: 12px;
       padding: 14px;
       margin-bottom: 12px;
@@ -369,51 +493,59 @@
     }
     
     .success-box h4 {
-      color: #16a34a;
+      color: #22c55e;
       font-size: 14px;
-      font-weight: 800;
+      font-weight: 700;
       margin-bottom: 4px;
     }
     
     .success-box p {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--text-secondary);
       word-break: break-all;
     }
     
     .success-box .tx-link {
       color: var(--text-purple);
-      text-decoration: underline;
+      text-decoration: none;
       font-weight: 600;
     }
     
+    .success-box .tx-link:hover {
+      text-decoration: underline;
+    }
+    
+    /* BUTTONS */
     .btn {
       width: 100%;
       padding: 14px;
       border: none;
       border-radius: 12px;
-      font-size: 15px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
     }
     
     .btn-mint {
-      background: linear-gradient(135deg, var(--text-purple), #4f46e5);
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
       color: white;
+      box-shadow: 0 4px 20px var(--glow-color);
     }
     
     .btn-mint:hover:not(:disabled) {
       transform: scale(1.02);
-      box-shadow: 0 8px 20px rgba(124,58,237,0.3);
+      box-shadow: 0 8px 30px var(--glow-color), 0 0 60px var(--glow-color);
     }
     
     .btn-mint:disabled {
-      background: #d1d5db;
-      color: #9ca3af;
+      background: var(--border-color);
+      color: var(--text-muted);
       cursor: not-allowed;
+      box-shadow: none;
     }
     
     .btn-twitter {
@@ -425,7 +557,7 @@
     
     .btn-twitter:hover {
       transform: scale(1.02);
-      box-shadow: 0 8px 20px rgba(29,161,242,0.3);
+      box-shadow: 0 8px 30px rgba(29, 161, 242, 0.30);
     }
     
     #status {
@@ -434,9 +566,12 @@
       font-weight: 600;
       margin-top: 10px;
       min-height: 20px;
-      color: var(--text-purple);
+      color: var(--text-secondary);
     }
     
+    /* ================================================================
+       GALLERY
+       ================================================================ */
     .gallery-header {
       display: flex;
       justify-content: space-between;
@@ -448,20 +583,17 @@
       font-size: 16px;
       font-weight: 800;
       color: var(--text-primary);
+      letter-spacing: -0.3px;
     }
     
     .gallery-header .count {
-      background: var(--bg-upload);
+      background: var(--bg-card);
       color: var(--text-purple);
-      padding: 4px 12px;
+      padding: 4px 14px;
       border-radius: 20px;
       font-size: 12px;
       font-weight: 700;
-    }
-    
-    .gallery-header .count .dim {
-      opacity: 0.5;
-      font-weight: 400;
+      border: 1px solid var(--border-color);
     }
     
     .nft-grid {
@@ -471,24 +603,30 @@
     }
     
     .nft-card {
-      background: var(--bg-gallery-card);
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
       border-radius: 16px;
       overflow: hidden;
-      border: 2px solid var(--border-color);
-      transition: all 0.3s;
+      border: 1px solid var(--border-color);
+      transition: all 0.4s ease;
     }
     
     .nft-card:hover {
-      border-color: var(--text-purple);
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px var(--shadow-color);
+      border-color: var(--border-purple);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px var(--shadow-color), 0 0 40px var(--glow-color);
     }
     
     .nft-card img {
       width: 100%;
       height: 150px;
       object-fit: cover;
-      background: var(--border-purple);
+      background: var(--border-color);
+      transition: transform 0.4s ease;
+    }
+    
+    .nft-card:hover img {
+      transform: scale(1.03);
     }
     
     .nft-card .info {
@@ -496,10 +634,10 @@
     }
     
     .nft-card .token-id {
-      background: var(--badge-bg);
-      color: var(--badge-text);
+      background: var(--text-purple);
+      color: white;
       font-size: 10px;
-      font-weight: 800;
+      font-weight: 700;
       padding: 2px 10px;
       border-radius: 4px;
       display: inline-block;
@@ -508,7 +646,7 @@
     
     .nft-card .name {
       font-size: 14px;
-      font-weight: 800;
+      font-weight: 700;
       color: var(--text-primary);
       margin-bottom: 2px;
     }
@@ -545,7 +683,7 @@
       padding: 40px 20px;
       background: var(--bg-card);
       border-radius: 16px;
-      border: 2px dashed var(--text-purple);
+      border: 2px dashed var(--border-purple);
     }
     
     .wallet-required .big-icon {
@@ -559,20 +697,33 @@
       font-weight: 600;
     }
     
+    /* ================================================================
+       RESPONSIVE
+       ================================================================ */
     @media (max-width: 480px) {
-      .header { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
+      .header { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
       .logo h1 { font-size: 18px; }
       .wallet-btn { font-size: 11px; padding: 8px 14px; }
       .nft-grid { gap: 10px; }
       .nft-card img { height: 120px; }
-      .header-controls { gap: 4px; }
+      .header-controls { gap: 6px; }
       .theme-toggle { width: 34px; height: 34px; font-size: 14px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @media (max-width: 380px) {
+      .container { padding: 12px 10px; }
+      .mint-card { padding: 16px; }
+      .nft-grid { grid-template-columns: 1fr; }
+      .nft-card img { height: 180px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
+  <!-- ================================================================
+       HEADER
+       ================================================================ -->
   <header class="header">
     <div class="logo">
       <h1>🖼️ Portal <span>NFT</span></h1>
@@ -587,7 +738,9 @@
     </div>
   </header>
 
-  <!-- STATS BANNER -->
+  <!-- ================================================================
+       STATS BANNER
+       ================================================================ -->
   <section class="stats-banner">
     <h2>✨ Mint NFT, Own The Chain!</h2>
     <div class="stats-grid">
@@ -606,7 +759,9 @@
     </div>
   </section>
 
-  <!-- TABS -->
+  <!-- ================================================================
+       TABS
+       ================================================================ -->
   <div class="tabs">
     <div class="tab active" data-tab="mint" onclick="switchTab('mint')">
       <i class="fas fa-rocket"></i> Mint
@@ -616,19 +771,21 @@
     </div>
   </div>
 
-  <!-- CONTAINER -->
+  <!-- ================================================================
+       CONTAINER
+       ================================================================ -->
   <div class="container">
 
     <!-- TAB MINT -->
     <div class="tab-panel active" id="panel-mint">
-      <div class="mint-card">
+      <div class="mint-card glass-card">
         <div class="card-header">
           <h3>Buat NFT Kamu</h3>
           <span class="badge">ERC-721</span>
         </div>
 
-        <input type="text" id="nftName" placeholder="Nama NFT (contoh: Kucing Keren)" />
-        <input type="text" id="nftDesc" placeholder="Deskripsi (contoh: NFT kucing dari LitVM)" />
+        <input type="text" id="nftName" placeholder="Nama NFT" />
+        <input type="text" id="nftDesc" placeholder="Deskripsi" />
 
         <label for="imageFile">
           <div class="upload-area" id="uploadArea">
@@ -670,10 +827,10 @@
         <span class="count" id="galleryCount">0 NFT</span>
       </div>
       <div class="nft-grid" id="nftGrid">
-        <div class="empty-gallery">
+        <div class="wallet-required">
           <span class="big-icon">🔗</span>
           <p>Connect wallet dulu untuk lihat koleksi</p>
-          <span style="font-size:12px;font-weight:400;">Klik "Connect Wallet" di atas</span>
+          <span style="font-size:12px;color:var(--text-muted);">Klik "Connect Wallet" di header</span>
         </div>
       </div>
     </div>
@@ -740,10 +897,13 @@
     // =============================================================
     // 4. THEME TOGGLE
     // =============================================================
-    let currentTheme = localStorage.getItem('theme') || 'light';
+    let currentTheme = localStorage.getItem('theme') || 'dark';
     if (currentTheme === 'dark') {
       htmlRoot.setAttribute('data-theme', 'dark');
       themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+      htmlRoot.removeAttribute('data-theme');
+      themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
     }
 
     themeToggle.addEventListener('click', () => {
@@ -775,7 +935,7 @@
 
     function showStatus(msg, isError = false) {
       statusEl.textContent = msg;
-      statusEl.style.color = isError ? '#dc2626' : 'var(--text-purple)';
+      statusEl.style.color = isError ? '#ef4444' : 'var(--text-secondary)';
     }
 
     function truncateAddress(addr) {
@@ -859,7 +1019,7 @@
     }
 
     // =============================================================
-    // 8. GALLERY LOAD (HANYA JIKA WALLET TERHUBUNG)
+    // 8. GALLERY LOAD - HANYA NFT MILIK WALLET
     // =============================================================
     async function loadGallery() {
       if (!isConnected || !userAddress) {
@@ -889,14 +1049,29 @@
         const total = await readContract.totalSupply();
         const totalNum = Number(total);
         totalSupplyEl.textContent = totalNum;
-        galleryCount.textContent = totalNum + ' NFT';
 
-        if (totalNum === 0) {
+        // Cari semua NFT yang owner-nya = userAddress
+        let myNfts = [];
+        for (let i = 0; i < totalNum; i++) {
+          try {
+            const owner = await readContract.ownerOf(i);
+            if (owner.toLowerCase() === userAddress.toLowerCase()) {
+              myNfts.push(i);
+            }
+          } catch (e) {
+            console.warn('Gagal cek owner NFT #' + i, e.message);
+          }
+        }
+
+        const myNftCount = myNfts.length;
+        galleryCount.textContent = myNftCount + ' NFT';
+
+        if (myNftCount === 0) {
           nftGrid.innerHTML = `
             <div class="empty-gallery">
               <span class="big-icon">🖼️</span>
-              <p>Belum ada NFT</p>
-              <span style="font-size:12px;font-weight:400;">Mint pertama kamu!</span>
+              <p>Kamu belum punya NFT</p>
+              <span style="font-size:12px;font-weight:400;">Mint NFT pertama kamu!</span>
             </div>
           `;
           return;
@@ -906,20 +1081,20 @@
 
         let html = '';
         let successCount = 0;
-        
-        for (let i = 0; i < totalNum; i++) {
+
+        for (const tokenId of myNfts) {
           try {
-            const owner = await readContract.ownerOf(i);
-            let imageUrl = `https://via.placeholder.com/300/7c3aed/ffffff?text=NFT+%23${i}`;
-            let name = `Portal NFT #${i}`;
-            
+            const owner = await readContract.ownerOf(tokenId);
+            let imageUrl = `https://via.placeholder.com/300/7c3aed/ffffff?text=NFT+%23${tokenId}`;
+            let name = `Portal NFT #${tokenId}`;
+
             try {
-              let tokenUri = await readContract.tokenURI(i);
+              let tokenUri = await readContract.tokenURI(tokenId);
               if (tokenUri && tokenUri.startsWith('ipfs://')) {
                 tokenUri = tokenUri.replace('ipfs://', 'https://ipfs.io/ipfs/');
               }
-              
-              const res = await fetch(tokenUri, { 
+
+              const res = await fetch(tokenUri, {
                 signal: AbortSignal.timeout(5000)
               });
               if (res.ok) {
@@ -933,7 +1108,7 @@
                 if (meta.name) name = meta.name;
               }
             } catch (e) {
-              console.warn('Gagal load metadata NFT #' + i, e.message);
+              console.warn('Gagal load metadata NFT #' + tokenId, e.message);
             }
 
             html += `
@@ -941,7 +1116,7 @@
                 <img src="${imageUrl}" alt="${name}" 
                      onerror="this.src='https://via.placeholder.com/300/7c3aed/ffffff?text=Error'" />
                 <div class="info">
-                  <span class="token-id">#${i}</span>
+                  <span class="token-id">#${tokenId}</span>
                   <div class="name">${name}</div>
                   <div class="owner">👤 ${truncateAddress(owner)}</div>
                 </div>
@@ -949,7 +1124,7 @@
             `;
             successCount++;
           } catch (e) {
-            console.warn('Gagal load NFT #' + i, e.message);
+            console.warn('Gagal load NFT #' + tokenId, e.message);
           }
         }
 
@@ -1187,7 +1362,7 @@
     });
 
     // =============================================================
-    // 13. SHARE KE X (TWITTER) - DIPERBAIKI
+    // 13. SHARE KE X (TWITTER)
     // =============================================================
     twitterBtn.addEventListener('click', function() {
       if (!lastTxHash) {
