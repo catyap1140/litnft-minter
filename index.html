@@ -7,98 +7,150 @@
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f5f5ff; color: #1a1a2e; min-height: 100vh; }
-    .header { background: linear-gradient(135deg, #7c3aed, #a78bfa); padding: 28px 20px; text-align: center; }
-    .header h1 { font-size: 28px; color: #fff; margin-bottom: 4px; }
-    .header p { color: #e9d5ff; font-size: 13px; }
-    .container { padding: 20px; max-width: 480px; margin: 0 auto; }
-    .card { background: #fff; border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid #ede9fe; box-shadow: 0 2px 12px rgba(124,58,237,0.07); }
-    .wallet-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .wallet-badge { background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 20px; padding: 6px 14px; font-size: 12px; color: #7c3aed; }
-    .section-title { font-size: 12px; color: #9ca3af; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-    input[type="text"] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #e5e7eb; background: #fafafa; color: #1a1a2e; font-size: 14px; margin-bottom: 12px; outline: none; }
-    input[type="text"]:focus { border-color: #7c3aed; background: #fff; }
-    .upload-area { width: 100%; padding: 20px; border-radius: 10px; border: 2px dashed #c4b5fd; background: #f5f3ff; color: #7c3aed; font-size: 13px; text-align: center; cursor: pointer; margin-bottom: 12px; transition: all 0.2s; }
-    .upload-area:hover { border-color: #7c3aed; background: #ede9fe; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f0f0; color: #1a1a1a; min-height: 100vh; }
+
+    /* HEADER */
+    .header { background: #1a1a2e; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo span { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -1px; }
+    .logo em { color: #a78bfa; font-style: normal; }
+    .wallet-pill { background: #2a1a4e; border: 1px solid #7c3aed; border-radius: 20px; padding: 8px 16px; font-size: 12px; color: #a78bfa; cursor: pointer; font-weight: 600; }
+    .wallet-pill.connected { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+
+    /* STATS BANNER */
+    .stats-banner { background: linear-gradient(135deg, #7c3aed, #4f46e5); padding: 20px; margin: 0; }
+    .stats-banner h2 { font-size: 22px; font-weight: 900; color: #fff; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 1px; }
+    .stats-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .stat-row { background: rgba(255,255,255,0.15); border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+    .stat-row span { font-size: 13px; color: #e9d5ff; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-row strong { font-size: 18px; color: #fff; font-weight: 900; }
+
+    /* TABS */
+    .tabs { display: flex; background: #fff; border-bottom: 2px solid #e5e7eb; }
+    .tab { flex: 1; padding: 14px; text-align: center; font-size: 13px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+    .tab.active { color: #7c3aed; border-bottom-color: #7c3aed; }
+
+    /* CONTENT */
+    .container { padding: 16px; max-width: 480px; margin: 0 auto; }
+
+    /* MINT CARD */
+    .mint-card { background: #e8e4ff; border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 2px solid #c4b5fd; }
+    .mint-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .mint-card-header h3 { font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: #4c1d95; }
+    .mint-badge { background: #7c3aed; color: #fff; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    input[type="text"] { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #c4b5fd; background: #fff; color: #1a1a1a; font-size: 14px; margin-bottom: 10px; outline: none; font-weight: 500; }
+    input[type="text"]:focus { border-color: #7c3aed; }
+    .upload-area { width: 100%; padding: 18px; border-radius: 10px; border: 2px dashed #7c3aed; background: #fff; color: #7c3aed; font-size: 13px; text-align: center; cursor: pointer; margin-bottom: 10px; font-weight: 600; }
     input[type="file"] { display: none; }
-    #previewImg { width: 100%; border-radius: 12px; margin-bottom: 12px; display: none; max-height: 300px; object-fit: cover; border: 2px solid #ede9fe; }
-    .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; font-weight: bold; transition: all 0.2s; margin-bottom: 10px; }
-    .btn-primary { background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff; }
-    .btn-primary:hover { opacity: 0.9; }
-    .btn-mint { background: linear-gradient(135deg, #6d28d9, #7c3aed); color: #fff; }
-    .btn-mint:hover { opacity: 0.9; }
+    #previewImg { width: 100%; border-radius: 12px; margin-bottom: 10px; display: none; max-height: 250px; object-fit: cover; border: 2px solid #c4b5fd; }
+
+    /* PROGRESS */
+    .progress { display: none; margin-bottom: 10px; }
+    .progress-bar { height: 8px; background: #c4b5fd; border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #f59e0b); width: 0%; transition: width 0.3s; }
+    .progress-text { font-size: 12px; color: #7c3aed; margin-top: 6px; text-align: center; font-weight: 600; }
+
+    /* SUCCESS */
+    .success-box { background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px; padding: 14px; margin-bottom: 10px; display: none; }
+    .success-box h3 { color: #16a34a; font-size: 14px; margin-bottom: 6px; font-weight: 800; }
+    .success-box p { font-size: 11px; color: #6b7280; word-break: break-all; }
+
+    /* BUTTONS */
+    .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 15px; cursor: pointer; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; margin-bottom: 8px; }
+    .btn-mint { background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; }
+    .btn-mint:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
     .btn-twitter { background: #1DA1F2; color: #fff; display: none; }
-    .btn:disabled { background: #e5e7eb; color: #9ca3af; cursor: not-allowed; }
-    #status { text-align: center; margin-top: 8px; font-size: 13px; word-break: break-all; color: #7c3aed; min-height: 20px; }
-    .progress { display: none; margin-bottom: 12px; }
-    .progress-bar { height: 6px; background: #ede9fe; border-radius: 3px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #a78bfa); width: 0%; transition: width 0.3s; }
-    .progress-text { font-size: 12px; color: #7c3aed; margin-top: 6px; text-align: center; }
-    .gallery-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .gallery-header h2 { color: #7c3aed; font-size: 18px; }
-    .badge { background: #f5f3ff; color: #7c3aed; border: 1px solid #c4b5fd; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
+    #status { text-align: center; font-size: 13px; color: #7c3aed; font-weight: 600; min-height: 18px; }
+
+    /* NFT GALLERY */
+    .section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-bottom: 12px; }
     .nft-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .nft-card { background: #fafafa; border-radius: 12px; overflow: hidden; border: 1px solid #ede9fe; transition: transform 0.2s, box-shadow 0.2s; }
-    .nft-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(124,58,237,0.12); }
-    .nft-card img { width: 100%; height: 140px; object-fit: cover; }
+    .nft-card { background: #fff; border-radius: 14px; overflow: hidden; border: 2px solid #e5e7eb; transition: all 0.2s; }
+    .nft-card:hover { border-color: #7c3aed; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(124,58,237,0.15); }
+    .nft-card img { width: 100%; height: 130px; object-fit: cover; }
     .nft-card-info { padding: 10px; }
-    .nft-card-info h3 { font-size: 13px; color: #1a1a2e; margin-bottom: 4px; font-weight: 600; }
-    .nft-card-info p { font-size: 11px; color: #9ca3af; }
-    .empty-gallery { text-align: center; padding: 40px; color: #c4b5fd; grid-column: span 2; }
-    .empty-gallery span { font-size: 40px; display: block; margin-bottom: 8px; }
-    .empty-gallery p { color: #9ca3af; font-size: 14px; }
-    .success-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; padding: 16px; margin-bottom: 12px; display: none; }
-    .success-box h3 { color: #16a34a; font-size: 14px; margin-bottom: 8px; }
-    .success-box p { font-size: 12px; color: #6b7280; word-break: break-all; }
+    .nft-card-info h3 { font-size: 13px; color: #1a1a1a; font-weight: 800; margin-bottom: 3px; }
+    .nft-card-info p { font-size: 11px; color: #9ca3af; font-weight: 500; }
+    .nft-card-number { background: #7c3aed; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+    .empty-gallery { text-align: center; padding: 40px; color: #9ca3af; grid-column: span 2; }
+    .empty-gallery span { font-size: 36px; display: block; margin-bottom: 8px; }
+    .empty-gallery p { font-size: 13px; font-weight: 600; }
+
+    /* TAB PANELS */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
   </style>
 </head>
 <body>
 
+  <!-- HEADER -->
   <div class="header">
-    <h1>🖼️ LitNFT Minter</h1>
-    <p>Mint NFT kamu di LitVM Testnet</p>
+    <div class="logo">
+      <span>🖼️ Lit<em>NFT</em></span>
+    </div>
+    <div class="wallet-pill" id="connectBtn">🔗 Connect Wallet</div>
+  </div>
+
+  <!-- STATS BANNER -->
+  <div class="stats-banner">
+    <h2>Mint NFT, Own The Chain!</h2>
+    <div class="stats-grid">
+      <div class="stat-row">
+        <span>Total NFT Ter-mint</span>
+        <strong id="totalSupplyBanner">0</strong>
+      </div>
+      <div class="stat-row">
+        <span>Network</span>
+        <strong>LitVM Testnet</strong>
+      </div>
+      <div class="stat-row">
+        <span>Wallet</span>
+        <strong id="walletShort">-</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('mint', this)">🚀 Mint</div>
+    <div class="tab" onclick="switchTab('gallery', this)">🖼️ Galeri</div>
   </div>
 
   <div class="container">
 
-    <!-- Wallet -->
-    <div class="card">
-      <div class="wallet-info">
-        <span class="section-title">Wallet</span>
-        <span class="wallet-badge" id="walletAddress">Belum terhubung</span>
+    <!-- MINT TAB -->
+    <div class="tab-panel active" id="tab-mint">
+      <br>
+      <div class="mint-card">
+        <div class="mint-card-header">
+          <h3>Buat NFT Kamu</h3>
+          <span class="mint-badge">ERC-721</span>
+        </div>
+        <input type="text" id="nftName" placeholder="Nama NFT" />
+        <input type="text" id="nftDesc" placeholder="Deskripsi NFT" />
+        <label for="imageFile">
+          <div class="upload-area" id="uploadArea">📁 Tap untuk pilih gambar</div>
+        </label>
+        <input type="file" id="imageFile" accept="image/*" />
+        <img id="previewImg" />
+        <div class="progress" id="progressBox">
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          <p class="progress-text" id="progressText"></p>
+        </div>
+        <div class="success-box" id="successBox">
+          <h3>✅ NFT Berhasil Di-mint!</h3>
+          <p id="txHash"></p>
+        </div>
+        <button class="btn btn-mint" id="mintBtn" disabled>🚀 Mint NFT Sekarang</button>
+        <button class="btn btn-twitter" id="twitterBtn">🐦 Share ke Twitter</button>
+        <p id="status"></p>
       </div>
-      <button class="btn btn-primary" id="connectBtn">🔗 Connect Wallet</button>
     </div>
 
-    <!-- Mint -->
-    <div class="card">
-      <p class="section-title">Buat NFT</p>
-      <input type="text" id="nftName" placeholder="Nama NFT" />
-      <input type="text" id="nftDesc" placeholder="Deskripsi NFT" />
-      <label for="imageFile">
-        <div class="upload-area" id="uploadArea">📁 Tap untuk pilih gambar</div>
-      </label>
-      <input type="file" id="imageFile" accept="image/*" />
-      <img id="previewImg" />
-      <div class="progress" id="progressBox">
-        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-        <p class="progress-text" id="progressText"></p>
-      </div>
-      <div class="success-box" id="successBox">
-        <h3>✅ NFT Berhasil Di-mint!</h3>
-        <p id="txHash"></p>
-      </div>
-      <button class="btn btn-mint" id="mintBtn" disabled>🚀 Mint NFT</button>
-      <button class="btn btn-twitter" id="twitterBtn">🐦 Share ke Twitter</button>
-      <p id="status"></p>
-    </div>
-
-    <!-- Gallery -->
-    <div class="card">
-      <div class="gallery-header">
-        <h2>📦 Galeri NFT</h2>
-        <span class="badge" id="totalSupply">0 NFT</span>
-      </div>
+    <!-- GALLERY TAB -->
+    <div class="tab-panel" id="tab-gallery">
+      <br>
+      <p class="section-label">Semua NFT di Contract</p>
       <div class="nft-grid" id="nftGrid">
         <div class="empty-gallery">
           <span>🖼️</span>
@@ -126,8 +178,15 @@
       { chainId: 4441, name: "LitVM LiteForge" }
     );
     const readContract = new ethers.Contract(CONTRACT_ADDRESS, ABI, readProvider);
-
     let provider, signer, contract, lastTxHash, lastNftName;
+
+    function switchTab(name, el) {
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      el.classList.add("active");
+      document.getElementById("tab-" + name).classList.add("active");
+      if (name === "gallery") loadGallery();
+    }
 
     function setProgress(pct, text) {
       document.getElementById("progressBox").style.display = "block";
@@ -175,7 +234,7 @@
     async function loadGallery() {
       try {
         const total = await readContract.totalSupply();
-        document.getElementById("totalSupply").innerText = total.toString() + " NFT";
+        document.getElementById("totalSupplyBanner").innerText = total.toString();
         const grid = document.getElementById("nftGrid");
         if (total == 0) {
           grid.innerHTML = `<div class="empty-gallery"><span>🖼️</span><p>Belum ada NFT</p></div>`;
@@ -198,6 +257,7 @@
           card.innerHTML = `
             <img src="${imageUrl}" onerror="this.src='https://via.placeholder.com/150/7c3aed/ffffff?text=NFT'" />
             <div class="nft-card-info">
+              <div class="nft-card-number">#${i}</div>
               <h3>${nftName}</h3>
               <p>👤 ${owner.slice(0,6)}...${owner.slice(-4)}</p>
             </div>
@@ -215,7 +275,9 @@
       await provider.send("eth_requestAccounts", []);
       signer = provider.getSigner();
       const address = await signer.getAddress();
-      document.getElementById("walletAddress").innerText = address.slice(0,6) + "..." + address.slice(-4);
+      document.getElementById("connectBtn").innerText = address.slice(0,6) + "..." + address.slice(-4);
+      document.getElementById("connectBtn").classList.add("connected");
+      document.getElementById("walletShort").innerText = address.slice(0,6) + "..." + address.slice(-4);
       contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
       document.getElementById("mintBtn").disabled = false;
       loadGallery();
