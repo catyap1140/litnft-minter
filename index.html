@@ -55,7 +55,10 @@
     ];
     const TOKEN_URI = "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/I/0.json";
 
-    const readProvider = new ethers.providers.JsonRpcProvider(RPC_URL);
+    const readProvider = new ethers.providers.JsonRpcProvider(
+      { url: RPC_URL },
+      { chainId: 4441, name: "LitVM LiteForge" }
+    );
     const readContract = new ethers.Contract(CONTRACT_ADDRESS, ABI, readProvider);
 
     let provider, signer, contract;
@@ -107,7 +110,6 @@
       }
     };
 
-    // Load gallery on page load
     loadGallery();
   </script>
 
