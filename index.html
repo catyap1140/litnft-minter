@@ -12,11 +12,16 @@
     .subtitle { text-align: center; color: #888; margin-bottom: 20px; font-size: 14px; }
     .wallet-box { background: #1a1a2e; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: center; }
     .wallet-box p { font-size: 12px; color: #aaa; word-break: break-all; margin-bottom: 12px; }
-    button { width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 16px; cursor: pointer; font-weight: bold; }
-    #connectBtn { background: #7c3aed; color: #fff; margin-bottom: 10px; }
+    .mint-box { background: #1a1a2e; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+    .mint-box label { font-size: 13px; color: #aaa; display: block; margin-bottom: 6px; }
+    .mint-box input[type="text"] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #333; background: #0f0f1a; color: #fff; font-size: 14px; margin-bottom: 12px; }
+    .mint-box input[type="file"] { width: 100%; padding: 10px; border-radius: 8px; border: 1px dashed #7c3aed; background: #0f0f1a; color: #aaa; font-size: 13px; margin-bottom: 12px; }
+    #previewImg { width: 100%; border-radius: 8px; margin-bottom: 12px; display: none; }
+    button { width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 16px; cursor: pointer; font-weight: bold; margin-bottom: 10px; }
+    #connectBtn { background: #7c3aed; color: #fff; }
     #mintBtn { background: #a78bfa; color: #0f0f1a; }
     #mintBtn:disabled { background: #444; color: #888; cursor: not-allowed; }
-    #status { text-align: center; margin-top: 12px; font-size: 13px; word-break: break-all; color: #a78bfa; }
+    #status { text-align: center; margin-top: 8px; font-size: 13px; word-break: break-all; color: #a78bfa; }
     .gallery { margin-top: 24px; }
     .gallery h2 { color: #a78bfa; margin-bottom: 12px; font-size: 18px; }
     .nft-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -34,8 +39,17 @@
   <div class="wallet-box">
     <p id="walletAddress">Wallet: Belum terhubung</p>
     <button id="connectBtn">Connect Wallet</button>
-    <br><br>
-    <button id="mintBtn" disabled>Mint NFT</button>
+  </div>
+
+  <div class="mint-box">
+    <label>Nama NFT</label>
+    <input type="text" id="nftName" placeholder="Contoh: My First NFT" />
+    <label>Deskripsi</label>
+    <input type="text" id="nftDesc" placeholder="Contoh: NFT pertamaku!" />
+    <label>Pilih Gambar</label>
+    <input type="file" id="imageFile" accept="image/*" />
+    <img id="previewImg" />
+    <button id="mintBtn" disabled>🚀 Mint NFT</button>
     <p id="status"></p>
   </div>
 
@@ -47,14 +61,14 @@
   <script>
     const CONTRACT_ADDRESS = "0xb315b699A226a044F39800e50c8bAf748daA43bd";
     const RPC_URL = "https://liteforge.rpc.caldera.xyz/http";
+    const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJiNWE2ODYxZi01NWMwLTQ3ZDktYmM2ZS0zMjBlYWFmMDcyNDYiLCJlbWFpbCI6InJleWhhbmFmaWtyaTExNDBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjIwYjljODBhMmQ2NjBiZDFkODFmIiwic2NvcGVkS2V5U2VjcmV0IjoiYmM4YzdkZmZhOGU4MmQ1MjM0NTA1MDhjNDQ1MzI0ZjY3OGVmOTdjNDZmYzNjMWI3YzJiM2Y3YmFiNjIxMWQ0OSIsImV4cCI6MTgxNDAwNTI5Mn0.W0JQ9feTkAYhi3jNoW8kIrCYNTZDWKz9bfN11KWRRTc";
+
     const ABI = [
       "function mint(address to, string memory tokenURI) public",
       "function totalSupply() public view returns (uint256)",
       "function tokenURI(uint256 tokenId) public view returns (string)",
       "function ownerOf(uint256 tokenId) public view returns (address)"
     ];
-    const TOKEN_URI = "https://ipfs.io/ipfs/bafkreif4oo3g3vhonvvd3nb3hhnsmef3hqfwekxzgk3xihublbxo33hk4a";
-    const IMAGE_URL = "https://ipfs.io/ipfs/bafybeigrqs27kd5ruddynelriuyqly5e2sme76kjvxfj5ksboayhjrt7lu";
 
     const readProvider = new ethers.providers.JsonRpcProvider(
       { url: RPC_URL },
@@ -63,6 +77,45 @@
     const readContract = new ethers.Contract(CONTRACT_ADDRESS, ABI, readProvider);
 
     let provider, signer, contract;
+
+    document.getElementById("imageFile").onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = document.getElementById("previewImg");
+          img.src = ev.target.result;
+          img.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    async function uploadToIPFS(file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${PINATA_JWT}` },
+        body: formData
+      });
+      const data = await res.json();
+      return `https://ipfs.io/ipfs/${data.IpfsHash}`;
+    }
+
+    async function uploadMetadata(name, description, imageUrl) {
+      const metadata = { name, description, image: imageUrl };
+      const res = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${PINATA_JWT}`
+        },
+        body: JSON.stringify({ pinataContent: metadata })
+      });
+      const data = await res.json();
+      return `https://ipfs.io/ipfs/${data.IpfsHash}`;
+    }
 
     async function loadGallery() {
       try {
@@ -75,7 +128,7 @@
           const card = document.createElement("div");
           card.className = "nft-card";
           card.innerHTML = `
-            <img src="${IMAGE_URL}" onerror="this.src='https://via.placeholder.com/150/7c3aed/ffffff?text=NFT+%23${i}'" />
+            <img src="https://via.placeholder.com/150/7c3aed/ffffff?text=NFT+%23${i}" />
             <h3>LitNFT #${i}</h3>
             <p>Owner: ${owner.slice(0,6)}...${owner.slice(-4)}</p>
           `;
@@ -99,11 +152,24 @@
     };
 
     document.getElementById("mintBtn").onclick = async () => {
+      const name = document.getElementById("nftName").value || "LitNFT";
+      const desc = document.getElementById("nftDesc").value || "NFT di LitVM Testnet";
+      const file = document.getElementById("imageFile").files[0];
+
+      if (!file) return alert("Pilih gambar dulu!");
+
       try {
-        document.getElementById("status").innerText = "⏳ Minting...";
+        document.getElementById("status").innerText = "⏳ Upload gambar ke IPFS...";
+        const imageUrl = await uploadToIPFS(file);
+
+        document.getElementById("status").innerText = "⏳ Upload metadata...";
+        const metadataUrl = await uploadMetadata(name, desc, imageUrl);
+
+        document.getElementById("status").innerText = "⏳ Minting NFT...";
         const address = await signer.getAddress();
-        const tx = await contract.mint(address, TOKEN_URI);
+        const tx = await contract.mint(address, metadataUrl);
         await tx.wait();
+
         document.getElementById("status").innerText = "✅ Mint berhasil! TX: " + tx.hash.slice(0,10) + "...";
         loadGallery();
       } catch (err) {
