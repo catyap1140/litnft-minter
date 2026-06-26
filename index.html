@@ -2,26 +2,81 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LitNFT Minter</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #0f0f1a; color: #fff; padding: 20px; }
+    h1 { text-align: center; color: #a78bfa; margin-bottom: 8px; }
+    .subtitle { text-align: center; color: #888; margin-bottom: 20px; font-size: 14px; }
+    .wallet-box { background: #1a1a2e; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: center; }
+    .wallet-box p { font-size: 12px; color: #aaa; word-break: break-all; margin-bottom: 12px; }
+    button { width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 16px; cursor: pointer; font-weight: bold; }
+    #connectBtn { background: #7c3aed; color: #fff; margin-bottom: 10px; }
+    #mintBtn { background: #a78bfa; color: #0f0f1a; }
+    #mintBtn:disabled { background: #444; color: #888; cursor: not-allowed; }
+    #status { text-align: center; margin-top: 12px; font-size: 13px; word-break: break-all; color: #a78bfa; }
+    .gallery { margin-top: 24px; }
+    .gallery h2 { color: #a78bfa; margin-bottom: 12px; font-size: 18px; }
+    .nft-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .nft-card { background: #1a1a2e; border-radius: 12px; padding: 12px; text-align: center; }
+    .nft-card img { width: 100%; border-radius: 8px; margin-bottom: 8px; }
+    .nft-card p { font-size: 12px; color: #aaa; word-break: break-all; }
+    .nft-card h3 { font-size: 14px; color: #fff; margin-bottom: 4px; }
+  </style>
 </head>
 <body>
+
   <h1>🖼️ LitNFT Minter</h1>
-  <p id="walletAddress">Wallet: Belum terhubung</p>
-  <button id="connectBtn">Connect Wallet</button>
-  <br><br>
-  <button id="mintBtn" disabled>Mint NFT</button>
-  <p id="status"></p>
+  <p class="subtitle">Mint NFT di LitVM Testnet</p>
+
+  <div class="wallet-box">
+    <p id="walletAddress">Wallet: Belum terhubung</p>
+    <button id="connectBtn">Connect Wallet</button>
+    <br><br>
+    <button id="mintBtn" disabled>Mint NFT</button>
+    <p id="status"></p>
+  </div>
+
+  <div class="gallery">
+    <h2>📦 NFT Ter-mint (<span id="totalSupply">0</span>)</h2>
+    <div class="nft-grid" id="nftGrid"></div>
+  </div>
 
   <script>
     const CONTRACT_ADDRESS = "0xb315b699A226a044F39800e50c8bAf748daA43bd";
     const ABI = [
       "function mint(address to, string memory tokenURI) public",
-      "function totalSupply() public view returns (uint256)"
+      "function totalSupply() public view returns (uint256)",
+      "function tokenURI(uint256 tokenId) public view returns (string)",
+      "function ownerOf(uint256 tokenId) public view returns (address)"
     ];
     const TOKEN_URI = "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/I/0.json";
 
     let provider, signer, contract;
+
+    async function loadGallery() {
+      try {
+        const total = await contract.totalSupply();
+        document.getElementById("totalSupply").innerText = total.toString();
+        const grid = document.getElementById("nftGrid");
+        grid.innerHTML = "";
+        for (let i = 0; i < total; i++) {
+          const owner = await contract.ownerOf(i);
+          const card = document.createElement("div");
+          card.className = "nft-card";
+          card.innerHTML = `
+            <img src="https://via.placeholder.com/150/7c3aed/ffffff?text=NFT+%23${i}" />
+            <h3>LitNFT #${i}</h3>
+            <p>Owner: ${owner.slice(0,6)}...${owner.slice(-4)}</p>
+          `;
+          grid.appendChild(card);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
 
     document.getElementById("connectBtn").onclick = async () => {
       if (!window.ethereum) return alert("Install MetaMask/Rabby dulu!");
@@ -29,22 +84,25 @@
       await provider.send("eth_requestAccounts", []);
       signer = provider.getSigner();
       const address = await signer.getAddress();
-      document.getElementById("walletAddress").innerText = "Wallet: " + address;
+      document.getElementById("walletAddress").innerText = "Wallet: " + address.slice(0,6) + "..." + address.slice(-4);
       contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
       document.getElementById("mintBtn").disabled = false;
+      loadGallery();
     };
 
     document.getElementById("mintBtn").onclick = async () => {
       try {
-        document.getElementById("status").innerText = "Minting...";
+        document.getElementById("status").innerText = "⏳ Minting...";
         const address = await signer.getAddress();
         const tx = await contract.mint(address, TOKEN_URI);
         await tx.wait();
-        document.getElementById("status").innerText = "✅ Mint berhasil! TX: " + tx.hash;
+        document.getElementById("status").innerText = "✅ Mint berhasil! TX: " + tx.hash.slice(0,10) + "...";
+        loadGallery();
       } catch (err) {
         document.getElementById("status").innerText = "❌ Error: " + err.message;
       }
     };
   </script>
+
 </body>
 </html>
