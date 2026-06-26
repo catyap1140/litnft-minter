@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>LitNFT Minter</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+  <h1>🖼️ LitNFT Minter</h1>
+  <p id="walletAddress">Wallet: Belum terhubung</p>
+  <button id="connectBtn">Connect Wallet</button>
+  <br><br>
+  <button id="mintBtn" disabled>Mint NFT</button>
+  <p id="status"></p>
+
+  <script>
+    const CONTRACT_ADDRESS = 0xb315b699A226a044F39800e50c8bAf748daA43bd;
+    const ABI = [
+      "function mint(address to, string memory tokenURI) public",
+      "function totalSupply() public view returns (uint256)"
+    ];
+    const TOKEN_URI = "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/I/0.json";
+
+    let provider, signer, contract;
+
+    document.getElementById("connectBtn").onclick = async () => {
+      if (!window.ethereum) return alert("Install MetaMask/Rabby dulu!");
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      signer = provider.getSigner();
+      const address = await signer.getAddress();
+      document.getElementById("walletAddress").innerText = "Wallet: " + address;
+      contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+      document.getElementById("mintBtn").disabled = false;
+    };
+
+    document.getElementById("mintBtn").onclick = async () => {
+      try {
+        document.getElementById("status").innerText = "Minting...";
+        const address = await signer.getAddress();
+        const tx = await contract.mint(address, TOKEN_URI);
+        await tx.wait();
+        document.getElementById("status").innerText = "✅ Mint berhasil! TX: " + tx.hash;
+      } catch (err) {
+        document.getElementById("status").innerText = "❌ Error: " + err.message;
+      }
+    };
+  </script>
+</body>
+</html>
