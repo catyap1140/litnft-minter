@@ -315,6 +315,7 @@
     }
     .badge-green {
       background: #16a34a;
+      color: white;
     }
 
     /* ===== CANVAS EDITOR ===== */
@@ -1002,6 +1003,17 @@
       align-items: center;
     }
 
+    /* ===== WELCOME CARD ANIMATION ===== */
+    #welcomeCard {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(79, 70, 229, 0.05));
+      border: 2px solid var(--border-purple);
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(124, 58, 237, 0.1); }
+      50% { box-shadow: 0 0 40px rgba(124, 58, 237, 0.25); }
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 480px) {
       .nft-grid {
@@ -1170,6 +1182,29 @@
         </p>
       </div>
 
+      <!-- ===== WELCOME NFT CARD ===== -->
+      <div class="card" id="welcomeCard" style="display:none;">
+        <div class="card-header">
+          <h3>🎁 Welcome NFT</h3>
+          <span class="badge badge-green">Free Claim</span>
+        </div>
+        <div style="text-align:center;padding:12px 0;">
+          <span style="font-size:48px;display:block;margin-bottom:8px;">👋</span>
+          <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">
+            You're a new explorer! Claim your <strong style="color:var(--text-purple);">Welcome NFT</strong> for free.
+          </p>
+          <img id="welcomePreview" src="" alt="Welcome NFT Preview" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;border:2px solid var(--border-purple);margin-bottom:10px;display:none;" />
+        </div>
+        <button class="btn btn-mint" id="claimWelcomeBtn">
+          <i class="fas fa-gift"></i> Claim Welcome NFT
+        </button>
+        <div class="progress-wrap" id="welcomeProgressWrap" style="display:none;">
+          <div class="progress-bar"><div class="progress-fill" id="welcomeProgressFill"></div></div>
+          <p class="progress-text" id="welcomeProgressText"></p>
+        </div>
+        <p id="welcomeStatus" style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:4px;"></p>
+      </div>
+
       <!-- ===== MINT FORM ===== -->
       <div class="card">
         <div class="card-header">
@@ -1284,12 +1319,24 @@
     // 1. CONFIGURATION
     // ============================================================
     const CONFIG = {
-      nftContract: "0x893C81FC7B6dD2FACB1c167147209c5F1c342840",
+      nftContract: "0xb9c729B51254f734028a1A27c3F39e5805B2A6E4",
       marketContract: "0xB073d421f26453cB18c604BeD18EC779Bd273D6e",
       rpcUrl: "https://liteforge.rpc.caldera.xyz/http",
       chainId: 4441,
       explorerUrl: "https://liteforge.explorer.caldera.xyz/tx/",
       pinataJwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJiNWE2ODYxZi01NWMwLTQ3ZDktYmM2ZS0zMjBlYWFmMDcyNDYiLCJlbWFpbCI6InJleWhhbmFmaWtyaTExNDBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjIwYjljODBhMmQ2NjBiZDFkODFmIiwic2NvcGVkS2V5U2VjcmV0IjoiYmM4YzdkZmZhOGU4MmQ1MjM0NTA1MDhjNDQ1MzI0ZjY3OGVmOTdjNDZmYzNjMWI3YzJiM2Y3YmFiNjIxMWQ0OSIsImV4cCI6MTgxNDAwNTI5Mn0.W0JQ9feTkAYhi3jNoW8kIrCYNTZDWKz9bfN11KWRRTc"
+    };
+
+    // ===== WELCOME NFT METADATA =====
+    // GANTI image URL dengan CID gambar welcome NFT kamu
+    const WELCOME_METADATA = {
+      name: "Portal NFT Welcome",
+      description: "Exclusive welcome NFT for early explorers of Portal NFT",
+      image: "https://ipfs.io/ipfs/bafkreibm4h7v3l7k4s7p3q6y5x4z3w2v1u0t9s8r7q6p5o4n3m2l1k0j9i8h7g6f",
+      attributes: [
+        { trait_type: "Type", value: "Welcome" },
+        { trait_type: "Season", value: "Genesis" }
+      ]
     };
 
     const NFT_ABI = [
@@ -1298,7 +1345,11 @@
       "function tokenURI(uint256 tokenId) public view returns (string)",
       "function ownerOf(uint256 tokenId) public view returns (address)",
       "function setApprovalForAll(address operator, bool approved) public",
-      "function isApprovedForAll(address owner, address operator) public view returns (bool)"
+      "function isApprovedForAll(address owner, address operator) public view returns (bool)",
+      // ===== FUNGSI WELCOME (BARU) =====
+      "function claimWelcomeNFT(string memory tokenURI) external",
+      "function hasClaimedWelcome(address) external view returns (bool)",
+      "function checkWelcomeStatus(address) external view returns (bool)"
     ];
 
     const MARKET_ABI = [
@@ -1323,6 +1374,10 @@
     let readProvider, readNftContract, readMarketContract;
     let isApproved = false;
     let walletType = 'metamask';
+
+    // ===== STATE WELCOME =====
+    let hasClaimedWelcome = false;
+    let isClaiming = false;
 
     // ============================================================
     // 3. DOM REFS
@@ -1390,9 +1445,8 @@
         month: 'short' }); }
 
     // ============================================================
-    // 7. WALLET CONNECTION - EXPANDED
+    // 7. WALLET CONNECTION
     // ============================================================
-    // Toggle wallet dropdown
     connectBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       if (isConnected) {
@@ -1402,7 +1456,6 @@
       walletOptions.classList.toggle('show');
     });
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {
       if (!e.target.closest('.header-controls') && !e.target.closest('.wallet-options')) {
         walletOptions.classList.remove('show');
@@ -1418,7 +1471,6 @@
       try {
         let ethereumProvider = null;
 
-        // Detect wallet based on type
         if (type === 'metamask' || type === 'brave') {
           if (window.ethereum) {
             ethereumProvider = window.ethereum;
@@ -1440,7 +1492,6 @@
             throw new Error('Please install Trust Wallet extension!');
           }
         } else {
-          // Fallback: use any ethereum provider
           if (window.ethereum) {
             ethereumProvider = window.ethereum;
           } else {
@@ -1491,9 +1542,8 @@
         showStatus('✅ Wallet connected!');
         loadGallery();
         loadMarket();
-
-        // Check approval status
         checkApprovalStatus();
+        checkWelcomeStatus(); // <-- CEK WELCOME STATUS
 
       } catch (e) {
         console.error(e);
@@ -1518,7 +1568,6 @@
       $('mintBtn').disabled = true;
       showToast('Wallet disconnected', 'info');
 
-      // Reset gallery
       $('nftGrid').innerHTML =
         `<div class="wallet-required" style="grid-column:span 2"><span style="font-size:36px;display:block;margin-bottom:8px">🔗</span><p style="color:var(--text-muted);font-size:13px;font-weight:600">Connect wallet first</p></div>`;
     }
@@ -1605,7 +1654,105 @@
     }
 
     // ============================================================
-    // 12. GALLERY
+    // 12. WELCOME NFT FUNCTIONS
+    // ============================================================
+    async function uploadWelcomeMetadata() {
+      try {
+        const res = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${CONFIG.pinataJwt}` },
+          body: JSON.stringify({ pinataContent: WELCOME_METADATA })
+        });
+        if (!res.ok) throw new Error('Failed to upload welcome metadata');
+        const data = await res.json();
+        return `https://ipfs.io/ipfs/${data.IpfsHash}`;
+      } catch (e) {
+        console.error('Upload welcome metadata failed:', e);
+        return null;
+      }
+    }
+
+    async function checkWelcomeStatus() {
+      if (!isConnected || !userAddress) return;
+      try {
+        hasClaimedWelcome = await readNftContract.hasClaimedWelcome(userAddress);
+        const welcomeCard = document.getElementById('welcomeCard');
+        if (!hasClaimedWelcome) {
+          welcomeCard.style.display = 'block';
+          document.getElementById('welcomeStatus').textContent = '🎉 You are eligible for Welcome NFT!';
+          document.getElementById('claimWelcomeBtn').disabled = false;
+
+          const preview = document.getElementById('welcomePreview');
+          preview.src = WELCOME_METADATA.image;
+          preview.style.display = 'block';
+        } else {
+          welcomeCard.style.display = 'none';
+        }
+      } catch (e) {
+        console.warn('Welcome status check failed:', e);
+      }
+    }
+
+    // ============================================================
+    // 13. CLAIM WELCOME NFT
+    // ============================================================
+    document.getElementById('claimWelcomeBtn').addEventListener('click', async () => {
+      if (isClaiming) return;
+      if (!isConnected) { showToast('Connect wallet first!', 'error'); return; }
+
+      isClaiming = true;
+      const btn = document.getElementById('claimWelcomeBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Claiming...';
+
+      const progressWrap = document.getElementById('welcomeProgressWrap');
+      const progressFill = document.getElementById('welcomeProgressFill');
+      const progressText = document.getElementById('welcomeProgressText');
+      progressWrap.style.display = 'block';
+
+      try {
+        progressFill.style.width = '30%';
+        progressText.textContent = '⏳ Preparing metadata...';
+
+        let metadataUrl = localStorage.getItem('welcomeMetadataUrl');
+        if (!metadataUrl) {
+          metadataUrl = await uploadWelcomeMetadata();
+          if (metadataUrl) localStorage.setItem('welcomeMetadataUrl', metadataUrl);
+        }
+        if (!metadataUrl) throw new Error('Failed to prepare metadata');
+
+        progressFill.style.width = '60%';
+        progressText.textContent = '⏳ Minting Welcome NFT...';
+
+        const tx = await nftContract.claimWelcomeNFT(metadataUrl);
+        await tx.wait();
+
+        progressFill.style.width = '100%';
+        progressText.textContent = '✅ Welcome NFT claimed!';
+
+        hasClaimedWelcome = true;
+        document.getElementById('welcomeCard').style.display = 'none';
+        showToast('🎉 Welcome NFT claimed successfully!', 'success');
+        fireConfetti();
+        loadGallery();
+        loadMarket();
+
+      } catch (e) {
+        let msg = e.message;
+        if (msg.includes('user rejected')) msg = 'Transaction rejected';
+        if (msg.includes('Already claimed')) msg = 'You already claimed this!';
+        showToast('❌ ' + msg, 'error');
+        progressText.textContent = '❌ ' + msg;
+      } finally {
+        isClaiming = false;
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-gift"></i> Claim Welcome NFT';
+        setTimeout(() => { progressWrap.style.display = 'none'; }, 3000);
+      }
+    });
+
+    // ============================================================
+    // 14. GALLERY
     // ============================================================
     async function loadGallery() {
       if (!isConnected || !userAddress) {
@@ -1660,7 +1807,7 @@
     }
 
     // ============================================================
-    // 13. MARKETPLACE
+    // 15. MARKETPLACE
     // ============================================================
     async function loadMarket() {
       try {
@@ -1711,7 +1858,7 @@
     }
 
     // ============================================================
-    // 14. LIST MODAL - WITH APPROVAL FIX
+    // 16. LIST MODAL
     // ============================================================
     function openListModal(tokenId, name, img) {
       if (!isConnected) { showToast('Connect wallet first!', 'error'); return; }
@@ -1723,7 +1870,6 @@
       $('listModal').classList.add('show');
       $('approveStatus').textContent = '';
 
-      // Check if already approved
       checkApprovalStatus().then(approved => {
         if (approved) {
           $('approveBtn').style.display = 'none';
@@ -1768,7 +1914,6 @@
       const price = parseFloat($('listPrice').value);
       if (!price || price <= 0) { showToast('Enter a valid price!', 'error'); return; }
 
-      // Double check approval
       const approved = await checkApprovalStatus();
       if (!approved) {
         showToast('⚠️ Please approve marketplace first!', 'error');
@@ -1804,7 +1949,7 @@
     }
 
     // ============================================================
-    // 15. BUY & CANCEL
+    // 17. BUY & CANCEL
     // ============================================================
     async function buyNFT(listingId, priceEth) {
       if (!isConnected) { showToast('Connect wallet first!', 'error'); return; }
@@ -1842,7 +1987,7 @@
     }
 
     // ============================================================
-    // 16. HISTORY
+    // 18. HISTORY
     // ============================================================
     function loadHistory() { try { history = JSON.parse(localStorage.getItem('portalNftHistory')) || []; } catch (e) { history =
         []; } renderHistory(); }
@@ -1866,7 +2011,7 @@
     }
 
     // ============================================================
-    // 17. IMAGE PREVIEW
+    // 19. IMAGE PREVIEW
     // ============================================================
     $('imageFile').addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -1883,7 +2028,7 @@
     });
 
     // ============================================================
-    // 18. MINT NFT
+    // 20. MINT NFT
     // ============================================================
     $('mintBtn').addEventListener('click', async () => {
       if (isMinting) return;
@@ -1944,7 +2089,7 @@
     });
 
     // ============================================================
-    // 19. SHARE X
+    // 21. SHARE X
     // ============================================================
     $('twitterBtn').addEventListener('click', () => {
       if (!lastTxHash) return;
@@ -1955,7 +2100,7 @@
     });
 
     // ============================================================
-    // 20. CANVAS EDITOR
+    // 22. CANVAS EDITOR
     // ============================================================
     const drawCanvas = document.getElementById('drawCanvas');
     const ctx = drawCanvas.getContext('2d');
@@ -1967,7 +2112,6 @@
     let historyIndex = -1;
     const MAX_HISTORY = 30;
 
-    // Init canvas
     ctx.fillStyle = '#1a1a2e';
     ctx.fillRect(0, 0, drawCanvas.width, drawCanvas.height);
     saveCanvasState();
@@ -2105,7 +2249,6 @@
     drawCanvas.addEventListener('touchmove', draw, { passive: false });
     drawCanvas.addEventListener('touchend', endDraw, { passive: false });
 
-    // Flood Fill
     function floodFill(startX, startY, fillColor) {
       const imageData = ctx.getImageData(0, 0, drawCanvas.width, drawCanvas.height);
       const data = imageData.data;
@@ -2164,7 +2307,6 @@
       } : { r: 0, g: 0, b: 0 };
     }
 
-    // Undo / Redo
     function saveCanvasState() {
       const data = drawCanvas.toDataURL();
       historyCanvas = historyCanvas.slice(0, historyIndex + 1);
@@ -2205,11 +2347,9 @@
       }
     }
 
-    // Use Canvas for Mint
     function useCanvasForMint() {
       const canvas = document.getElementById('drawCanvas');
 
-      // Check if canvas is empty (only background)
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const data = imageData.data;
       let isEmpty = true;
@@ -2244,19 +2384,17 @@
     }
 
     // ============================================================
-    // 21. INIT
+    // 23. INIT
     // ============================================================
     (async function init() {
       loadHistory();
       loadMarket();
       setTool('pencil');
 
-      // Auto-detect if wallet already connected
       if (window.ethereum) {
         try {
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
           if (accounts.length > 0) {
-            // Auto-connect with detected wallet
             let detectedType = 'metamask';
             if (window.ethereum.isCoinbaseWallet) detectedType = 'coinbase';
             else if (window.ethereum.isTrust) detectedType = 'trust';
@@ -2266,12 +2404,10 @@
           console.warn('Auto-connect failed:', e);
         }
 
-        // Listen for account changes
         window.ethereum.on('accountsChanged', accounts => {
           if (accounts.length === 0) {
             disconnectWallet();
           } else {
-            // Reconnect
             let detectedType = 'metamask';
             if (window.ethereum.isCoinbaseWallet) detectedType = 'coinbase';
             else if (window.ethereum.isTrust) detectedType = 'trust';
@@ -2284,4 +2420,4 @@
     })();
   </script>
 </body>
-      </html>
+  </html>
