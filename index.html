@@ -4,25 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal NFT</title>
-  
-  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
-  
-  <!-- Ethers.js -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js">
-  </script>
-  
-  <!-- Font Awesome -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  
   <style>
-    /* ================================================================
-       RESET & VARIABLES
-       ================================================================ */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     :root {
       --bg-body: #0a0a12;
       --bg-card: rgba(255,255,255,0.05);
@@ -33,7 +21,6 @@
       --bg-upload-hover: rgba(124,58,237,0.20);
       --bg-tab: rgba(255,255,255,0.03);
       --bg-success: rgba(34,197,94,0.10);
-      --bg-toast: rgba(10,10,18,0.95);
       --text-primary: #f3f4f6;
       --text-secondary: #9ca3af;
       --text-white: #ffffff;
@@ -44,268 +31,114 @@
       --shadow-color: rgba(124,58,237,0.15);
       --glow-color: rgba(124,58,237,0.30);
       --badge-bg: #7c3aed;
-      --glass-bg: rgba(255,255,255,0.03);
-      --glass-border: rgba(255,255,255,0.06);
       --footer-bg: rgba(10,10,18,0.60);
     }
-    
-    body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background: var(--bg-body);
-      color: var(--text-primary);
-      min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
-    }
-    
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: 
-        radial-gradient(circle at 20% 50%, rgba(124,58,237,0.03) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(79,70,229,0.03) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    
-    .glass-card {
-      background: var(--bg-card);
-      backdrop-filter: blur(20px) saturate(1.2);
-      border: 1px solid var(--border-color);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-    }
-    
+    body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(circle at 20% 50%, rgba(124,58,237,0.03) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(79,70,229,0.03) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+
     /* HEADER */
-    .header {
-      background: var(--bg-header);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border-color);
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    
+    .header { background: var(--bg-header); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
     .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    
-    .logo-icon {
-      width: 38px; height: 38px;
-      background: linear-gradient(135deg, #7c3aed, #4f46e5);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      font-weight: 900;
-      color: white;
-      box-shadow: 0 4px 20px rgba(124,58,237,0.30);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .logo-icon::after {
-      content: '';
-      position: absolute;
-      top: -50%; right: -50%;
-      width: 100%; height: 100%;
-      background: linear-gradient(135deg, rgba(255,255,255,0.20), transparent);
-      border-radius: 50%;
-      transform: rotate(30deg);
-    }
-    .logo-icon:hover { transform: scale(1.05) rotate(-5deg); }
-    
-    .logo-text { font-size: 18px; font-weight: 800; color: var(--text-white); letter-spacing: -0.5px; }
+    .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, #7c3aed, #4f46e5); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; font-weight: 900; box-shadow: 0 4px 20px rgba(124,58,237,0.30); }
+    .logo-text { font-size: 18px; font-weight: 800; color: var(--text-white); }
     .logo-text span { background: linear-gradient(135deg, #a78bfa, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    
     .header-controls { display: flex; align-items: center; gap: 8px; }
-    
-    .wallet-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      padding: 8px 16px;
-      border-radius: 50px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: 'Inter', sans-serif;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .wallet-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 8px 16px; border-radius: 50px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px; }
     .wallet-btn:hover { background: var(--bg-card-hover); border-color: var(--border-purple); color: var(--text-primary); }
     .wallet-btn.connected { background: var(--text-purple); border-color: var(--text-purple); color: white; }
     .wallet-btn.connected:hover { background: #dc2626; border-color: #dc2626; }
-    
-    .copy-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-    }
-    .copy-btn:hover { background: var(--bg-card-hover); color: var(--text-purple); border-color: var(--border-purple); }
-    .copy-btn.copied { color: #22c55e; border-color: #22c55e; }
-    
+    .copy-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; transition: all 0.3s; display: none; align-items: center; justify-content: center; font-size: 13px; }
+    .copy-btn:hover { color: var(--text-purple); border-color: var(--border-purple); }
+
     /* HERO */
-    .hero { padding: 40px 20px 24px; text-align: center; position: relative; overflow: hidden; }
-    .hero::before {
-      content: '';
-      position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(124,58,237,0.06), transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-    .hero-greeting {
-      font-size: 24px; font-weight: 900; letter-spacing: -0.5px; line-height: 1.3;
-      background: linear-gradient(135deg, #f3f4f6 0%, #a78bfa 50%, #7c3aed 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      animation: floatGravity 4s ease-in-out infinite;
-      position: relative; display: inline-block;
-    }
-    .hero-greeting::after {
-      content: '✦';
-      position: absolute; top: -16px; right: -28px; font-size: 14px;
-      -webkit-text-fill-color: initial; color: #a78bfa; opacity: 0.5;
-      animation: sparkle 3s ease-in-out infinite;
-    }
-    .hero-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; }
-    
-    @keyframes floatGravity { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-    @keyframes sparkle { 0%,100% { opacity: 0.3; transform: scale(0.8) rotate(0); } 50% { opacity: 1; transform: scale(1.2) rotate(180deg); } }
-    
+    .hero { padding: 32px 20px 20px; text-align: center; }
+    .hero-greeting { font-size: 22px; font-weight: 900; background: linear-gradient(135deg, #f3f4f6 0%, #a78bfa 50%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: floatGravity 4s ease-in-out infinite; }
+    .hero-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; letter-spacing: 2px; text-transform: uppercase; }
+    @keyframes floatGravity { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
     /* TABS */
-    .tabs {
-      display: flex;
-      background: var(--bg-tab);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border-color);
-      position: sticky;
-      top: 64px;
-      z-index: 50;
-    }
-    .tab {
-      flex: 1; padding: 12px; text-align: center; font-size: 12px; font-weight: 700;
-      color: var(--text-muted); cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.3s ease;
-      font-family: 'Inter', sans-serif;
-    }
+    .tabs { display: flex; background: var(--bg-tab); border-bottom: 1px solid var(--border-color); position: sticky; top: 64px; z-index: 50; }
+    .tab { flex: 1; padding: 12px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.3s; font-family: 'Inter', sans-serif; }
     .tab:hover { color: var(--text-primary); }
     .tab.active { color: var(--text-purple); border-bottom-color: var(--text-purple); background: var(--bg-card); }
-    
+
     /* CONTAINER */
     .container { max-width: 480px; margin: 0 auto; padding: 16px 16px 100px; position: relative; z-index: 1; }
     .tab-panel { display: none; animation: fadeSlide 0.4s ease; }
     .tab-panel.active { display: block; }
-    @keyframes fadeSlide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    
-    /* MINT CARD */
-    .mint-card {
-      background: var(--bg-card);
-      backdrop-filter: blur(20px);
-      border-radius: 16px;
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 8px 32px var(--shadow-color);
-      transition: all 0.3s ease;
-    }
-    .mint-card:hover { border-color: var(--border-purple); box-shadow: 0 8px 40px var(--shadow-color), 0 0 60px var(--glow-color); }
-    .mint-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .mint-card .card-header h3 { font-size: 16px; font-weight: 800; color: var(--text-primary); }
-    .badge { background: var(--text-purple); color: white; padding: 3px 12px; border-radius: 20px; font-size: 9px; font-weight: 700; text-transform: uppercase; }
-    .mint-card input[type="text"] {
-      width: 100%; padding: 10px 14px;
-      border: 1px solid var(--border-color); border-radius: 10px;
-      font-size: 13px; font-weight: 500; margin-bottom: 10px;
-      background: var(--bg-input); color: var(--text-primary);
-      font-family: 'Inter', sans-serif;
-      outline: none; transition: all 0.3s ease;
-    }
-    .mint-card input[type="text"]:focus { border-color: var(--text-purple); box-shadow: 0 0 0 3px var(--glow-color); }
-    
-    .upload-area {
-      width: 100%; padding: 16px;
-      border: 2px dashed var(--border-purple); border-radius: 10px;
-      background: var(--bg-upload);
-      text-align: center; cursor: pointer;
-      font-weight: 600; font-size: 13px;
-      color: var(--text-secondary);
-      transition: all 0.3s ease;
-      margin-bottom: 10px;
-    }
-    .upload-area:hover { background: var(--bg-upload-hover); border-color: var(--text-purple); color: var(--text-primary); }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* CARDS */
+    .card { background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 16px; padding: 20px; border: 1px solid var(--border-color); box-shadow: 0 8px 32px var(--shadow-color); transition: all 0.3s; margin-bottom: 12px; }
+    .card:hover { border-color: var(--border-purple); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .card-header h3 { font-size: 15px; font-weight: 800; color: var(--text-primary); }
+    .badge { background: var(--badge-bg); color: white; padding: 3px 12px; border-radius: 20px; font-size: 9px; font-weight: 700; text-transform: uppercase; }
+    .badge-green { background: #16a34a; }
+    .badge-red { background: #dc2626; }
+    .badge-yellow { background: #d97706; }
+
+    /* INPUTS */
+    input[type="text"], input[type="number"] { width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 500; margin-bottom: 10px; background: var(--bg-input); color: var(--text-primary); font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s; }
+    input[type="text"]:focus, input[type="number"]:focus { border-color: var(--text-purple); box-shadow: 0 0 0 3px var(--glow-color); }
+    .upload-area { width: 100%; padding: 16px; border: 2px dashed var(--border-purple); border-radius: 10px; background: var(--bg-upload); text-align: center; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--text-secondary); transition: all 0.3s; margin-bottom: 10px; }
+    .upload-area:hover { background: var(--bg-upload-hover); border-color: var(--text-purple); }
     .upload-area .icon { font-size: 24px; display: block; margin-bottom: 2px; }
     input[type="file"] { display: none; }
     #previewImg { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; display: none; border: 2px solid var(--border-purple); }
-    
-    /* PREVIEW CARD */
-    .preview-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-purple);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 12px;
-      display: none;
-      animation: fadeSlide 0.3s ease;
-    }
-    .preview-card .preview-row { display: flex; align-items: center; gap: 12px; }
-    .preview-card .preview-thumb { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: var(--border-color); }
-    .preview-card .preview-info { flex: 1; }
-    .preview-card .preview-info .p-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
-    .preview-card .preview-info .p-desc { font-size: 11px; color: var(--text-muted); }
-    .preview-card .preview-badge { font-size: 9px; background: var(--text-purple); color: white; padding: 2px 10px; border-radius: 12px; font-weight: 700; }
-    
+
     /* PROGRESS */
     .progress-wrap { display: none; margin-bottom: 10px; }
     .progress-bar { height: 4px; background: var(--border-color); border-radius: 4px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--text-purple), #f59e0b); width: 0%; transition: width 0.5s ease; border-radius: 4px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--text-purple), #f59e0b); width: 0%; transition: width 0.5s ease; }
     .progress-text { font-size: 11px; color: var(--text-secondary); font-weight: 600; margin-top: 4px; text-align: center; }
-    
+
     /* SUCCESS */
     .success-box { background: var(--bg-success); border: 1px solid rgba(34,197,94,0.30); border-radius: 10px; padding: 12px; margin-bottom: 10px; display: none; }
     .success-box h4 { color: #22c55e; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
     .success-box p { font-size: 11px; color: var(--text-secondary); word-break: break-all; }
-    .success-box .tx-link { color: var(--text-purple); text-decoration: none; font-weight: 600; }
-    .success-box .tx-link:hover { text-decoration: underline; }
-    
+    .tx-link { color: var(--text-purple); text-decoration: none; font-weight: 600; }
+    .tx-link:hover { text-decoration: underline; }
+
     /* BUTTONS */
-    .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; text-transform: uppercase; }
+    .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; text-transform: uppercase; margin-bottom: 8px; }
     .btn-mint { background: linear-gradient(135deg, #7c3aed, #4f46e5); color: white; box-shadow: 0 4px 20px var(--glow-color); }
-    .btn-mint:hover:not(:disabled) { transform: scale(1.02); box-shadow: 0 8px 30px var(--glow-color), 0 0 60px var(--glow-color); }
+    .btn-mint:hover:not(:disabled) { transform: scale(1.02); box-shadow: 0 8px 30px var(--glow-color); }
     .btn-mint:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
-    .btn-twitter { background: #1DA1F2; color: white; margin-top: 6px; display: none; }
-    .btn-twitter:hover { transform: scale(1.02); box-shadow: 0 8px 30px rgba(29,161,242,0.30); }
-    #status { text-align: center; font-size: 12px; font-weight: 600; margin-top: 8px; min-height: 18px; color: var(--text-secondary); }
-    
-    /* GALLERY - HANYA MILIK WALLET */
-    .gallery-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-    .gallery-header h3 { font-size: 15px; font-weight: 800; color: var(--text-primary); }
-    .gallery-controls { display: flex; align-items: center; gap: 8px; }
-    .gallery-header .count { background: var(--bg-card); color: var(--text-purple); padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid var(--border-color); }
-    
+    .btn-list { background: linear-gradient(135deg, #16a34a, #15803d); color: white; }
+    .btn-buy { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; }
+    .btn-cancel { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; }
+    .btn-twitter { background: #1DA1F2; color: white; display: none; }
+    .btn-sm { width: auto; padding: 8px 14px; font-size: 11px; margin-bottom: 0; border-radius: 8px; }
+    #status { text-align: center; font-size: 12px; font-weight: 600; margin-top: 6px; min-height: 18px; color: var(--text-secondary); }
+
+    /* NFT GRID - GALERI */
+    .gallery-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .gallery-header h3 { font-size: 15px; font-weight: 800; }
+    .count-badge { background: var(--bg-card); color: var(--text-purple); padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid var(--border-color); }
     .nft-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .nft-card { background: var(--bg-card); backdrop-filter: blur(10px); border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.4s ease; }
-    .nft-card:hover { border-color: var(--border-purple); transform: translateY(-4px); box-shadow: 0 12px 40px var(--shadow-color), 0 0 40px var(--glow-color); }
-    .nft-card img { width: 100%; height: 130px; object-fit: cover; background: var(--border-color); transition: transform 0.4s ease; }
-    .nft-card:hover img { transform: scale(1.03); }
+    .nft-card { background: var(--bg-card); backdrop-filter: blur(10px); border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.4s; }
+    .nft-card:hover { border-color: var(--border-purple); transform: translateY(-4px); box-shadow: 0 12px 40px var(--shadow-color); }
+    .nft-card img { width: 100%; height: 130px; object-fit: cover; background: var(--border-color); }
     .nft-card .info { padding: 10px; }
-    .nft-card .token-id { background: var(--text-purple); color: white; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 2px; }
+    .token-id { background: var(--text-purple); color: white; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 3px; }
     .nft-card .name { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
-    .nft-card .owner { font-size: 10px; color: var(--text-muted); font-weight: 500; }
-    
+    .nft-card .owner { font-size: 10px; color: var(--text-muted); }
+    .nft-card .list-price { font-size: 11px; color: #22c55e; font-weight: 700; margin-top: 4px; }
+    .nft-card .card-actions { display: flex; gap: 6px; margin-top: 8px; }
+
+    /* MARKETPLACE */
+    .market-card { background: var(--bg-card); border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.4s; margin-bottom: 12px; }
+    .market-card:hover { border-color: var(--border-purple); box-shadow: 0 8px 32px var(--shadow-color); }
+    .market-card img { width: 100%; height: 180px; object-fit: cover; }
+    .market-card .market-info { padding: 12px; }
+    .market-card .market-name { font-size: 14px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
+    .market-card .market-seller { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+    .market-card .market-price { font-size: 18px; font-weight: 900; color: #22c55e; margin-bottom: 10px; }
+    .market-card .market-price span { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+    .market-actions { display: flex; gap: 8px; }
+    .market-actions .btn { margin-bottom: 0; }
+
     /* SKELETON */
     .skeleton { background: var(--bg-card); border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color); }
     .skeleton-img { width: 100%; height: 130px; background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
@@ -313,761 +146,595 @@
     .skeleton-line { height: 10px; background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; margin-bottom: 6px; }
     .skeleton-line.short { width: 60%; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    
-    .empty-gallery { grid-column: span 2; text-align: center; padding: 40px 20px; color: var(--text-muted); }
-    .empty-gallery .big-icon { font-size: 40px; display: block; margin-bottom: 6px; }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+    .empty-state .big-icon { font-size: 40px; display: block; margin-bottom: 8px; }
     .wallet-required { grid-column: span 2; text-align: center; padding: 30px 20px; background: var(--bg-card); border-radius: 14px; border: 2px dashed var(--border-purple); }
-    .wallet-required .big-icon { font-size: 40px; display: block; margin-bottom: 6px; }
-    .wallet-required p { color: var(--text-muted); font-weight: 600; font-size: 13px; }
-    
+
     /* HISTORY */
     .history-section { margin-top: 16px; }
-    .history-title { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .history-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
     .history-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
     .history-item .h-name { font-weight: 600; color: var(--text-primary); }
     .history-item .h-time { color: var(--text-muted); font-size: 10px; }
     .history-item .h-link { color: var(--text-purple); text-decoration: none; font-size: 10px; }
-    .history-item .h-link:hover { text-decoration: underline; }
-    .history-empty { color: var(--text-muted); font-size: 12px; text-align: center; padding: 12px; }
-    
+
+    /* LIST NFT MODAL */
+    .list-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+    .list-modal.show { display: flex; }
+    .list-modal-box { background: #1a1a2e; border: 1px solid var(--border-purple); border-radius: 16px; padding: 24px; width: 100%; max-width: 400px; }
+    .list-modal-box h3 { font-size: 16px; font-weight: 800; margin-bottom: 16px; color: var(--text-primary); }
+    .list-modal-box .modal-nft { display: flex; gap: 12px; align-items: center; background: var(--bg-card); border-radius: 10px; padding: 10px; margin-bottom: 16px; }
+    .list-modal-box .modal-nft img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+    .list-modal-box .modal-nft .modal-nft-info .modal-nft-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .list-modal-box .modal-nft .modal-nft-info .modal-nft-id { font-size: 11px; color: var(--text-muted); }
+    .list-modal-box label { font-size: 12px; color: var(--text-secondary); font-weight: 600; display: block; margin-bottom: 6px; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .modal-actions .btn { margin-bottom: 0; }
+    .btn-secondary { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-color); }
+
     /* TOAST */
-    .toast-container { position: fixed; bottom: 80px; right: 16px; z-index: 999; display: flex; flex-direction: column; gap: 8px; max-width: 320px; width: 100%; }
+    .toast-container { position: fixed; bottom: 80px; right: 16px; z-index: 999; display: flex; flex-direction: column; gap: 8px; max-width: 300px; }
     .toast { background: rgba(10,10,18,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; color: var(--text-primary); font-size: 13px; font-weight: 600; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: slideInToast 0.4s ease; display: flex; align-items: center; gap: 10px; }
     .toast.success { border-left: 3px solid #22c55e; }
     .toast.error { border-left: 3px solid #ef4444; }
     .toast.info { border-left: 3px solid #a78bfa; }
     .toast .toast-icon { font-size: 18px; }
-    .toast .toast-msg { flex: 1; }
-    .toast .toast-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 0 4px; }
-    .toast .toast-close:hover { color: var(--text-primary); }
+    .toast .toast-msg { flex: 1; font-size: 12px; }
+    .toast .toast-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; }
     @keyframes slideInToast { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
-    @keyframes slideOutToast { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(40px); } }
-    
+    @keyframes slideOutToast { from { opacity: 1; } to { opacity: 0; transform: translateX(40px); } }
+
     /* CONFETTI */
     .confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 1000; overflow: hidden; }
     .confetti-piece { position: absolute; width: 10px; height: 10px; top: -10px; animation: confettiFall linear forwards; }
-    @keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
-    
-    /* FOOTER - LINK DIPERBAIKI */
+    @keyframes confettiFall { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+
+    /* FOOTER */
     .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--footer-bg); backdrop-filter: blur(20px); border-top: 1px solid var(--border-color); padding: 10px 16px; z-index: 50; display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-    .footer a { color: var(--text-muted); text-decoration: none; font-size: 11px; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 5px; }
-    .footer a:hover { color: var(--text-purple); transform: translateY(-2px); }
-    .footer a i { font-size: 12px; }
+    .footer a { color: var(--text-muted); text-decoration: none; font-size: 11px; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 5px; }
+    .footer a:hover { color: var(--text-purple); }
     .footer-divider { color: var(--border-color); font-size: 11px; display: flex; align-items: center; }
-    
+
     @media (max-width: 480px) {
-      .header { padding: 10px 14px; }
-      .logo-icon { width: 32px; height: 32px; font-size: 14px; }
-      .logo-text { font-size: 15px; }
-      .wallet-btn { font-size: 10px; padding: 6px 12px; }
-      .copy-btn { width: 28px; height: 28px; font-size: 11px; }
       .nft-grid { gap: 8px; }
       .nft-card img { height: 100px; }
-      .hero { padding: 30px 16px 16px; }
-      .hero-greeting { font-size: 19px; }
-      .footer { gap: 10px; padding: 8px 12px; }
-      .footer a { font-size: 10px; }
+      .market-card img { height: 150px; }
+      .footer { gap: 10px; }
       .footer-divider { display: none; }
-      .toast-container { bottom: 70px; right: 10px; max-width: 280px; }
-      .toast { font-size: 12px; padding: 10px 12px; }
-      .container { padding: 12px 12px 80px; }
-      .mint-card { padding: 16px; }
+      .toast-container { right: 10px; max-width: 260px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ================================================================
-       HEADER
-       ================================================================ -->
   <header class="header">
     <a href="#" class="logo">
       <div class="logo-icon">⧫</div>
       <span class="logo-text">Portal <span>NFT</span></span>
     </a>
     <div class="header-controls">
-      <button class="copy-btn" id="copyBtn" title="Copy Address">
-        <i class="fas fa-copy"></i>
-      </button>
-      <button class="wallet-btn" id="connectBtn">
-        <i class="fas fa-wallet"></i> Connect Wallet
-      </button>
+      <button class="copy-btn" id="copyBtn"><i class="fas fa-copy"></i></button>
+      <button class="wallet-btn" id="connectBtn"><i class="fas fa-wallet"></i> Connect Wallet</button>
     </div>
   </header>
 
-  <!-- ================================================================
-       HERO
-       ================================================================ -->
   <section class="hero">
     <div class="hero-greeting">your photos will be immortalized in chains</div>
-    <div class="hero-sub">✦ mint your moment ✦</div>
+    <div class="hero-sub">✦ mint · list · trade ✦</div>
   </section>
 
-  <!-- ================================================================
-       TABS
-       ================================================================ -->
   <div class="tabs">
-    <div class="tab active" data-tab="mint" onclick="switchTab('mint')">
-      <i class="fas fa-rocket"></i> Mint
-    </div>
-    <div class="tab" data-tab="gallery" onclick="switchTab('gallery')">
-      <i class="fas fa-images"></i> Galeri
-    </div>
+    <div class="tab active" data-tab="mint" onclick="switchTab('mint')"><i class="fas fa-rocket"></i> Mint</div>
+    <div class="tab" data-tab="gallery" onclick="switchTab('gallery')"><i class="fas fa-images"></i> Galeri</div>
+    <div class="tab" data-tab="market" onclick="switchTab('market')"><i class="fas fa-store"></i> Market</div>
   </div>
 
-  <!-- ================================================================
-       CONTAINER
-       ================================================================ -->
   <div class="container">
 
-    <!-- TAB MINT -->
+    <!-- MINT TAB -->
     <div class="tab-panel active" id="panel-mint">
-      <div class="mint-card glass-card">
+      <div class="card">
         <div class="card-header">
           <h3>Buat NFT Kamu</h3>
           <span class="badge">ERC-721</span>
         </div>
-
         <input type="text" id="nftName" placeholder="Nama NFT" />
         <input type="text" id="nftDesc" placeholder="Deskripsi" />
-
         <label for="imageFile">
-          <div class="upload-area" id="uploadArea">
-            <span class="icon">📁</span>
-            Tap untuk pilih gambar
-          </div>
+          <div class="upload-area" id="uploadArea"><span class="icon">📁</span>Tap untuk pilih gambar</div>
         </label>
         <input type="file" id="imageFile" accept="image/*" />
-
-        <img id="previewImg" alt="Preview NFT" />
-
-        <!-- PREVIEW CARD -->
-        <div class="preview-card" id="previewCard">
-          <div class="preview-row">
-            <img class="preview-thumb" id="previewThumb" src="" alt="preview" />
-            <div class="preview-info">
-              <div class="p-name" id="previewName">Nama NFT</div>
-              <div class="p-desc" id="previewDesc">Deskripsi</div>
-            </div>
-            <span class="preview-badge">Ready to Mint</span>
-          </div>
-        </div>
-
+        <img id="previewImg" alt="Preview" />
         <div class="progress-wrap" id="progressWrap">
           <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-          <p class="progress-text" id="progressText">Memulai...</p>
+          <p class="progress-text" id="progressText"></p>
         </div>
-
         <div class="success-box" id="successBox">
           <h4>✅ NFT Berhasil Di-mint!</h4>
           <p id="txDisplay"></p>
         </div>
-
-        <button class="btn btn-mint" id="mintBtn" disabled>
-          <i class="fas fa-rocket"></i> Mint NFT Sekarang
-        </button>
-        <button class="btn btn-twitter" id="twitterBtn">
-          <i class="fab fa-x-twitter"></i> Share ke X
-        </button>
-
+        <button class="btn btn-mint" id="mintBtn" disabled><i class="fas fa-rocket"></i> Mint NFT Sekarang</button>
+        <button class="btn btn-twitter" id="twitterBtn"><i class="fab fa-x-twitter"></i> Share ke X</button>
         <p id="status"></p>
       </div>
-
-      <!-- HISTORY -->
       <div class="history-section">
         <div class="history-title"><i class="fas fa-clock-rotate-left"></i> Riwayat Mint</div>
         <div id="historyList"></div>
       </div>
     </div>
 
-    <!-- TAB GALLERY - HANYA MILIK WALLET -->
+    <!-- GALLERY TAB -->
     <div class="tab-panel" id="panel-gallery">
       <div class="gallery-header">
-        <h3><i class="fas fa-images"></i> Koleksi NFT</h3>
-        <span class="count" id="galleryCount">0 NFT</span>
+        <h3><i class="fas fa-images"></i> Koleksi Kamu</h3>
+        <span class="count-badge" id="galleryCount">0 NFT</span>
       </div>
       <div class="nft-grid" id="nftGrid">
-        <div class="wallet-required">
-          <span class="big-icon">🔗</span>
-          <p>Connect wallet dulu untuk lihat koleksi</p>
-          <span style="font-size:11px;color:var(--text-muted);">Klik "Connect Wallet" di header</span>
+        <div class="wallet-required" style="grid-column:span 2">
+          <span style="font-size:36px;display:block;margin-bottom:8px">🔗</span>
+          <p style="color:var(--text-muted);font-size:13px;font-weight:600">Connect wallet dulu</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKET TAB -->
+    <div class="tab-panel" id="panel-market">
+      <div class="gallery-header">
+        <h3><i class="fas fa-store"></i> Marketplace</h3>
+        <span class="count-badge" id="marketCount">0 listing</span>
+      </div>
+      <div id="marketGrid">
+        <div class="empty-state">
+          <span class="big-icon">🏪</span>
+          <p>Belum ada NFT yang dijual</p>
         </div>
       </div>
     </div>
 
   </div>
 
-  <!-- ================================================================
-       TOAST & CONFETTI
-       ================================================================ -->
+  <!-- LIST NFT MODAL -->
+  <div class="list-modal" id="listModal">
+    <div class="list-modal-box">
+      <h3>🏷️ Jual NFT</h3>
+      <div class="modal-nft">
+        <img id="modalImg" src="" alt="NFT" />
+        <div class="modal-nft-info">
+          <div class="modal-nft-name" id="modalName">-</div>
+          <div class="modal-nft-id" id="modalId">Token #-</div>
+        </div>
+      </div>
+      <label>Harga (zkLTC)</label>
+      <input type="number" id="listPrice" placeholder="0.01" step="0.001" min="0.001" />
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeListModal()">Batal</button>
+        <button class="btn btn-list" id="confirmListBtn" onclick="confirmList()">Jual Sekarang</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast-container" id="toastContainer"></div>
   <div class="confetti-container" id="confettiContainer"></div>
 
-  <!-- ================================================================
-       FOOTER - LINK SUDAH DIPERBAIKI
-       ================================================================ -->
   <footer class="footer">
     <a href="https://docs.litvm.com/" target="_blank"><i class="fas fa-book"></i> LitVM Doc</a>
     <span class="footer-divider">|</span>
-    <a href="https://liteforge.hub.caldera.xyz/" target="_blank"><i class="fas fa-arrows-left-right"></i> Bridge zkLTC</a>
+    <a href="https://liteforge.hub.caldera.xyz/" target="_blank"><i class="fas fa-arrows-left-right"></i> Bridge</a>
     <span class="footer-divider">|</span>
     <a href="https://liteforge.explorer.caldera.xyz/" target="_blank"><i class="fas fa-magnifying-glass"></i> Explorer</a>
     <span class="footer-divider">|</span>
     <a href="https://x.com/catyaphunter_" target="_blank"><i class="fab fa-x-twitter"></i> Twitter</a>
   </footer>
 
-  <!-- ================================================================ -->
-  <!-- JAVASCRIPT -->
-  <!-- ================================================================ -->
   <script>
-    // =============================================================
-    // 1. KONFIGURASI
-    // =============================================================
     const CONFIG = {
-      contractAddress: "0x893C81FC7B6dD2FACB1c167147209c5F1c342840",
+      nftContract: "0x893C81FC7B6dD2FACB1c167147209c5F1c342840",
+      marketContract: "0xB073d421f26453cB18c604BeD18EC779Bd273D6e",
       rpcUrl: "https://liteforge.rpc.caldera.xyz/http",
       chainId: 4441,
       explorerUrl: "https://liteforge.explorer.caldera.xyz/tx/",
-      pinataJwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJiNWE2ODYxZi01NWMwLTQ3ZDktYmM2ZS0zMjBlYWFmMDcyNDYiLCJlbWFpbCI6InJleWhhbmFmaWtyaTExNDBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6Ijg5ODQ4OTA2ZTVhNDliY2M4ZDEzIiwic2NvcGVkS2V5U2VjcmV0IjoiMDA4NmIwMzljM2NiODE5MmMzYzQ1NzYyM2Y3YzIwNmYyYWQ3Nzg3OWMxNzE4YjJmMjRhZDNiYTQ1MTdmOWViNCIsImV4cCI6MTgxNDAyOTUwMn0.LIWI8NMwgRzLRtumOpKmmv2BHBDJBdmb6_G8dPZvn28"
+      pinataJwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJiNWE2ODYxZi01NWMwLTQ3ZDktYmM2ZS0zMjBlYWFmMDcyNDYiLCJlbWFpbCI6InJleWhhbmFmaWtyaTExNDBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjIwYjljODBhMmQ2NjBiZDFkODFmIiwic2NvcGVkS2V5U2VjcmV0IjoiYmM4YzdkZmZhOGU4MmQ1MjM0NTA1MDhjNDQ1MzI0ZjY3OGVmOTdjNDZmYzNjMWI3YzJiM2Y3YmFiNjIxMWQ0OSIsImV4cCI6MTgxNDAwNTI5Mn0.W0JQ9feTkAYhi3jNoW8kIrCYNTZDWKz9bfN11KWRRTc"
     };
 
-    const ABI = [
+    const NFT_ABI = [
       "function mint(address to, string memory tokenURI) public",
       "function totalSupply() public view returns (uint256)",
       "function tokenURI(uint256 tokenId) public view returns (string)",
-      "function ownerOf(uint256 tokenId) public view returns (address)"
+      "function ownerOf(uint256 tokenId) public view returns (address)",
+      "function setApprovalForAll(address operator, bool approved) public",
+      "function isApprovedForAll(address owner, address operator) public view returns (bool)"
     ];
 
-    // =============================================================
-    // 2. STATE
-    // =============================================================
-    let provider, signer, contract;
+    const MARKET_ABI = [
+      "function listNFT(address nftContract, uint256 tokenId, uint256 price) external",
+      "function buyNFT(uint256 listingId) external payable",
+      "function cancelListing(uint256 listingId) external",
+      "function getActiveListings() external view returns (tuple(address seller, address nftContract, uint256 tokenId, uint256 price, bool active)[], uint256[])",
+      "function listings(uint256) external view returns (address seller, address nftContract, uint256 tokenId, uint256 price, bool active)"
+    ];
+
+    let provider, signer, nftContract, marketContract;
     let userAddress = null;
+    let isConnected = false;
+    let isMinting = false;
     let lastTxHash = null;
     let lastNftName = '';
-    let isMinting = false;
-    let isConnected = false;
-    let myNfts = [];
     let history = [];
+    let pendingListToken = null;
 
-    // =============================================================
-    // 3. DOM REFS
-    // =============================================================
     const $ = id => document.getElementById(id);
     const connectBtn = $('connectBtn');
     const copyBtn = $('copyBtn');
-    const galleryCount = $('galleryCount');
-    const nftGrid = $('nftGrid');
-    const mintBtn = $('mintBtn');
-    const nftName = $('nftName');
-    const nftDesc = $('nftDesc');
-    const imageFile = $('imageFile');
-    const previewImg = $('previewImg');
-    const previewThumb = $('previewThumb');
-    const previewName = $('previewName');
-    const previewDesc = $('previewDesc');
-    const previewCard = $('previewCard');
-    const uploadArea = $('uploadArea');
-    const progressWrap = $('progressWrap');
-    const progressFill = $('progressFill');
-    const progressText = $('progressText');
-    const successBox = $('successBox');
-    const txDisplay = $('txDisplay');
-    const statusEl = $('status');
-    const twitterBtn = $('twitterBtn');
-    const toastContainer = $('toastContainer');
-    const confettiContainer = $('confettiContainer');
-    const historyList = $('historyList');
 
-    // =============================================================
-    // 4. TOAST
-    // =============================================================
-    function showToast(message, type = 'info', duration = 4000) {
+    // READ PROVIDER
+    let readProvider, readNftContract, readMarketContract;
+    try {
+      readProvider = new ethers.providers.JsonRpcProvider(CONFIG.rpcUrl, { chainId: CONFIG.chainId, name: 'LitVM' });
+      readNftContract = new ethers.Contract(CONFIG.nftContract, NFT_ABI, readProvider);
+      readMarketContract = new ethers.Contract(CONFIG.marketContract, MARKET_ABI, readProvider);
+    } catch(e) { console.warn('Read provider error:', e); }
+
+    // TOAST
+    function showToast(msg, type = 'info', duration = 4000) {
       const icons = { success: '✅', error: '❌', info: 'ℹ️' };
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.innerHTML = `
-        <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
-        <span class="toast-msg">${message}</span>
-        <button class="toast-close">&times;</button>
-      `;
-      toast.querySelector('.toast-close').addEventListener('click', () => {
-        toast.style.animation = 'slideOutToast 0.3s ease forwards';
-        setTimeout(() => toast.remove(), 300);
-      });
-      toastContainer.appendChild(toast);
-      setTimeout(() => {
-        if (toast.parentNode) {
-          toast.style.animation = 'slideOutToast 0.3s ease forwards';
-          setTimeout(() => toast.remove(), 300);
-        }
-      }, duration);
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.innerHTML = `<span class="toast-icon">${icons[type]}</span><span class="toast-msg">${msg}</span><button class="toast-close">&times;</button>`;
+      t.querySelector('.toast-close').onclick = () => { t.style.animation = 'slideOutToast 0.3s ease forwards'; setTimeout(() => t.remove(), 300); };
+      $('toastContainer').appendChild(t);
+      setTimeout(() => { if(t.parentNode) { t.style.animation = 'slideOutToast 0.3s ease forwards'; setTimeout(() => t.remove(), 300); } }, duration);
     }
 
-    // =============================================================
-    // 5. CONFETTI
-    // =============================================================
+    // CONFETTI
     function fireConfetti() {
-      const colors = ['#7c3aed', '#a78bfa', '#4f46e5', '#f59e0b', '#22c55e', '#ef4444', '#ec4899', '#06b6d4'];
-      const pieces = 80;
-      for (let i = 0; i < pieces; i++) {
-        const piece = document.createElement('div');
-        piece.className = 'confetti-piece';
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const size = Math.random() * 8 + 4;
-        const left = Math.random() * 100;
-        const duration = Math.random() * 2 + 2;
-        const delay = Math.random() * 1.5;
-        const shape = Math.random() > 0.5 ? '50%' : '0';
-        piece.style.cssText = `left:${left}%;width:${size}px;height:${size}px;background:${color};border-radius:${shape};animation-duration:${duration}s;animation-delay:${delay}s;box-shadow:0 0 10px ${color}40;`;
-        confettiContainer.appendChild(piece);
-        setTimeout(() => piece.remove(), (duration + delay) * 1000 + 500);
+      const colors = ['#7c3aed','#a78bfa','#4f46e5','#f59e0b','#22c55e','#ef4444','#ec4899'];
+      for(let i = 0; i < 80; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        const color = colors[Math.floor(Math.random()*colors.length)];
+        const size = Math.random()*8+4;
+        p.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random()>0.5?'50%':'0'};animation-duration:${Math.random()*2+2}s;animation-delay:${Math.random()*1.5}s;`;
+        $('confettiContainer').appendChild(p);
+        setTimeout(() => p.remove(), 4000);
       }
     }
 
-    // =============================================================
-    // 6. UTILITY
-    // =============================================================
-    function setProgress(pct, text) {
-      progressWrap.style.display = 'block';
-      progressFill.style.width = pct + '%';
-      progressText.textContent = text;
-    }
-    function hideProgress() {
-      progressWrap.style.display = 'none';
-      progressFill.style.width = '0%';
-    }
-    function showStatus(msg, isError = false) {
-      statusEl.textContent = msg;
-      statusEl.style.color = isError ? '#ef4444' : 'var(--text-secondary)';
-    }
-    function truncateAddress(addr) {
-      if (!addr) return '-';
-      return addr.slice(0, 6) + '...' + addr.slice(-4);
-    }
-    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-    function formatTime(ts) {
-      return new Date(ts).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
-    }
+    // UTILS
+    function setProgress(pct, text) { $('progressWrap').style.display='block'; $('progressFill').style.width=pct+'%'; $('progressText').textContent=text; }
+    function hideProgress() { $('progressWrap').style.display='none'; $('progressFill').style.width='0%'; }
+    function showStatus(msg, isError=false) { $('status').textContent=msg; $('status').style.color=isError?'#ef4444':'var(--text-secondary)'; }
+    function truncate(addr) { return addr?addr.slice(0,6)+'...'+addr.slice(-4):'-'; }
+    function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
+    function formatTime(ts) { return new Date(ts).toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'}); }
 
-    // =============================================================
-    // 7. COPY ADDRESS
-    // =============================================================
+    // COPY
     copyBtn.addEventListener('click', async () => {
-      if (!userAddress) return;
-      try {
-        await navigator.clipboard.writeText(userAddress);
-        copyBtn.classList.add('copied');
-        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-        showToast('Alamat wallet disalin!', 'success', 2000);
-        setTimeout(() => {
-          copyBtn.classList.remove('copied');
-          copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
-        }, 2000);
-      } catch (e) {
-        showToast('Gagal menyalin', 'error');
-      }
+      if(!userAddress) return;
+      await navigator.clipboard.writeText(userAddress);
+      copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+      showToast('Alamat disalin!', 'success', 2000);
+      setTimeout(() => { copyBtn.innerHTML = '<i class="fas fa-copy"></i>'; }, 2000);
     });
 
-    // =============================================================
-    // 8. READ PROVIDER
-    // =============================================================
-    let readProvider, readContract;
-    try {
-      readProvider = new ethers.providers.JsonRpcProvider(
-        CONFIG.rpcUrl,
-        { chainId: CONFIG.chainId, name: 'LitVM' }
-      );
-      readContract = new ethers.Contract(CONFIG.contractAddress, ABI, readProvider);
-    } catch (e) {
-      console.warn('Read provider error:', e);
+    // SWITCH TAB
+    function switchTab(name) {
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelector(`.tab[data-tab="${name}"]`).classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      $('panel-'+name).classList.add('active');
+      if(name==='gallery') loadGallery();
+      if(name==='market') loadMarket();
     }
 
-    // =============================================================
-    // 9. IPFS UPLOAD
-    // =============================================================
+    // IPFS
     async function uploadToIPFS(file) {
-      const formData = new FormData();
-      formData.append('file', file);
-      const res = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${CONFIG.pinataJwt}` },
-        body: formData
-      });
-      if (!res.ok) throw new Error('Gagal upload gambar');
+      const fd = new FormData(); fd.append('file', file);
+      const res = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', { method:'POST', headers:{Authorization:`Bearer ${CONFIG.pinataJwt}`}, body:fd });
+      if(!res.ok) throw new Error('Gagal upload gambar');
+      const data = await res.json();
+      return `https://ipfs.io/ipfs/${data.IpfsHash}`;
+    }
+    async function uploadMetadata(name, desc, imageUrl) {
+      const res = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', { method:'POST', headers:{'Content-Type':'application/json',Authorization:`Bearer ${CONFIG.pinataJwt}`}, body:JSON.stringify({pinataContent:{name,description:desc,image:imageUrl}}) });
+      if(!res.ok) throw new Error('Gagal upload metadata');
       const data = await res.json();
       return `https://ipfs.io/ipfs/${data.IpfsHash}`;
     }
 
-    async function uploadMetadata(name, description, imageUrl) {
-      const metadata = { name, description, image: imageUrl };
-      const res = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${CONFIG.pinataJwt}` },
-        body: JSON.stringify({ pinataContent: metadata })
-      });
-      if (!res.ok) throw new Error('Gagal upload metadata');
-      const data = await res.json();
-      return `https://ipfs.io/ipfs/${data.IpfsHash}`;
-    }
-
-    // =============================================================
-    // 10. GALLERY - HANYA NFT MILIK WALLET
-    // =============================================================
-    function renderSkeletons(count = 4) {
-      let html = '';
-      for (let i = 0; i < count; i++) {
-        html += `<div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-text"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>`;
-      }
-      nftGrid.innerHTML = html;
-    }
-
+    // GALLERY
     async function loadGallery() {
-      // Jika wallet belum connect
-      if (!isConnected || !userAddress) {
-        nftGrid.innerHTML = `<div class="wallet-required"><span class="big-icon">🔗</span><p>Connect wallet dulu untuk lihat koleksi</p><span style="font-size:11px;color:var(--text-muted);">Klik "Connect Wallet" di header</span></div>`;
-        galleryCount.textContent = '? NFT';
+      if(!isConnected||!userAddress) {
+        $('nftGrid').innerHTML = `<div class="wallet-required" style="grid-column:span 2"><span style="font-size:36px;display:block;margin-bottom:8px">🔗</span><p style="color:var(--text-muted);font-size:13px;font-weight:600">Connect wallet dulu</p></div>`;
         return;
       }
-
       try {
-        if (!readContract) {
-          nftGrid.innerHTML = `<div class="empty-gallery"><span class="big-icon">⚠️</span><p>Gagal terhubung ke blockchain</p></div>`;
-          return;
-        }
-
-        renderSkeletons(4);
-        
-        const total = await readContract.totalSupply();
-        const totalNum = Number(total);
-        myNfts = [];
-        
-        // Cari semua NFT yang owner-nya = userAddress
-        for (let i = 0; i < totalNum; i++) {
+        $('nftGrid').innerHTML = Array(4).fill(`<div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-text"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>`).join('');
+        const total = await readNftContract.totalSupply();
+        const myNfts = [];
+        for(let i=0; i<Number(total); i++) {
           try {
-            const owner = await readContract.ownerOf(i);
-            if (owner.toLowerCase() === userAddress.toLowerCase()) {
-              let imageUrl = `https://via.placeholder.com/300/7c3aed/ffffff?text=NFT+%23${i}`;
+            const owner = await readNftContract.ownerOf(i);
+            if(owner.toLowerCase()===userAddress.toLowerCase()) {
+              let img = `https://via.placeholder.com/300/7c3aed/ffffff?text=NFT+%23${i}`;
               let name = `Portal NFT #${i}`;
               try {
-                let tokenUri = await readContract.tokenURI(i);
-                if (tokenUri && tokenUri.startsWith('ipfs://')) {
-                  tokenUri = tokenUri.replace('ipfs://', 'https://ipfs.io/ipfs/');
-                }
-                const res = await fetch(tokenUri, { signal: AbortSignal.timeout(5000) });
-                if (res.ok) {
-                  const meta = await res.json();
-                  if (meta.image) {
-                    imageUrl = meta.image;
-                    if (imageUrl.startsWith('ipfs://')) {
-                      imageUrl = imageUrl.replace('ipfs://', 'https://ipfs.io/ipfs/');
-                    }
-                  }
-                  if (meta.name) name = meta.name;
-                }
-              } catch (e) {
-                console.warn('Gagal load metadata NFT #' + i);
-              }
-              myNfts.push({ id: i, name, imageUrl, owner });
+                let uri = await readNftContract.tokenURI(i);
+                if(uri.startsWith('ipfs://')) uri = uri.replace('ipfs://','https://ipfs.io/ipfs/');
+                const r = await fetch(uri, {signal:AbortSignal.timeout(5000)});
+                if(r.ok) { const m = await r.json(); if(m.image) img=m.image.startsWith('ipfs://')?m.image.replace('ipfs://','https://ipfs.io/ipfs/'):m.image; if(m.name) name=m.name; }
+              } catch(e) {}
+              myNfts.push({id:i,name,img});
             }
-          } catch (e) {
-            console.warn('Gagal cek owner NFT #' + i);
-          }
+          } catch(e) {}
         }
+        $('galleryCount').textContent = myNfts.length+' NFT';
+        if(myNfts.length===0) { $('nftGrid').innerHTML=`<div class="empty-state" style="grid-column:span 2"><span class="big-icon">🖼️</span><p>Kamu belum punya NFT</p></div>`; return; }
+        $('nftGrid').innerHTML = myNfts.map(nft=>`
+          <div class="nft-card">
+            <img src="${nft.img}" onerror="this.src='https://via.placeholder.com/300/7c3aed/ffffff?text=Error'" />
+            <div class="info">
+              <span class="token-id">#${nft.id}</span>
+              <div class="name">${nft.name}</div>
+              <div class="card-actions">
+                <button class="btn btn-list btn-sm" onclick="openListModal(${nft.id},'${nft.name}','${nft.img}')">🏷️ Jual</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch(e) { console.error(e); $('nftGrid').innerHTML=`<div class="empty-state" style="grid-column:span 2"><span class="big-icon">⚠️</span><p>Gagal load galeri</p></div>`; }
+    }
 
-        galleryCount.textContent = myNfts.length + ' NFT';
-        
-        if (myNfts.length === 0) {
-          nftGrid.innerHTML = `<div class="empty-gallery"><span class="big-icon">🖼️</span><p>Kamu belum punya NFT</p><span style="font-size:11px;color:var(--text-muted);">Mint NFT pertama kamu!</span></div>`;
-          return;
-        }
-
+    // MARKETPLACE
+    async function loadMarket() {
+      try {
+        $('marketGrid').innerHTML = `<div class="empty-state"><span class="big-icon">⏳</span><p>Loading listings...</p></div>`;
+        const [listings, ids] = await readMarketContract.getActiveListings();
+        $('marketCount').textContent = listings.length+' listing';
+        if(listings.length===0) { $('marketGrid').innerHTML=`<div class="empty-state"><span class="big-icon">🏪</span><p>Belum ada NFT yang dijual</p></div>`; return; }
         let html = '';
-        for (const nft of myNfts) {
+        for(let i=0; i<listings.length; i++) {
+          const l = listings[i];
+          const lid = Number(ids[i]);
+          const tokenId = Number(l.tokenId);
+          const price = ethers.utils.formatEther(l.price);
+          let img = `https://via.placeholder.com/400/7c3aed/ffffff?text=NFT+%23${tokenId}`;
+          let name = `Portal NFT #${tokenId}`;
+          try {
+            let uri = await readNftContract.tokenURI(tokenId);
+            if(uri.startsWith('ipfs://')) uri = uri.replace('ipfs://','https://ipfs.io/ipfs/');
+            const r = await fetch(uri, {signal:AbortSignal.timeout(5000)});
+            if(r.ok) { const m = await r.json(); if(m.image) img=m.image.startsWith('ipfs://')?m.image.replace('ipfs://','https://ipfs.io/ipfs/'):m.image; if(m.name) name=m.name; }
+          } catch(e) {}
+          const isMine = userAddress && l.seller.toLowerCase()===userAddress.toLowerCase();
           html += `
-            <div class="nft-card">
-              <img src="${nft.imageUrl}" alt="${nft.name}" onerror="this.src='https://via.placeholder.com/300/7c3aed/ffffff?text=Error'" />
-              <div class="info">
-                <span class="token-id">#${nft.id}</span>
-                <div class="name">${nft.name}</div>
-                <div class="owner">👤 ${truncateAddress(nft.owner)}</div>
+            <div class="market-card">
+              <img src="${img}" onerror="this.src='https://via.placeholder.com/400/7c3aed/ffffff?text=Error'" />
+              <div class="market-info">
+                <div class="market-name">${name}</div>
+                <div class="market-seller">Seller: ${truncate(l.seller)}</div>
+                <div class="market-price">${price} <span>zkLTC</span></div>
+                <div class="market-actions">
+                  ${isMine
+                    ? `<button class="btn btn-cancel btn-sm" onclick="cancelListing(${lid})">❌ Batalkan</button>`
+                    : `<button class="btn btn-buy btn-sm" onclick="buyNFT(${lid},'${price}')">🛒 Beli Sekarang</button>`
+                  }
+                </div>
               </div>
             </div>
           `;
         }
-        nftGrid.innerHTML = html;
+        $('marketGrid').innerHTML = html;
+      } catch(e) { console.error(e); $('marketGrid').innerHTML=`<div class="empty-state"><span class="big-icon">⚠️</span><p>Gagal load marketplace</p></div>`; }
+    }
 
-      } catch (err) {
-        console.error('Gallery error:', err);
-        nftGrid.innerHTML = `<div class="empty-gallery"><span class="big-icon">⚠️</span><p>Gagal terhubung ke blockchain</p></div>`;
+    // LIST MODAL
+    let pendingListData = {};
+    function openListModal(tokenId, name, img) {
+      if(!isConnected) { showToast('Connect wallet dulu!','error'); return; }
+      pendingListData = { tokenId, name, img };
+      $('modalImg').src = img;
+      $('modalName').textContent = name;
+      $('modalId').textContent = 'Token #'+tokenId;
+      $('listPrice').value = '';
+      $('listModal').classList.add('show');
+    }
+    function closeListModal() { $('listModal').classList.remove('show'); }
+
+    async function confirmList() {
+      const price = parseFloat($('listPrice').value);
+      if(!price || price <= 0) { showToast('Masukkan harga valid!','error'); return; }
+      try {
+        $('confirmListBtn').disabled = true;
+        $('confirmListBtn').textContent = '⏳ Proses...';
+        const priceWei = ethers.utils.parseEther(price.toString());
+        const tx = await marketContract.listNFT(CONFIG.nftContract, pendingListData.tokenId, priceWei);
+        await tx.wait();
+        closeListModal();
+        showToast(`NFT berhasil dijual dengan harga ${price} zkLTC!`, 'success');
+        fireConfetti();
+        loadGallery();
+        loadMarket();
+      } catch(e) {
+        console.error(e);
+        let msg = e.message;
+        if(msg.includes('user rejected')) msg = 'Transaksi dibatalkan';
+        showToast('❌ '+msg, 'error');
+      } finally {
+        $('confirmListBtn').disabled = false;
+        $('confirmListBtn').textContent = 'Jual Sekarang';
       }
     }
 
-    // =============================================================
-    // 11. HISTORY
-    // =============================================================
-    function loadHistory() {
-      try { history = JSON.parse(localStorage.getItem('portalNftHistory')) || []; } catch (e) { history = []; }
-      renderHistory();
+    // BUY NFT
+    async function buyNFT(listingId, priceEth) {
+      if(!isConnected) { showToast('Connect wallet dulu!','error'); return; }
+      try {
+        showToast('⏳ Membeli NFT...','info');
+        const priceWei = ethers.utils.parseEther(priceEth);
+        const tx = await marketContract.buyNFT(listingId, { value: priceWei });
+        await tx.wait();
+        showToast('🎉 NFT berhasil dibeli!','success');
+        fireConfetti();
+        loadMarket();
+        loadGallery();
+      } catch(e) {
+        let msg = e.message;
+        if(msg.includes('user rejected')) msg = 'Transaksi dibatalkan';
+        if(msg.includes('insufficient funds')) msg = 'Saldo tidak cukup!';
+        showToast('❌ '+msg,'error');
+      }
     }
-    function saveHistory() { try { localStorage.setItem('portalNftHistory', JSON.stringify(history)); } catch (e) {} renderHistory(); }
-    function addHistory(name, txHash) { history.unshift({ name, txHash, time: Date.now() }); if (history.length > 50) history.pop(); saveHistory(); }
+
+    // CANCEL LISTING
+    async function cancelListing(listingId) {
+      if(!isConnected) { showToast('Connect wallet dulu!','error'); return; }
+      try {
+        showToast('⏳ Membatalkan listing...','info');
+        const tx = await marketContract.cancelListing(listingId);
+        await tx.wait();
+        showToast('✅ Listing dibatalkan!','success');
+        loadMarket();
+        loadGallery();
+      } catch(e) {
+        let msg = e.message;
+        if(msg.includes('user rejected')) msg = 'Transaksi dibatalkan';
+        showToast('❌ '+msg,'error');
+      }
+    }
+
+    // HISTORY
+    function loadHistory() { try { history = JSON.parse(localStorage.getItem('portalNftHistory'))||[]; } catch(e) { history=[]; } renderHistory(); }
+    function saveHistory() { try { localStorage.setItem('portalNftHistory',JSON.stringify(history)); } catch(e) {} renderHistory(); }
+    function addHistory(name, txHash) { history.unshift({name,txHash,time:Date.now()}); if(history.length>50) history.pop(); saveHistory(); }
     function renderHistory() {
-      if (history.length === 0) { historyList.innerHTML = `<div class="history-empty">Belum ada riwayat mint</div>`; return; }
-      let html = '';
-      for (const item of history) {
-        html += `<div class="history-item"><span class="h-name">${item.name}</span><span class="h-time">${formatTime(item.time)}</span><a href="${CONFIG.explorerUrl}${item.txHash}" target="_blank" class="h-link">Lihat</a></div>`;
-      }
-      historyList.innerHTML = html;
+      if(history.length===0) { $('historyList').innerHTML=`<div style="color:var(--text-muted);font-size:12px;text-align:center;padding:12px">Belum ada riwayat mint</div>`; return; }
+      $('historyList').innerHTML = history.map(h=>`<div class="history-item"><span class="h-name">${h.name}</span><span class="h-time">${formatTime(h.time)}</span><a href="${CONFIG.explorerUrl}${h.txHash}" target="_blank" class="h-link">Lihat</a></div>`).join('');
     }
 
-    // =============================================================
-    // 12. SWITCH TAB
-    // =============================================================
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      document.getElementById('panel-' + tabName).classList.add('active');
-      if (tabName === 'gallery') loadGallery();
-    }
-
-    // =============================================================
-    // 13. PREVIEW
-    // =============================================================
-    function updatePreview() {
-      const name = nftName.value.trim() || 'Nama NFT';
-      const desc = nftDesc.value.trim() || 'Deskripsi';
-      const file = imageFile.files[0];
-      if (file && previewImg.src) {
-        previewCard.style.display = 'block';
-        previewName.textContent = name;
-        previewDesc.textContent = desc;
-        previewThumb.src = previewImg.src;
-      } else {
-        previewCard.style.display = 'none';
-      }
-    }
-    nftName.addEventListener('input', updatePreview);
-    nftDesc.addEventListener('input', updatePreview);
-
-    imageFile.addEventListener('change', function(e) {
+    // IMAGE PREVIEW
+    $('imageFile').addEventListener('change', function(e) {
       const file = e.target.files[0];
-      if (file) {
+      if(file) {
         const reader = new FileReader();
-        reader.onload = (ev) => {
-          previewImg.src = ev.target.result;
-          previewImg.style.display = 'block';
-          previewThumb.src = ev.target.result;
-          uploadArea.innerHTML = '<span class="icon">✅</span> ' + file.name;
-          updatePreview();
+        reader.onload = ev => {
+          $('previewImg').src = ev.target.result;
+          $('previewImg').style.display = 'block';
+          $('uploadArea').innerHTML = '<span class="icon">✅</span>'+file.name;
+          if(userAddress) $('mintBtn').disabled = false;
         };
         reader.readAsDataURL(file);
-        if (userAddress) mintBtn.disabled = false;
       }
     });
 
-    // =============================================================
-    // 14. CONNECT / DISCONNECT WALLET
-    // =============================================================
-    connectBtn.addEventListener('click', async function(e) {
-      e.preventDefault();
-      
-      if (isConnected) {
-        userAddress = null;
-        isConnected = false;
-        signer = null;
-        contract = null;
-        connectBtn.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
+    // CONNECT WALLET
+    connectBtn.addEventListener('click', async function() {
+      if(isConnected) {
+        userAddress=null; isConnected=false; signer=null; nftContract=null; marketContract=null;
+        connectBtn.innerHTML='<i class="fas fa-wallet"></i> Connect Wallet';
         connectBtn.classList.remove('connected');
-        copyBtn.style.display = 'none';
-        mintBtn.disabled = true;
-        galleryCount.textContent = '? NFT';
-        nftGrid.innerHTML = `<div class="wallet-required"><span class="big-icon">🔗</span><p>Connect wallet dulu untuk lihat koleksi</p></div>`;
-        showToast('Wallet terputus', 'info');
-        showStatus('👋 Wallet terputus', true);
+        copyBtn.style.display='none';
+        $('mintBtn').disabled=true;
+        showToast('Wallet terputus','info');
         return;
       }
-
       try {
-        if (!window.ethereum) {
-          showToast('Install MetaMask atau wallet Web3!', 'error');
-          return;
-        }
-
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        if (parseInt(chainId) !== CONFIG.chainId) {
+        if(!window.ethereum) { showToast('Install wallet Web3!','error'); return; }
+        const chainId = await window.ethereum.request({method:'eth_chainId'});
+        if(parseInt(chainId)!==CONFIG.chainId) {
           try {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: '0x' + CONFIG.chainId.toString(16) }],
-            });
-          } catch (switchError) {
-            if (switchError.code === 4902) {
-              await window.ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [{
-                  chainId: '0x' + CONFIG.chainId.toString(16),
-                  chainName: 'LitVM Testnet',
-                  rpcUrls: [CONFIG.rpcUrl],
-                  nativeCurrency: { name: 'tLit', symbol: 'tLIT', decimals: 18 },
-                  blockExplorerUrls: ['https://liteforge.explorer.caldera.xyz'],
-                }],
-              });
-            } else {
-              throw switchError;
-            }
+            await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+CONFIG.chainId.toString(16)}]});
+          } catch(se) {
+            if(se.code===4902) {
+              await window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:'0x'+CONFIG.chainId.toString(16),chainName:'LitVM LiteForge',rpcUrls:[CONFIG.rpcUrl],nativeCurrency:{name:'zkLTC',symbol:'zkLTC',decimals:18},blockExplorerUrls:['https://liteforge.explorer.caldera.xyz']}]});
+            } else throw se;
           }
         }
-
         provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send('eth_requestAccounts', []);
+        await provider.send('eth_requestAccounts',[]);
         signer = provider.getSigner();
         userAddress = await signer.getAddress();
-        contract = new ethers.Contract(CONFIG.contractAddress, ABI, signer);
+        nftContract = new ethers.Contract(CONFIG.nftContract, NFT_ABI, signer);
+        marketContract = new ethers.Contract(CONFIG.marketContract, MARKET_ABI, signer);
         isConnected = true;
-
-        connectBtn.innerHTML = '<i class="fas fa-check-circle"></i> ' + truncateAddress(userAddress) + ' ✕';
+        connectBtn.innerHTML='<i class="fas fa-check-circle"></i> '+truncate(userAddress)+' ✕';
         connectBtn.classList.add('connected');
-        copyBtn.style.display = 'flex';
-        mintBtn.disabled = false;
-
-        showToast('Wallet terhubung!', 'success');
+        copyBtn.style.display='flex';
+        showToast('Wallet terhubung!','success');
         showStatus('✅ Wallet terhubung!');
-        await loadGallery();
-
-      } catch (err) {
-        console.error('Connect error:', err);
-        showToast('Gagal konek wallet: ' + err.message, 'error');
-        showStatus('❌ Gagal konek wallet: ' + err.message, true);
-      }
-    });
-
-    // =============================================================
-    // 15. MINT NFT
-    // =============================================================
-    mintBtn.addEventListener('click', async () => {
-      if (isMinting) return;
-      
-      const name = nftName.value.trim() || 'Portal NFT';
-      const desc = nftDesc.value.trim() || 'NFT dari LitVM Testnet';
-      const file = imageFile.files[0];
-
-      if (!file) { showToast('Pilih gambar dulu!', 'error'); showStatus('⚠️ Pilih gambar dulu!', true); return; }
-      if (!userAddress) { showToast('Konek wallet dulu!', 'error'); showStatus('⚠️ Konek wallet dulu!', true); return; }
-
-      isMinting = true;
-      mintBtn.disabled = true;
-      successBox.style.display = 'none';
-      twitterBtn.style.display = 'none';
-      hideProgress();
-      showStatus('');
-
-      try {
-        setProgress(10, '⏳ Persiapan...'); await sleep(300);
-        setProgress(20, '⏳ Upload gambar ke IPFS...');
-        const imageUrl = await uploadToIPFS(file);
-        setProgress(50, '✅ Gambar terupload!');
-        setProgress(55, '⏳ Upload metadata...');
-        const metadataUrl = await uploadMetadata(name, desc, imageUrl);
-        setProgress(75, '✅ Metadata terupload!');
-        setProgress(80, '⏳ Minting ke blockchain...');
-        
-        let gasLimit = 3000000;
-        try {
-          const gasEstimate = await contract.estimateGas.mint(userAddress, metadataUrl);
-          gasLimit = gasEstimate.mul(120).div(100).toNumber();
-          if (gasLimit < 100000) gasLimit = 3000000;
-        } catch (e) { console.warn('Gas estimation failed, using default'); }
-
-        const tx = await contract.mint(userAddress, metadataUrl, { gasLimit: gasLimit });
-        setProgress(90, '⏳ Menunggu konfirmasi (30-60 detik)...');
-        await tx.wait();
-        setProgress(100, '✅ Selesai!');
-        
-        lastTxHash = tx.hash;
-        lastNftName = name;
-        addHistory(name, tx.hash);
-
-        successBox.style.display = 'block';
-        txDisplay.innerHTML = `✅ Transaksi berhasil! <a href="${CONFIG.explorerUrl}${tx.hash}" target="_blank" class="tx-link">Lihat di Explorer →</a>`;
-        twitterBtn.style.display = 'block';
-        showToast('🎉 NFT berhasil di-mint!', 'success');
-        showStatus('🎉 NFT berhasil di-mint!');
-        fireConfetti();
-
-        nftName.value = ''; nftDesc.value = ''; imageFile.value = '';
-        previewImg.style.display = 'none'; previewCard.style.display = 'none';
-        uploadArea.innerHTML = '<span class="icon">📁</span> Tap untuk pilih gambar';
-        mintBtn.disabled = true;
         loadGallery();
-
-      } catch (err) {
-        console.error('Mint error:', err);
-        hideProgress();
-        let errorMsg = err.message;
-        if (errorMsg.includes('insufficient funds')) errorMsg = 'Saldo tLIT tidak cukup!';
-        else if (errorMsg.includes('user rejected')) errorMsg = 'Transaksi dibatalkan di wallet.';
-        else if (errorMsg.includes('Pinata')) errorMsg = 'Gagal upload ke IPFS. Cek PINATA_JWT.';
-        showToast('❌ ' + errorMsg, 'error');
-        showStatus('❌ ' + errorMsg, true);
-      } finally {
-        isMinting = false;
-        if (userAddress && imageFile.files[0]) mintBtn.disabled = false;
-        setTimeout(hideProgress, 3000);
+      } catch(e) {
+        showToast('Gagal konek: '+e.message,'error');
       }
     });
 
-    // =============================================================
-    // 16. SHARE KE X
-    // =============================================================
-    twitterBtn.addEventListener('click', function() {
-      if (!lastTxHash) { showToast('Belum ada transaksi', 'error'); return; }
-      const text = encodeURIComponent(`🎉 Baru aja mint NFT "${lastNftName}" di Portal NFT!\n\n🔗 Lihat transaksi: ${CONFIG.explorerUrl}${lastTxHash}\n\n🚀 Mint juga di: ${window.location.href}\n\n#PortalNFT #LitVM #Web3 #NFT`);
-      window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank', 'width=600,height=400');
+    // MINT
+    $('mintBtn').addEventListener('click', async () => {
+      if(isMinting) return;
+      const name = $('nftName').value.trim()||'Portal NFT';
+      const desc = $('nftDesc').value.trim()||'NFT dari LitVM Testnet';
+      const file = $('imageFile').files[0];
+      if(!file) { showToast('Pilih gambar dulu!','error'); return; }
+      if(!userAddress) { showToast('Konek wallet dulu!','error'); return; }
+      isMinting=true; $('mintBtn').disabled=true;
+      $('successBox').style.display='none'; $('twitterBtn').style.display='none';
+      hideProgress(); showStatus('');
+      try {
+        setProgress(20,'⏳ Upload gambar ke IPFS...');
+        const imageUrl = await uploadToIPFS(file);
+        setProgress(55,'⏳ Upload metadata...');
+        const metadataUrl = await uploadMetadata(name,desc,imageUrl);
+        setProgress(80,'⏳ Minting ke blockchain...');
+        let gasLimit=3000000;
+        try { const g=await nftContract.estimateGas.mint(userAddress,metadataUrl); gasLimit=g.mul(120).div(100).toNumber(); if(gasLimit<100000)gasLimit=3000000; } catch(e) {}
+        const tx = await nftContract.mint(userAddress,metadataUrl,{gasLimit});
+        await tx.wait();
+        setProgress(100,'✅ Selesai!');
+        lastTxHash=tx.hash; lastNftName=name;
+        addHistory(name,tx.hash);
+        $('successBox').style.display='block';
+        $('txDisplay').innerHTML=`✅ Berhasil! <a href="${CONFIG.explorerUrl}${tx.hash}" target="_blank" class="tx-link">Lihat di Explorer →</a>`;
+        $('twitterBtn').style.display='block';
+        showToast('🎉 NFT berhasil di-mint!','success');
+        fireConfetti();
+        $('nftName').value=''; $('nftDesc').value=''; $('imageFile').value='';
+        $('previewImg').style.display='none';
+        $('uploadArea').innerHTML='<span class="icon">📁</span>Tap untuk pilih gambar';
+        $('mintBtn').disabled=true;
+        loadGallery();
+      } catch(e) {
+        hideProgress();
+        let msg=e.message;
+        if(msg.includes('insufficient funds')) msg='Saldo tidak cukup!';
+        else if(msg.includes('user rejected')) msg='Transaksi dibatalkan.';
+        showToast('❌ '+msg,'error'); showStatus('❌ '+msg,true);
+      } finally {
+        isMinting=false;
+        if(userAddress&&$('imageFile').files[0]) $('mintBtn').disabled=false;
+        setTimeout(hideProgress,3000);
+      }
     });
 
-    // =============================================================
-    // 17. AUTO CHECK & INIT
-    // =============================================================
+    // SHARE X
+    $('twitterBtn').addEventListener('click', () => {
+      if(!lastTxHash) return;
+      const text = encodeURIComponent(`🎉 Baru aja mint NFT "${lastNftName}" di Portal NFT!\n\n🔗 TX: ${CONFIG.explorerUrl}${lastTxHash}\n\n🚀 Mint juga: ${window.location.href}\n\n#PortalNFT #LitVM #Web3 #NFT`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank','width=600,height=400');
+    });
+
+    // INIT
     (async function init() {
       loadHistory();
-      loadGallery();
-      
-      if (window.ethereum) {
+      loadMarket();
+      if(window.ethereum) {
         try {
-          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-          if (accounts.length > 0) {
-            await connectBtn.click();
-          }
-        } catch (e) { console.log('Auto-connect skipped'); }
+          const accounts = await window.ethereum.request({method:'eth_accounts'});
+          if(accounts.length>0) connectBtn.click();
+        } catch(e) {}
+        window.ethereum.on('accountsChanged', accounts => { if(accounts.length===0) { userAddress=null;isConnected=false;connectBtn.innerHTML='<i class="fas fa-wallet"></i> Connect Wallet';connectBtn.classList.remove('connected');copyBtn.style.display='none';$('mintBtn').disabled=true; } else connectBtn.click(); });
+        window.ethereum.on('chainChanged', ()=>window.location.reload());
       }
     })();
-
-    // =============================================================
-    // 18. EVENT LISTENER WALLET
-    // =============================================================
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts.length === 0) {
-          userAddress = null; isConnected = false;
-          connectBtn.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
-          connectBtn.classList.remove('connected');
-          copyBtn.style.display = 'none';
-          mintBtn.disabled = true;
-          galleryCount.textContent = '? NFT';
-          nftGrid.innerHTML = `<div class="wallet-required"><span class="big-icon">🔗</span><p>Connect wallet dulu untuk lihat koleksi</p></div>`;
-          showToast('Wallet terputus', 'info');
-        } else {
-          connectBtn.click();
-        }
-      });
-      window.ethereum.on('chainChanged', () => window.location.reload());
-    }
-
-    console.log('🚀 Portal NFT siap!');
-    console.log('🔗 Explorer: ' + CONFIG.explorerUrl);
   </script>
-
 </body>
 </html>
