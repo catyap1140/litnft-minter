@@ -1327,18 +1327,6 @@
       pinataJwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJiNWE2ODYxZi01NWMwLTQ3ZDktYmM2ZS0zMjBlYWFmMDcyNDYiLCJlbWFpbCI6InJleWhhbmFmaWtyaTExNDBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjIwYjljODBhMmQ2NjBiZDFkODFmIiwic2NvcGVkS2V5U2VjcmV0IjoiYmM4YzdkZmZhOGU4MmQ1MjM0NTA1MDhjNDQ1MzI0ZjY3OGVmOTdjNDZmYzNjMWI3YzJiM2Y3YmFiNjIxMWQ0OSIsImV4cCI6MTgxNDAwNTI5Mn0.W0JQ9feTkAYhi3jNoW8kIrCYNTZDWKz9bfN11KWRRTc"
     };
 
-    // ===== WELCOME NFT METADATA =====
-    // GANTI image URL dengan CID gambar welcome NFT kamu
-    const WELCOME_METADATA = {
-      name: "Portal NFT Welcome",
-      description: "Exclusive welcome NFT for early explorers of Portal NFT",
-      image: "https://ipfs.io/ipfs/bafkreibm4h7v3l7k4s7p3q6y5x4z3w2v1u0t9s8r7q6p5o4n3m2l1k0j9i8h7g6f",
-      attributes: [
-        { trait_type: "Type", value: "Welcome" },
-        { trait_type: "Season", value: "Genesis" }
-      ]
-    };
-
     const NFT_ABI = [
       "function mint(address to, string memory tokenURI) public",
       "function totalSupply() public view returns (uint256)",
@@ -1346,7 +1334,6 @@
       "function ownerOf(uint256 tokenId) public view returns (address)",
       "function setApprovalForAll(address operator, bool approved) public",
       "function isApprovedForAll(address owner, address operator) public view returns (bool)",
-      // ===== FUNGSI WELCOME (BARU) =====
       "function claimWelcomeNFT(string memory tokenURI) external",
       "function hasClaimedWelcome(address) external view returns (bool)",
       "function checkWelcomeStatus(address) external view returns (bool)"
@@ -1374,10 +1361,9 @@
     let readProvider, readNftContract, readMarketContract;
     let isApproved = false;
     let walletType = 'metamask';
-
-    // ===== STATE WELCOME =====
     let hasClaimedWelcome = false;
     let isClaiming = false;
+    let WELCOME_METADATA = null;
 
     // ============================================================
     // 3. DOM REFS
@@ -1445,7 +1431,122 @@
         month: 'short' }); }
 
     // ============================================================
-    // 7. WALLET CONNECTION
+    // 7. WELCOME NFT - GENERATE GAMBAR OTOMATIS
+    // ============================================================
+    async function generateWelcomeImage() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 500;
+      canvas.height = 500;
+      const ctx = canvas.getContext('2d');
+
+      // Background gradasi
+      const grad = ctx.createLinearGradient(0, 0, 500, 500);
+      grad.addColorStop(0, '#7c3aed');
+      grad.addColorStop(0.5, '#4f46e5');
+      grad.addColorStop(1, '#1e1b4b');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 500, 500);
+
+      // Bintang / sparkle
+      for (let i = 0; i < 50; i++) {
+        ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.5})`;
+        ctx.beginPath();
+        ctx.arc(Math.random() * 500, Math.random() * 500, Math.random() * 2 + 1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Lingkaran glow
+      ctx.shadowColor = 'rgba(124,58,237,0.5)';
+      ctx.shadowBlur = 40;
+      ctx.fillStyle = 'rgba(124,58,237,0.2)';
+      ctx.beginPath();
+      ctx.arc(250, 250, 150, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Emoji besar
+      ctx.font = '80px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('👋', 250, 190);
+
+      // Text WELCOME
+      ctx.shadowColor = 'rgba(0,0,0,0.5)';
+      ctx.shadowBlur = 10;
+      ctx.font = 'bold 52px Arial';
+      ctx.fillStyle = 'white';
+      ctx.fillText('WELCOME', 250, 270);
+
+      // Subtext
+      ctx.shadowBlur = 5;
+      ctx.font = '20px Arial';
+      ctx.fillStyle = '#a78bfa';
+      ctx.fillText('Portal NFT Explorer', 250, 320);
+
+      // Garis dekorasi
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = 'rgba(167,139,250,0.3)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(100, 350);
+      ctx.lineTo(400, 350);
+      ctx.stroke();
+
+      return canvas.toDataURL('image/png');
+    }
+
+    async function uploadWelcomeImage() {
+      try {
+        const dataUrl = await generateWelcomeImage();
+        const blob = await fetch(dataUrl).then(r => r.blob());
+        const file = new File([blob], 'welcome-nft.png', { type: 'image/png' });
+
+        const fd = new FormData();
+        fd.append('file', file);
+        const res = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${CONFIG.pinataJwt}` },
+          body: fd
+        });
+        if (!res.ok) throw new Error('Upload failed');
+        const data = await res.json();
+        return `https://ipfs.io/ipfs/${data.IpfsHash}`;
+      } catch (e) {
+        console.error('Upload welcome image failed:', e);
+        return null;
+      }
+    }
+
+    async function getWelcomeMetadata() {
+      if (WELCOME_METADATA) return WELCOME_METADATA;
+
+      const cached = localStorage.getItem('welcomeMetadata');
+      if (cached) {
+        try {
+          WELCOME_METADATA = JSON.parse(cached);
+          return WELCOME_METADATA;
+        } catch (e) {}
+      }
+
+      const imageUrl = await uploadWelcomeImage();
+      if (!imageUrl) throw new Error('Failed to upload welcome image');
+
+      WELCOME_METADATA = {
+        name: "Portal NFT Welcome",
+        description: "Exclusive welcome NFT for early explorers of Portal NFT",
+        image: imageUrl,
+        attributes: [
+          { trait_type: "Type", value: "Welcome" },
+          { trait_type: "Season", value: "Genesis" }
+        ]
+      };
+
+      localStorage.setItem('welcomeMetadata', JSON.stringify(WELCOME_METADATA));
+      return WELCOME_METADATA;
+    }
+
+    // ============================================================
+    // 8. WALLET CONNECTION
     // ============================================================
     connectBtn.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -1499,7 +1600,6 @@
           }
         }
 
-        // Check chain
         const chainId = await ethereumProvider.request({ method: 'eth_chainId' });
         if (parseInt(chainId) !== CONFIG.chainId) {
           try {
@@ -1523,7 +1623,6 @@
           }
         }
 
-        // Connect
         provider = new ethers.providers.Web3Provider(ethereumProvider);
         await provider.send('eth_requestAccounts', []);
         signer = provider.getSigner();
@@ -1543,7 +1642,7 @@
         loadGallery();
         loadMarket();
         checkApprovalStatus();
-        checkWelcomeStatus(); // <-- CEK WELCOME STATUS
+        checkWelcomeStatus();
 
       } catch (e) {
         console.error(e);
@@ -1573,7 +1672,7 @@
     }
 
     // ============================================================
-    // 8. APPROVAL CHECK
+    // 9. APPROVAL CHECK
     // ============================================================
     async function checkApprovalStatus() {
       if (!isConnected || !userAddress) return;
@@ -1604,7 +1703,7 @@
     }
 
     // ============================================================
-    // 9. COPY ADDRESS
+    // 10. COPY ADDRESS
     // ============================================================
     copyBtn.addEventListener('click', async () => {
       if (!userAddress) return;
@@ -1615,7 +1714,7 @@
     });
 
     // ============================================================
-    // 10. SWITCH TAB
+    // 11. SWITCH TAB
     // ============================================================
     function switchTab(name) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1627,7 +1726,7 @@
     }
 
     // ============================================================
-    // 11. IPFS UPLOAD
+    // 12. IPFS UPLOAD
     // ============================================================
     async function uploadToIPFS(file) {
       const fd = new FormData();
@@ -1654,24 +1753,8 @@
     }
 
     // ============================================================
-    // 12. WELCOME NFT FUNCTIONS
+    // 13. WELCOME NFT FUNCTIONS
     // ============================================================
-    async function uploadWelcomeMetadata() {
-      try {
-        const res = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${CONFIG.pinataJwt}` },
-          body: JSON.stringify({ pinataContent: WELCOME_METADATA })
-        });
-        if (!res.ok) throw new Error('Failed to upload welcome metadata');
-        const data = await res.json();
-        return `https://ipfs.io/ipfs/${data.IpfsHash}`;
-      } catch (e) {
-        console.error('Upload welcome metadata failed:', e);
-        return null;
-      }
-    }
-
     async function checkWelcomeStatus() {
       if (!isConnected || !userAddress) return;
       try {
@@ -1682,8 +1765,10 @@
           document.getElementById('welcomeStatus').textContent = '🎉 You are eligible for Welcome NFT!';
           document.getElementById('claimWelcomeBtn').disabled = false;
 
+          // Tampilkan preview
           const preview = document.getElementById('welcomePreview');
-          preview.src = WELCOME_METADATA.image;
+          const metadata = await getWelcomeMetadata();
+          preview.src = metadata.image;
           preview.style.display = 'block';
         } else {
           welcomeCard.style.display = 'none';
@@ -1694,7 +1779,7 @@
     }
 
     // ============================================================
-    // 13. CLAIM WELCOME NFT
+    // 14. CLAIM WELCOME NFT
     // ============================================================
     document.getElementById('claimWelcomeBtn').addEventListener('click', async () => {
       if (isClaiming) return;
@@ -1714,12 +1799,19 @@
         progressFill.style.width = '30%';
         progressText.textContent = '⏳ Preparing metadata...';
 
+        const metadata = await getWelcomeMetadata();
         let metadataUrl = localStorage.getItem('welcomeMetadataUrl');
         if (!metadataUrl) {
-          metadataUrl = await uploadWelcomeMetadata();
-          if (metadataUrl) localStorage.setItem('welcomeMetadataUrl', metadataUrl);
+          const res = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${CONFIG.pinataJwt}` },
+            body: JSON.stringify({ pinataContent: metadata })
+          });
+          if (!res.ok) throw new Error('Failed to upload welcome metadata');
+          const data = await res.json();
+          metadataUrl = `https://ipfs.io/ipfs/${data.IpfsHash}`;
+          localStorage.setItem('welcomeMetadataUrl', metadataUrl);
         }
-        if (!metadataUrl) throw new Error('Failed to prepare metadata');
 
         progressFill.style.width = '60%';
         progressText.textContent = '⏳ Minting Welcome NFT...';
@@ -1752,7 +1844,7 @@
     });
 
     // ============================================================
-    // 14. GALLERY
+    // 15. GALLERY
     // ============================================================
     async function loadGallery() {
       if (!isConnected || !userAddress) {
@@ -1807,7 +1899,7 @@
     }
 
     // ============================================================
-    // 15. MARKETPLACE
+    // 16. MARKETPLACE
     // ============================================================
     async function loadMarket() {
       try {
@@ -1858,7 +1950,7 @@
     }
 
     // ============================================================
-    // 16. LIST MODAL
+    // 17. LIST MODAL
     // ============================================================
     function openListModal(tokenId, name, img) {
       if (!isConnected) { showToast('Connect wallet first!', 'error'); return; }
@@ -1949,7 +2041,7 @@
     }
 
     // ============================================================
-    // 17. BUY & CANCEL
+    // 18. BUY & CANCEL
     // ============================================================
     async function buyNFT(listingId, priceEth) {
       if (!isConnected) { showToast('Connect wallet first!', 'error'); return; }
@@ -1987,7 +2079,7 @@
     }
 
     // ============================================================
-    // 18. HISTORY
+    // 19. HISTORY
     // ============================================================
     function loadHistory() { try { history = JSON.parse(localStorage.getItem('portalNftHistory')) || []; } catch (e) { history =
         []; } renderHistory(); }
@@ -2011,7 +2103,7 @@
     }
 
     // ============================================================
-    // 19. IMAGE PREVIEW
+    // 20. IMAGE PREVIEW
     // ============================================================
     $('imageFile').addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -2028,7 +2120,7 @@
     });
 
     // ============================================================
-    // 20. MINT NFT
+    // 21. MINT NFT
     // ============================================================
     $('mintBtn').addEventListener('click', async () => {
       if (isMinting) return;
@@ -2089,7 +2181,7 @@
     });
 
     // ============================================================
-    // 21. SHARE X
+    // 22. SHARE X
     // ============================================================
     $('twitterBtn').addEventListener('click', () => {
       if (!lastTxHash) return;
@@ -2100,7 +2192,7 @@
     });
 
     // ============================================================
-    // 22. CANVAS EDITOR
+    // 23. CANVAS EDITOR
     // ============================================================
     const drawCanvas = document.getElementById('drawCanvas');
     const ctx = drawCanvas.getContext('2d');
@@ -2384,7 +2476,7 @@
     }
 
     // ============================================================
-    // 23. INIT
+    // 24. INIT
     // ============================================================
     (async function init() {
       loadHistory();
