@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portal NFT - Creative Omnichain Studio</title>
+  <title>Portal NFT - Creative Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
@@ -12,277 +12,403 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --bg-body: #05050a;
-      --bg-sidebar: #0b0b14;
-      --bg-topbar: rgba(11, 11, 20, 0.8);
-      --bg-card: rgba(255, 255, 255, 0.03);
-      --bg-card-hover: rgba(255, 255, 255, 0.06);
-      --bg-input: rgba(255, 255, 255, 0.02);
+      --bg-body: #0a0a12;
+      --bg-card: rgba(255,255,255,0.05);
+      --bg-card-hover: rgba(255,255,255,0.10);
+      --bg-header: rgba(10,10,18,0.85);
+      --bg-input: rgba(255,255,255,0.05);
+      --bg-upload: rgba(124,58,237,0.10);
+      --bg-upload-hover: rgba(124,58,237,0.20);
+      --bg-tab: rgba(255,255,255,0.03);
+      --bg-success: rgba(34,197,94,0.10);
       --text-primary: #f3f4f6;
       --text-secondary: #9ca3af;
-      --text-muted: #4b5563;
-      --accent-color: #2563eb;
-      --accent-glow: rgba(37, 99, 235, 0.25);
-      --border-color: rgba(255, 255, 255, 0.07);
-      --border-accent: rgba(37, 99, 235, 0.4);
-      --badge-soon: rgba(245, 158, 11, 0.15);
-      --text-soon: #f59e0b;
+      --text-white: #ffffff;
+      --text-muted: #6b7280;
+      --text-purple: #a78bfa;
+      --border-color: rgba(255,255,255,0.06);
+      --border-purple: rgba(124,58,237,0.30);
+      --shadow-color: rgba(124,58,237,0.15);
+      --glow-color: rgba(124,58,237,0.30);
+      --badge-bg: #7c3aed;
+      --footer-bg: rgba(10,10,18,0.60);
     }
-    body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-primary); min-height: 100vh; display: flex; overflow-x: hidden; }
-    
-    /* SIDEBAR */
-    .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; inset: y 0; left: 0; height: 100vh; z-index: 150; }
-    .sidebar-brand { padding: 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
-    .sidebar-brand-text { font-size: 18px; font-weight: 800; tracking-letter: -0.5px; }
-    .sidebar-brand-text span { color: var(--accent-color); }
-    .sidebar-menu { padding: 20px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
-    .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: var(--text-secondary); text-decoration: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; border: none; text-align: left; width: 100%; font-family: inherit; }
-    .menu-item:hover { color: var(--text-primary); background: var(--bg-card-hover); }
-    .menu-item.active { color: #ffffff; background: var(--accent-color); box-shadow: 0 4px 15px var(--accent-glow); }
-    
-    /* MAIN CONTAINER */
-    .main-content { margin-left: 260px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; position: relative; }
-    
-    /* TOPBAR */
-    .topbar { height: 72px; background: var(--bg-topbar); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 32px; position: sticky; top: 0; z-index: 100; }
-    .page-title { font-size: 18px; font-weight: 700; }
-    .topbar-actions { display: flex; align-items: center; gap: 12px; }
-    .wallet-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
-    .wallet-btn:hover { background: var(--bg-card-hover); border-color: var(--border-accent); }
-    .wallet-btn.connected { background: rgba(37, 99, 235, 0.1); border-color: var(--accent-color); color: #ffffff; }
-    .wallet-btn.connected:hover { background: rgba(220, 38, 38, 0.1); border-color: #dc2626; color: #ef4444; }
-    
-    /* LOGO POSISI POJOK KANAN ATAS */
-    .user-logo { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border-color); object-fit: cover; background: #000; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(circle at 20% 50%, rgba(124,58,237,0.03) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(79,70,229,0.03) 0%, transparent 50%); pointer-events: none; z-index: 0; }
 
-    .wallet-options { display: none; position: absolute; top: 64px; right: 88px; background: #0b0b14; border: 1px solid var(--border-accent); border-radius: 12px; padding: 8px; z-index: 200; min-width: 180px; flex-direction: column; gap: 4px; }
+    .header { background: var(--bg-header); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, #7c3aed, #4f46e5); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; font-weight: 900; box-shadow: 0 4px 20px rgba(124,58,237,0.30); }
+    .logo-text { font-size: 18px; font-weight: 800; color: var(--text-white); }
+    .logo-text span { background: linear-gradient(135deg, #a78bfa, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .header-controls { display: flex; align-items: center; gap: 8px; }
+    .wallet-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 8px 16px; border-radius: 50px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px; }
+    .wallet-btn:hover { background: var(--bg-card-hover); border-color: var(--border-purple); color: var(--text-primary); }
+    .wallet-btn.connected { background: var(--text-purple); border-color: var(--text-purple); color: white; }
+    .wallet-btn.connected:hover { background: #dc2626; border-color: #dc2626; }
+    .wallet-options { display: none; position: absolute; top: 60px; right: 20px; background: #1a1a2e; border: 1px solid var(--border-purple); border-radius: 12px; padding: 8px; z-index: 200; min-width: 180px; flex-direction: column; gap: 4px; }
     .wallet-options.show { display: flex; }
-    .wallet-options button { background: var(--bg-card); border: none; color: var(--text-primary); padding: 10px 14px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; }
+    .wallet-options button { background: var(--bg-card); border: none; color: var(--text-primary); padding: 10px 14px; border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
     .wallet-options button:hover { background: var(--bg-card-hover); }
-    .wallet-options button img { width: 20px; height: 20px; }
+    .wallet-options button img { width: 24px; height: 24px; border-radius: 50%; }
+    .copy-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; transition: all 0.3s; display: none; align-items: center; justify-content: center; font-size: 13px; }
+    .copy-btn:hover { color: var(--text-purple); border-color: var(--border-purple); }
 
-    /* CONTENT WRAPPER */
-    .container { max-width: 1000px; width: 100%; margin: 0 auto; padding: 32px; flex: 1; }
-    .tab-panel { display: none; animation: fadeIn 0.3s ease-in-out; }
+    .hero { padding: 32px 20px 20px; text-align: center; }
+    .hero-greeting { font-size: 22px; font-weight: 900; background: linear-gradient(135deg, #f3f4f6 0%, #a78bfa 50%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: floatGravity 4s ease-in-out infinite; }
+    .hero-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; letter-spacing: 2px; text-transform: uppercase; }
+    @keyframes floatGravity { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+    .tabs { display: flex; background: var(--bg-tab); border-bottom: 1px solid var(--border-color); position: sticky; top: 64px; z-index: 50; }
+    .tab { flex: 1; padding: 12px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.3s; font-family: 'Inter', sans-serif; background: transparent; }
+    .tab:hover { color: var(--text-primary); }
+    .tab.active { color: var(--text-purple); border-bottom-color: var(--text-purple); background: var(--bg-card); }
+
+    .container { max-width: 480px; margin: 0 auto; padding: 16px 16px 100px; position: relative; z-index: 1; }
+    .tab-panel { display: none; animation: fadeSlide 0.4s ease; }
     .tab-panel.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* OMNIHUB CARDS MINT MODUL */
-    .grid-studio { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: start; }
-    .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; position: relative; transition: border-color 0.2s; }
-    .card:hover { border-color: rgba(255,255,255,0.12); }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .card-header h3 { font-size: 16px; font-weight: 700; color: #ffffff; }
-    
-    /* CROSS CHAIN CHAIN SELECTOR SIMULATOR */
-    .chain-flow-box { display: flex; align-items: center; justify-content: space-between; background: var(--bg-input); border: 1px solid var(--border-color); padding: 16px; border-radius: 12px; margin-bottom: 20px; position: relative; }
-    .chain-select-wrapper { width: 44%; }
-    .chain-select-wrapper label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 6px; }
-    select { width: 100%; background: #121222; border: 1px solid var(--border-color); color: #fff; padding: 10px 12px; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; appearance: none; }
-    select:focus { border-color: var(--accent-color); }
-    .flow-arrow { color: var(--accent-color); font-size: 16px; font-weight: bold; margin-top: 16px; }
+    .card { background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 16px; padding: 20px; border: 1px solid var(--border-color); box-shadow: 0 8px 32px var(--shadow-color); transition: all 0.3s; margin-bottom: 12px; }
+    .card:hover { border-color: var(--border-purple); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .card-header h3 { font-size: 15px; font-weight: 800; color: var(--text-primary); }
+    .badge { background: var(--badge-bg); color: white; padding: 3px 12px; border-radius: 20px; font-size: 9px; font-weight: 700; text-transform: uppercase; }
+    .badge-green { background: #16a34a; color: white; }
 
-    /* CANVAS AND FORMS */
-    .canvas-wrapper { border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: #020205; position: relative; margin-bottom: 12px; }
+    .canvas-toolbar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; padding: 10px; background: var(--bg-input); border-radius: 10px; align-items: center; }
+    .tool-btn { padding: 6px 10px; border: 2px solid transparent; border-radius: 6px; background: var(--bg-card); color: var(--text-secondary); cursor: pointer; font-size: 13px; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+    .tool-btn:hover { border-color: var(--border-purple); color: var(--text-primary); }
+    .tool-btn.active { border-color: var(--text-purple) !important; background: var(--bg-upload) !important; color: var(--text-purple) !important; box-shadow: 0 0 15px var(--glow-color); }
+    .tool-group { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+    .tool-divider { width: 1px; height: 30px; background: var(--border-color); margin: 0 4px; }
+    #canvasColor { width: 32px; height: 32px; border: none; padding: 0; border-radius: 6px; cursor: pointer; background: none; }
+    #canvasSize { width: 80px; }
+    #sizeLabel { font-size: 11px; color: var(--text-muted); min-width: 24px; }
+    .canvas-wrapper { position: relative; border: 2px solid var(--border-purple); border-radius: 10px; overflow: hidden; background: #1a1a2e; }
     #drawCanvas { display: block; width: 100%; height: auto; cursor: crosshair; touch-action: none; }
-    .canvas-tools { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 8px; }
-    .tool-btn { background: transparent; border: none; font-size: 14px; padding: 8px 12px; border-radius: 6px; cursor: pointer; color: var(--text-secondary); transition: all 0.2s; }
-    .tool-btn:hover { background: var(--bg-card-hover); color: #fff; }
-    .tool-btn.active { background: var(--accent-color); color: #fff; }
-    
-    input[type="text"], input[type="number"], textarea { width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; background: var(--bg-input); color: #fff; font-family: inherit; outline: none; margin-bottom: 14px; transition: border-color 0.2s; }
-    input[type="text"]:focus, textarea:focus { border-color: var(--accent-color); }
-    
-    .upload-area { border: 2px dashed var(--border-color); border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; color: var(--text-secondary); font-size: 13px; font-weight: 600; margin-bottom: 14px; }
-    .upload-area:hover { border-color: var(--border-accent); background: var(--bg-card-hover); }
-    #previewImg { width: 100%; max-height: 160px; object-fit: cover; border-radius: 10px; margin-bottom: 14px; display: none; border: 1px solid var(--border-color); }
 
-    /* BUTTONS */
-    .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; text-transform: uppercase; letter-spacing: 0.5px; }
-    .btn-primary { background: var(--accent-color); color: #fff; box-shadow: 0 4px 14px var(--accent-glow); }
-    .btn-primary:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-1px); }
-    .btn-primary:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none; }
-    .btn-secondary { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-color); margin-top: 8px; }
-    .btn-secondary:hover { background: var(--bg-card-hover); color: #fff; }
+    input[type="text"], input[type="number"], textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 500; margin-bottom: 10px; background: var(--bg-input); color: var(--text-primary); font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s; }
+    input[type="text"]:focus, input[type="number"]:focus, textarea:focus { border-color: var(--text-purple); box-shadow: 0 0 0 3px var(--glow-color); }
+    textarea { resize: vertical; min-height: 60px; }
+    .upload-area { width: 100%; padding: 16px; border: 2px dashed var(--border-purple); border-radius: 10px; background: var(--bg-upload); text-align: center; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--text-secondary); transition: all 0.3s; margin-bottom: 10px; }
+    .upload-area:hover { background: var(--bg-upload-hover); border-color: var(--text-purple); }
+    .upload-area .icon { font-size: 24px; display: block; margin-bottom: 2px; }
+    input[type="file"] { display: none; }
+    #previewImg { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; display: none; border: 2px solid var(--border-purple); }
 
-    /* GALLERIES & GRIDS */
-    .nft-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
-    .nft-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: all 0.2s; }
-    .nft-card:hover { border-color: var(--border-accent); transform: translateY(-2px); }
-    .nft-card img { width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid var(--border-color); }
-    .nft-info { padding: 14px; }
-    .nft-id { font-size: 10px; font-weight: 700; color: var(--accent-color); text-transform: uppercase; display: inline-block; margin-bottom: 4px; }
-    .nft-name { font-size: 14px; font-weight: 700; color: #fff; }
-    .nft-card .btn-sm { padding: 6px 12px; font-size: 11px; margin-top: 10px; border-radius: 6px; width: auto; text-transform: none; }
+    .progress-wrap { display: none; margin-bottom: 10px; }
+    .progress-bar { height: 4px; background: var(--border-color); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--text-purple), #f59e0b); width: 0%; transition: width 0.5s ease; }
+    .progress-text { font-size: 11px; color: var(--text-secondary); font-weight: 600; margin-top: 4px; text-align: center; }
 
-    /* PROGRESS BAR */
-    .progress-wrap { display: none; margin: 12px 0; }
-    .progress-bar { height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--accent-color); width: 0%; transition: width 0.4s ease; }
-    .progress-text { font-size: 11px; color: var(--text-secondary); margin-top: 6px; text-align: center; font-weight: 600; }
+    .success-box { background: var(--bg-success); border: 1px solid rgba(34,197,94,0.30); border-radius: 10px; padding: 12px; margin-bottom: 10px; display: none; }
+    .success-box h4 { color: #22c55e; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .success-box p { font-size: 11px; color: var(--text-secondary); word-break: break-all; }
+    .tx-link { color: var(--text-purple); text-decoration: none; font-weight: 600; }
+    .tx-link:hover { text-decoration: underline; }
 
-    /* STATUS FEED */
-    .history-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-    .history-item { background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
-    .history-link { color: var(--accent-color); text-decoration: none; font-weight: 600; }
-    
-    /* TOAST */
-    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
-    .toast { background: #0b0b14; border: 1px solid var(--border-color); border-left: 4px solid var(--accent-color); border-radius: 8px; padding: 12px 20px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px; color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: slideIn 0.2s ease forwards; }
-    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; text-transform: uppercase; margin-bottom: 8px; }
+    .btn-mint { background: linear-gradient(135deg, #7c3aed, #4f46e5); color: white; box-shadow: 0 4px 20px var(--glow-color); }
+    .btn-mint:hover:not(:disabled) { transform: scale(1.02); box-shadow: 0 8px 30px var(--glow-color); }
+    .btn-mint:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
+    .btn-list { background: linear-gradient(135deg, #16a34a, #15803d); color: white; }
+    .btn-buy { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; }
+    .btn-cancel { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; }
+    .btn-secondary { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-color); }
+    .btn-twitter { background: #1DA1F2; color: white; display: none; }
+    .btn-approve { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+    .btn-approve:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; }
+    .btn-sm { width: auto; padding: 8px 14px; font-size: 11px; margin-bottom: 0; border-radius: 8px; }
+    #status { text-align: center; font-size: 12px; font-weight: 600; margin-top: 6px; min-height: 18px; color: var(--text-secondary); }
 
-    /* FOOTER BAR */
-    .footer-bar { padding: 24px 32px; border-top: 1px solid var(--border-color); text-align: center; font-size: 12px; color: var(--text-muted); margin-top: auto; background: var(--bg-sidebar); display: flex; justify-content: space-between; align-items: center; }
-    .footer-links { display: flex; gap: 16px; }
-    .footer-links a { color: var(--text-secondary); text-decoration: none; }
-    .footer-links a:hover { color: #fff; }
+    .gallery-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .gallery-header h3 { font-size: 15px; font-weight: 800; }
+    .count-badge { background: var(--bg-card); color: var(--text-purple); padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid var(--border-color); }
+    .nft-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .nft-card { background: var(--bg-card); backdrop-filter: blur(10px); border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.4s; }
+    .nft-card:hover { border-color: var(--border-purple); transform: translateY(-4px); box-shadow: 0 12px 40px var(--shadow-color); }
+    .nft-card img { width: 100%; height: 130px; object-fit: cover; background: var(--border-color); }
+    .nft-card .info { padding: 10px; }
+    .token-id { background: var(--text-purple); color: white; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 3px; }
+    .nft-card .name { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+    .nft-card .card-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
 
-    /* SOON BADGE */
-    .soon-badge { background: var(--badge-soon); color: var(--text-soon); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: auto; }
-    .empty-state { text-align: center; padding: 48px 24px; color: var(--text-secondary); font-size: 14px; }
-    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-top: 2px solid #fff; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 6px; }
+    .market-card { background: var(--bg-card); border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.4s; margin-bottom: 12px; }
+    .market-card:hover { border-color: var(--border-purple); box-shadow: 0 8px 32px var(--shadow-color); }
+    .market-card img { width: 100%; height: 180px; object-fit: cover; }
+    .market-card .market-info { padding: 12px; }
+    .market-card .market-name { font-size: 14px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
+    .market-card .market-seller { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+    .market-card .market-price { font-size: 18px; font-weight: 900; color: #22c55e; margin-bottom: 10px; }
+    .market-card .market-price span { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+    .market-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .market-actions .btn { margin-bottom: 0; }
+
+    .skeleton { background: var(--bg-card); border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color); }
+    .skeleton-img { width: 100%; height: 130px; background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .skeleton-text { padding: 10px; }
+    .skeleton-line { height: 10px; background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; margin-bottom: 6px; }
+    .skeleton-line.short { width: 60%; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+    .empty-state .big-icon { font-size: 40px; display: block; margin-bottom: 8px; }
+    .wallet-required { grid-column: span 2; text-align: center; padding: 30px 20px; background: var(--bg-card); border-radius: 14px; border: 2px dashed var(--border-purple); }
+
+    .history-section { margin-top: 16px; }
+    .history-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .history-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
+    .history-item .h-name { font-weight: 600; color: var(--text-primary); }
+    .history-item .h-time { color: var(--text-muted); font-size: 10px; }
+    .history-item .h-link { color: var(--text-purple); text-decoration: none; font-size: 10px; }
+
+    .list-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+    .list-modal.show { display: flex; }
+    .list-modal-box { background: #1a1a2e; border: 1px solid var(--border-purple); border-radius: 16px; padding: 24px; width: 100%; max-width: 400px; }
+    .list-modal-box h3 { font-size: 16px; font-weight: 800; margin-bottom: 16px; color: var(--text-primary); }
+    .list-modal-box .modal-nft { display: flex; gap: 12px; align-items: center; background: var(--bg-card); border-radius: 10px; padding: 10px; margin-bottom: 16px; }
+    .list-modal-box .modal-nft img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+    .modal-nft-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .modal-nft-id { font-size: 11px; color: var(--text-muted); }
+    .list-modal-box label { font-size: 12px; color: var(--text-secondary); font-weight: 600; display: block; margin-bottom: 6px; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .modal-actions .btn { margin-bottom: 0; }
+
+    #welcomeCard { background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(79,70,229,0.05)); border: 2px solid var(--border-purple); animation: pulseGlow 2s ease-in-out infinite; }
+    @keyframes pulseGlow { 0%,100% { box-shadow: 0 0 20px rgba(124,58,237,0.1); } 50% { box-shadow: 0 0 40px rgba(124,58,237,0.25); } }
+
+    .toast-container { position: fixed; bottom: 80px; right: 16px; z-index: 999; display: flex; flex-direction: column; gap: 8px; max-width: 300px; }
+    .toast { background: rgba(10,10,18,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; color: var(--text-primary); font-size: 13px; font-weight: 600; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: slideInToast 0.4s ease; display: flex; align-items: center; gap: 10px; }
+    .toast.success { border-left: 3px solid #22c55e; }
+    .toast.error { border-left: 3px solid #ef4444; }
+    .toast.info { border-left: 3px solid #a78bfa; }
+    .toast .toast-icon { font-size: 18px; }
+    .toast .toast-msg { flex: 1; font-size: 12px; }
+    .toast .toast-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; }
+    @keyframes slideInToast { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideOutToast { from { opacity: 1; } to { opacity: 0; transform: translateX(40px); } }
+
+    .confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 1000; overflow: hidden; }
+    .confetti-piece { position: absolute; width: 10px; height: 10px; top: -10px; animation: confettiFall linear forwards; }
+    @keyframes confettiFall { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+
+    .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--footer-bg); backdrop-filter: blur(20px); border-top: 1px solid var(--border-color); padding: 10px 16px; z-index: 50; display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .footer a { color: var(--text-muted); text-decoration: none; font-size: 11px; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 5px; }
+    .footer a:hover { color: var(--text-purple); }
+    .footer-divider { color: var(--border-color); font-size: 11px; display: flex; align-items: center; }
+
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid white; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 6px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) {
+      .nft-grid { gap: 8px; }
+      .nft-card img { height: 100px; }
+      .market-card img { height: 150px; }
+      .footer { gap: 10px; }
+      .footer-divider { display: none; }
+      .toast-container { right: 10px; max-width: 260px; }
+      .canvas-toolbar { gap: 4px; padding: 8px; }
+      .tool-btn { padding: 4px 8px; font-size: 12px; }
+      #canvasSize { width: 60px; }
+    }
   </style>
 </head>
 <body>
 
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="sidebar-brand-text">Portal <span>NFT</span></div>
+  <header class="header">
+    <a href="#" class="logo">
+      <div class="logo-icon">⧫</div>
+      <span class="logo-text">Portal <span>NFT</span></span>
+    </a>
+    <div class="header-controls">
+      <button class="copy-btn" id="copyBtn"><i class="fas fa-copy"></i></button>
+      <button class="wallet-btn" id="connectBtn"><i class="fas fa-wallet"></i> Connect Wallet</button>
     </div>
-    <nav class="sidebar-menu">
-      <button class="menu-item active" data-panel="mint" onclick="switchPanel('mint')"><i class="fas fa-magic"></i> Creative Studio</button>
-      <button class="menu-item" data-panel="gallery" onclick="switchPanel('gallery')"><i class="fas fa-images"></i> Collection Gallery</button>
-      <button class="menu-item" data-panel="market" onclick="switchPanel('market')"><i class="fas fa-store"></i> Marketplace</button>
-      <button class="menu-item" data-panel="welcome" onclick="switchPanel('welcome')"><i class="fas fa-gift"></i> Welcome Claims</button>
-    </nav>
-  </aside>
+    <div class="wallet-options" id="walletOptions">
+      <button onclick="connectWallet('metamask')">
+        <img src="https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg" alt="MM" /> MetaMask
+      </button>
+      <button onclick="connectWallet('coinbase')">
+        <img src="https://www.coinbase.com/favicon.ico" alt="CB" /> Coinbase Wallet
+      </button>
+      <button onclick="connectWallet('trust')">
+        <img src="https://trustwallet.com/favicon.ico" alt="TW" /> Trust Wallet
+      </button>
+      <button onclick="connectWallet('brave')">
+        <i class="fas fa-shield-halved" style="color:#fb542b;font-size:20px;"></i> Brave Wallet
+      </button>
+    </div>
+  </header>
 
-  <main class="main-content">
-    
-    <header class="topbar">
-      <div class="page-title" id="pageTitle">Creative Studio</div>
-      <div class="topbar-actions">
-        <button class="wallet-btn" id="connectBtn"><i class="fas fa-wallet"></i> Connect Wallet</button>
-        <img src="1000008981.png" alt="Portal NFT Logo" class="user-logo" id="userLogo" />
-      </div>
-      
-      <div class="wallet-options" id="walletOptions">
-        <button onclick="connectWallet('metamask')"><img src="https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg" alt="MM" /> MetaMask</button>
-        <button onclick="connectWallet('coinbase')"><img src="https://www.coinbase.com/favicon.ico" alt="CB" /> Coinbase</button>
-        <button onclick="connectWallet('trust')"><img src="https://trustwallet.com/favicon.ico" alt="TW" /> Trust Wallet</button>
-      </div>
-    </header>
+  <section class="hero">
+    <div class="hero-greeting">✨ Create & Immortalize Your Art on Chain</div>
+    <div class="hero-sub">✦ mint · list · trade ✦</div>
+  </section>
 
-    <div class="container">
+  <div class="tabs">
+    <div class="tab active" data-tab="mint" onclick="switchTab('mint')"><i class="fas fa-rocket"></i> Mint</div>
+    <div class="tab" data-tab="gallery" onclick="switchTab('gallery')"><i class="fas fa-images"></i> Gallery</div>
+    <div class="tab" data-tab="market" onclick="switchTab('market')"><i class="fas fa-store"></i> Market</div>
+  </div>
 
-      <div class="tab-panel active" id="panel-mint">
-        <div class="grid-studio">
-          
-          <div class="card">
-            <div class="card-header">
-              <h3>🎨 Canvas Free Draw</h3>
-            </div>
-            <div class="canvas-tools">
-              <button class="tool-btn active" onclick="setTool('pencil')">✏️ Draw</button>
-              <button class="tool-btn" onclick="setTool('eraser')">🧹 Erase</button>
-              <button class="tool-btn" onclick="clearCanvasConfirm()" style="color:#ef4444;">🗑️ Clear</button>
-              <input type="color" id="canvasColor" value="#2563eb" style="border:none;background:none;width:28px;height:28px;cursor:pointer;" />
-              <input type="range" id="canvasSize" min="1" max="20" value="4" style="width:60px;" />
-            </div>
-            <div class="canvas-wrapper">
-              <canvas id="drawCanvas" width="500" height="500"></canvas>
-            </div>
-            <button class="btn btn-secondary" onclick="useCanvasForMint()">📸 Attach Artwork to Mint Form</button>
-            <p id="canvasStatus" style="font-size:11px;color:var(--text-secondary);text-align:center;margin-top:8px;">Draw on canvas then attach image</p>
+  <div class="container">
+
+    <!-- MINT TAB -->
+    <div class="tab-panel active" id="panel-mint">
+
+      <!-- CANVAS EDITOR -->
+      <div class="card">
+        <div class="card-header">
+          <h3>🎨 Creative Studio</h3>
+          <span class="badge">Free Draw</span>
+        </div>
+        <div class="canvas-toolbar">
+          <div class="tool-group">
+            <button class="tool-btn active" data-tool="pencil" onclick="setTool('pencil')" title="Pencil">✏️</button>
+            <button class="tool-btn" data-tool="eraser" onclick="setTool('eraser')" title="Eraser">🧹</button>
+            <button class="tool-btn" data-tool="fill" onclick="setTool('fill')" title="Fill">🪣</button>
+            <button class="tool-btn" data-tool="text" onclick="setTool('text')" title="Text">𝘈</button>
           </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h3>🚀 Omnichain Core Deployment</h3>
-            </div>
-            
-            <div class="chain-flow-box">
-              <div class="chain-select-wrapper">
-                <label>Source Chain</label>
-                <select id="sourceChain">
-                  <option value="4441">LitVM LiteForge</option>
-                </select>
-              </div>
-              <div class="flow-arrow"><i class="fas fa-right-long"></i></div>
-              <div class="chain-select-wrapper">
-                <label>Destination Chain</label>
-                <select id="destChain">
-                  <option value="4441">LitVM LiteForge</option>
-                  <option value="arb" disabled>Arbitrum Sepolia (Soon)</option>
-                  <option value="base" disabled>Base Sepolia (Soon)</option>
-                  <option value="opt" disabled>Optimism Sepolia (Soon)</option>
-                </select>
-              </div>
-            </div>
-
-            <input type="text" id="nftName" placeholder="NFT Name (e.g. Genesis Orb)" />
-            <textarea id="nftDesc" placeholder="Description of your decentralized artwork"></textarea>
-            
-            <label for="imageFile">
-              <div class="upload-area" id="uploadArea">📁 Choose File or Draw Above</div>
-            </label>
-            <input type="file" id="imageFile" accept="image/*" style="display:none;" />
-            <img id="previewImg" alt="Preview Image Asset" />
-
-            <div class="progress-wrap" id="progressWrap">
-              <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-              <p class="progress-text" id="progressText"></p>
-            </div>
-
-            <button class="btn btn-primary" id="mintBtn" disabled>Execute Mint Layer</button>
-            <p id="status" style="font-size:12px;text-align:center;margin-top:10px;color:var(--text-secondary);"></p>
+          <div class="tool-divider"></div>
+          <div class="tool-group">
+            <button class="tool-btn" data-tool="rect" onclick="setTool('rect')" title="Rectangle">⬜</button>
+            <button class="tool-btn" data-tool="circle" onclick="setTool('circle')" title="Circle">⭕</button>
+            <button class="tool-btn" data-tool="triangle" onclick="setTool('triangle')" title="Triangle">🔺</button>
           </div>
-
-        </div>
-
-        <div style="margin-top:32px;">
-          <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text-secondary);">📜 Personal Deployment Ledger</h3>
-          <div class="history-list" id="historyList"></div>
-        </div>
-      </div>
-
-      <div class="tab-panel" id="panel-gallery">
-        <div class="nft-grid" id="nftGrid">
-          <div class="empty-state">Connect wallet to index chain collectibles.</div>
-        </div>
-      </div>
-
-      <div class="tab-panel" id="panel-market">
-        <div class="nft-grid" id="marketGrid">
-          <div class="empty-state">No order book items currently available.</div>
-        </div>
-      </div>
-
-      <div class="tab-panel" id="panel-welcome">
-        <div class="card" id="welcomeCard" style="max-width:500px;margin:0 auto;text-align:center;">
-          <h3 style="margin-bottom:12px;">🎁 Early Explorer Incentives</h3>
-          <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;">Claim an introductory smart NFT contract identifier proof on LitVM.</p>
-          <button class="btn btn-primary" id="claimWelcomeBtn">Claim Welcome Verification NFT</button>
-          <div class="progress-wrap" id="welcomeProgressWrap">
-            <div class="progress-bar"><div class="progress-fill" id="welcomeProgressFill"></div></div>
-            <p class="progress-text" id="welcomeProgressText"></p>
+          <div class="tool-divider"></div>
+          <div class="tool-group">
+            <input type="color" id="canvasColor" value="#7c3aed" />
+            <input type="range" id="canvasSize" min="1" max="20" value="4" />
+            <span id="sizeLabel">4</span>
+          </div>
+          <div class="tool-divider"></div>
+          <div class="tool-group">
+            <button class="tool-btn" onclick="undoCanvas()" title="Undo">↩️</button>
+            <button class="tool-btn" onclick="redoCanvas()" title="Redo">↪️</button>
+            <button class="tool-btn" onclick="clearCanvasConfirm()" title="Clear" style="color:#ef4444;">🗑️</button>
           </div>
         </div>
+        <div class="canvas-wrapper">
+          <canvas id="drawCanvas" width="500" height="500"></canvas>
+        </div>
+        <button class="btn btn-mint" onclick="useCanvasForMint()" style="margin-top:10px;">📸 Use for Mint NFT</button>
+        <p id="canvasStatus" style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:4px;">🎨 Draw freely, then click button above</p>
       </div>
 
+      <!-- WELCOME NFT -->
+      <div class="card" id="welcomeCard" style="display:none;">
+        <div class="card-header">
+          <h3>🎁 Welcome NFT</h3>
+          <span class="badge badge-green">Free Claim</span>
+        </div>
+        <div style="text-align:center;padding:12px 0;">
+          <span style="font-size:48px;display:block;margin-bottom:8px;">👋</span>
+          <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">You're a new explorer! Claim your <strong style="color:var(--text-purple);">Welcome NFT</strong> for free.</p>
+          <img id="welcomePreview" src="" alt="Welcome NFT" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;border:2px solid var(--border-purple);margin-bottom:10px;display:none;" />
+        </div>
+        <button class="btn btn-mint" id="claimWelcomeBtn"><i class="fas fa-gift"></i> Claim Welcome NFT</button>
+        <div class="progress-wrap" id="welcomeProgressWrap">
+          <div class="progress-bar"><div class="progress-fill" id="welcomeProgressFill"></div></div>
+          <p class="progress-text" id="welcomeProgressText"></p>
+        </div>
+        <p id="welcomeStatus" style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:4px;"></p>
+      </div>
+
+      <!-- MINT FORM -->
+      <div class="card">
+        <div class="card-header">
+          <h3>🚀 Mint NFT</h3>
+          <span class="badge">ERC-721</span>
+        </div>
+        <input type="text" id="nftName" placeholder="NFT Name (optional)" />
+        <input type="text" id="nftDesc" placeholder="Description (optional)" />
+        <label for="imageFile">
+          <div class="upload-area" id="uploadArea"><span class="icon">📁</span>Tap to select image</div>
+        </label>
+        <input type="file" id="imageFile" accept="image/*" />
+        <img id="previewImg" alt="Preview" />
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          <p class="progress-text" id="progressText"></p>
+        </div>
+        <div class="success-box" id="successBox">
+          <h4>✅ NFT Successfully Minted!</h4>
+          <p id="txDisplay"></p>
+        </div>
+        <button class="btn btn-mint" id="mintBtn" disabled><i class="fas fa-rocket"></i> Mint NFT Now</button>
+        <button class="btn btn-twitter" id="twitterBtn"><i class="fab fa-x-twitter"></i> Share to X</button>
+        <p id="status"></p>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="history-section">
+        <div class="history-title"><i class="fas fa-clock-rotate-left"></i> Mint History</div>
+        <div id="historyList"></div>
+      </div>
     </div>
 
-    <footer class="footer-bar">
-      <div>&copy; 2026 Portal NFT Engine. Architecture powered by LitVM.</div>
-      <div class="footer-links">
-        <a href="https://docs.litvm.com/" target="_blank">Documentation</a>
-        <a href="https://liteforge.explorer.caldera.xyz/" target="_blank">Explorer</a>
+    <!-- GALLERY TAB -->
+    <div class="tab-panel" id="panel-gallery">
+      <div class="gallery-header">
+        <h3><i class="fas fa-images"></i> Your Collection</h3>
+        <span class="count-badge" id="galleryCount">0 NFT</span>
       </div>
-    </footer>
-  </main>
+      <div class="nft-grid" id="nftGrid">
+        <div class="wallet-required" style="grid-column:span 2">
+          <span style="font-size:36px;display:block;margin-bottom:8px">🔗</span>
+          <p style="color:var(--text-muted);font-size:13px;font-weight:600">Connect wallet first</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKET TAB -->
+    <div class="tab-panel" id="panel-market">
+      <div class="gallery-header">
+        <h3><i class="fas fa-store"></i> Marketplace</h3>
+        <span class="count-badge" id="marketCount">0 listing</span>
+      </div>
+      <div id="marketGrid">
+        <div class="empty-state"><span class="big-icon">🏪</span><p>No NFTs listed yet</p></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LIST MODAL -->
+  <div class="list-modal" id="listModal">
+    <div class="list-modal-box">
+      <h3>🏷️ Sell NFT</h3>
+      <div class="modal-nft">
+        <img id="modalImg" src="" alt="NFT" />
+        <div class="modal-nft-info">
+          <div class="modal-nft-name" id="modalName">-</div>
+          <div class="modal-nft-id" id="modalId">Token #-</div>
+        </div>
+      </div>
+      <label>Price (zkLTC)</label>
+      <input type="number" id="listPrice" placeholder="0.01" step="0.001" min="0.001" />
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeListModal()">Cancel</button>
+        <button class="btn btn-approve" id="approveBtn" onclick="approveAndList()">🔓 Approve & List</button>
+        <button class="btn btn-list" id="confirmListBtn" onclick="confirmList()" style="display:none;">List Now</button>
+      </div>
+      <p id="approveStatus" style="font-size:11px;color:var(--text-muted);margin-top:8px;text-align:center;"></p>
+    </div>
+  </div>
 
   <div class="toast-container" id="toastContainer"></div>
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <footer class="footer">
+    <a href="https://docs.litvm.com/" target="_blank"><i class="fas fa-book"></i> LitVM Doc</a>
+    <span class="footer-divider">|</span>
+    <a href="https://liteforge.hub.caldera.xyz/" target="_blank"><i class="fas fa-arrows-left-right"></i> Bridge</a>
+    <span class="footer-divider">|</span>
+    <a href="https://liteforge.explorer.caldera.xyz/" target="_blank"><i class="fas fa-magnifying-glass"></i> Explorer</a>
+    <span class="footer-divider">|</span>
+    <a href="https://x.com/catyaphunter_" target="_blank"><i class="fab fa-x-twitter"></i> Twitter</a>
+  </footer>
 
   <script>
     const CONFIG = {
@@ -302,153 +428,644 @@
       "function setApprovalForAll(address operator, bool approved) public",
       "function isApprovedForAll(address owner, address operator) public view returns (bool)",
       "function claimWelcomeNFT(string memory tokenURI) external",
-      "function hasClaimedWelcome(address) external view returns (bool)"
+      "function hasClaimedWelcome(address) external view returns (bool)",
+      "function checkWelcomeStatus(address) external view returns (bool)"
     ];
 
     const MARKET_ABI = [
       "function listNFT(address nftContract, uint256 tokenId, uint256 price) external",
       "function buyNFT(uint256 listingId) external payable",
       "function cancelListing(uint256 listingId) external",
-      "function getActiveListings() external view returns (tuple(address seller, address nftContract, uint256 tokenId, uint256 price, bool active)[], uint256[])"
+      "function getActiveListings() external view returns (tuple(address seller, address nftContract, uint256 tokenId, uint256 price, bool active)[], uint256[])",
+      "function listings(uint256) external view returns (address seller, address nftContract, uint256 tokenId, uint256 price, bool active)"
     ];
 
-    let provider, signer, nftContract, marketContract, userAddress = null, isConnected = false;
-    let isCanvasDirty = false, isMinting = false, isClaiming = false;
+    let provider, signer, nftContract, marketContract;
+    let userAddress = null;
+    let isConnected = false;
+    let isMinting = false;
+    let isClaiming = false;
+    let lastTxHash = null;
+    let lastNftName = '';
+    let history = [];
+    let pendingListData = {};
+    let isApproved = false;
+    let WELCOME_METADATA = null;
+
     const $ = id => document.getElementById(id);
+    const connectBtn = $('connectBtn');
+    const copyBtn = $('copyBtn');
+    const walletOptions = $('walletOptions');
 
-    let readProvider = new ethers.providers.JsonRpcProvider(CONFIG.rpcUrl, { chainId: CONFIG.chainId, name: 'LitVM' });
-    let readNftContract = new ethers.Contract(CONFIG.nftContract, NFT_ABI, readProvider);
-    let readMarketContract = new ethers.Contract(CONFIG.marketContract, MARKET_ABI, readProvider);
+    let readProvider, readNftContract, readMarketContract;
+    try {
+      readProvider = new ethers.providers.JsonRpcProvider(CONFIG.rpcUrl, { chainId: CONFIG.chainId, name: 'LitVM' });
+      readNftContract = new ethers.Contract(CONFIG.nftContract, NFT_ABI, readProvider);
+      readMarketContract = new ethers.Contract(CONFIG.marketContract, MARKET_ABI, readProvider);
+    } catch(e) { console.warn('Read provider error:', e); }
 
-    function showToast(msg, type='info') {
-      const t = document.createElement('div'); t.className = `toast ${type}`;
-      t.innerHTML = `<span>${msg}</span>`;
+    // TOAST
+    function showToast(msg, type='info', duration=4000) {
+      const icons = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' };
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span class="toast-msg">${msg}</span><button class="toast-close">&times;</button>`;
+      t.querySelector('.toast-close').onclick = () => { t.style.animation='slideOutToast 0.3s ease forwards'; setTimeout(()=>t.remove(),300); };
       $('toastContainer').appendChild(t);
-      setTimeout(() => t.remove(), 4000);
+      setTimeout(()=>{ if(t.parentNode){ t.style.animation='slideOutToast 0.3s ease forwards'; setTimeout(()=>t.remove(),300); } },duration);
     }
 
-    function switchPanel(panelId) {
-      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      document.querySelector(`[data-panel="${panelId}"]`).classList.add('active');
-      $('panel-' + panelId).classList.add('active');
-      $('pageTitle').textContent = panelId.toUpperCase();
-      if(panelId==='gallery') loadGallery();
-      if(panelId==='market') loadMarket();
+    // CONFETTI
+    function fireConfetti() {
+      const colors = ['#7c3aed','#a78bfa','#4f46e5','#f59e0b','#22c55e','#ef4444','#ec4899'];
+      for(let i=0;i<80;i++){
+        const p=document.createElement('div'); p.className='confetti-piece';
+        const color=colors[Math.floor(Math.random()*colors.length)];
+        const size=Math.random()*8+4;
+        p.style.cssText=`left:${Math.random()*100}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random()>0.5?'50%':'0'};animation-duration:${Math.random()*2+2}s;animation-delay:${Math.random()*1.5}s;`;
+        $('confettiContainer').appendChild(p);
+        setTimeout(()=>p.remove(),4000);
+      }
     }
 
-    // IPFS CONTEXT
+    // UTILS
+    function setProgress(pct,text){ $('progressWrap').style.display='block'; $('progressFill').style.width=pct+'%'; $('progressText').textContent=text; }
+    function hideProgress(){ $('progressWrap').style.display='none'; $('progressFill').style.width='0%'; }
+    function showStatus(msg,isError=false){ $('status').textContent=msg; $('status').style.color=isError?'#ef4444':'var(--text-secondary)'; }
+    function truncate(addr){ return addr?addr.slice(0,6)+'...'+addr.slice(-4):'-'; }
+    function formatTime(ts){ return new Date(ts).toLocaleString('en-US',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'}); }
+
+    // COPY
+    copyBtn.addEventListener('click', async()=>{
+      if(!userAddress) return;
+      await navigator.clipboard.writeText(userAddress);
+      copyBtn.innerHTML='<i class="fas fa-check"></i>';
+      showToast('Address copied!','success',2000);
+      setTimeout(()=>{ copyBtn.innerHTML='<i class="fas fa-copy"></i>'; },2000);
+    });
+
+    // SWITCH TAB
+    function switchTab(name){
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelector(`.tab[data-tab="${name}"]`).classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      $('panel-'+name).classList.add('active');
+      if(name==='gallery') loadGallery();
+      if(name==='market') loadMarket();
+    }
+
+    // IPFS
     async function uploadToIPFS(file){
-      const fd = new FormData(); fd.append('file', file);
-      const res = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS',{method:'POST',headers:{Authorization:`Bearer ${CONFIG.pinataJwt}`},body:fd});
-      if(!res.ok) throw new Error('IPFS asset transport failed');
-      return `https://ipfs.io/ipfs/${(await res.json()).IpfsHash}`;
+      const fd=new FormData(); fd.append('file',file);
+      const res=await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS',{method:'POST',headers:{Authorization:`Bearer ${CONFIG.pinataJwt}`},body:fd});
+      if(!res.ok) throw new Error('Failed to upload image');
+      const data=await res.json();
+      return `https://ipfs.io/ipfs/${data.IpfsHash}`;
     }
-    async function uploadMetadata(name, desc, img){
-      const res = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${CONFIG.pinataJwt}`},body:JSON.stringify({pinataContent:{name,description:desc,image:img}})});
-      return `https://ipfs.io/ipfs/${(await res.json()).IpfsHash}`;
+    async function uploadMetadata(name,desc,imageUrl){
+      const res=await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${CONFIG.pinataJwt}`},body:JSON.stringify({pinataContent:{name,description:desc,image:imageUrl}})});
+      if(!res.ok) throw new Error('Failed to upload metadata');
+      const data=await res.json();
+      return `https://ipfs.io/ipfs/${data.IpfsHash}`;
     }
 
-    // WALLET CONNECTION
-    $('connectBtn').addEventListener('click', (e) => { e.stopPropagation(); if(isConnected){ disconnect(); } else { $('walletOptions').classList.toggle('show'); } });
-    document.addEventListener('click', () => $('walletOptions').classList.remove('show'));
+    // WELCOME NFT
+    async function generateWelcomeImage(){
+      const canvas=document.createElement('canvas'); canvas.width=500; canvas.height=500;
+      const ctx=canvas.getContext('2d');
+      const grad=ctx.createLinearGradient(0,0,500,500);
+      grad.addColorStop(0,'#7c3aed'); grad.addColorStop(0.5,'#4f46e5'); grad.addColorStop(1,'#1e1b4b');
+      ctx.fillStyle=grad; ctx.fillRect(0,0,500,500);
+      for(let i=0;i<50;i++){
+        ctx.fillStyle=`rgba(255,255,255,${Math.random()*0.5})`;
+        ctx.beginPath(); ctx.arc(Math.random()*500,Math.random()*500,Math.random()*2+1,0,Math.PI*2); ctx.fill();
+      }
+      ctx.shadowColor='rgba(124,58,237,0.5)'; ctx.shadowBlur=40;
+      ctx.fillStyle='rgba(124,58,237,0.2)'; ctx.beginPath(); ctx.arc(250,250,150,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0; ctx.font='80px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('👋',250,190);
+      ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=10;
+      ctx.font='bold 52px Arial'; ctx.fillStyle='white'; ctx.fillText('WELCOME',250,270);
+      ctx.font='20px Arial'; ctx.fillStyle='#a78bfa'; ctx.fillText('Portal NFT Explorer',250,320);
+      ctx.shadowBlur=0; ctx.strokeStyle='rgba(167,139,250,0.3)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(100,350); ctx.lineTo(400,350); ctx.stroke();
+      return canvas.toDataURL('image/png');
+    }
+
+    async function getWelcomeMetadataUrl(){
+      const cached=localStorage.getItem('welcomeMetadataUrl');
+      if(cached) return cached;
+      const dataUrl=await generateWelcomeImage();
+      const blob=await fetch(dataUrl).then(r=>r.blob());
+      const file=new File([blob],'welcome-nft.png',{type:'image/png'});
+      const imageUrl=await uploadToIPFS(file);
+      const metadata={ name:'Portal NFT Welcome', description:'Exclusive welcome NFT for early explorers of Portal NFT', image:imageUrl, attributes:[{trait_type:'Type',value:'Welcome'},{trait_type:'Season',value:'Genesis'}] };
+      const res=await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${CONFIG.pinataJwt}`},body:JSON.stringify({pinataContent:metadata})});
+      if(!res.ok) throw new Error('Failed to upload welcome metadata');
+      const data=await res.json();
+      const metadataUrl=`https://ipfs.io/ipfs/${data.IpfsHash}`;
+      localStorage.setItem('welcomeMetadataUrl',metadataUrl);
+      return metadataUrl;
+    }
+
+    async function checkWelcomeStatus(){
+      if(!isConnected||!userAddress) return;
+      try {
+        const claimed=await readNftContract.hasClaimedWelcome(userAddress);
+        if(!claimed){
+          $('welcomeCard').style.display='block';
+          $('welcomeStatus').textContent='🎉 You are eligible for Welcome NFT!';
+          const dataUrl=await generateWelcomeImage();
+          $('welcomePreview').src=dataUrl;
+          $('welcomePreview').style.display='block';
+        } else {
+          $('welcomeCard').style.display='none';
+        }
+      } catch(e){ console.warn('Welcome check failed:',e); }
+    }
+
+    // CLAIM WELCOME NFT
+    $('claimWelcomeBtn').addEventListener('click', async()=>{
+      if(isClaiming) return;
+      if(!isConnected){ showToast('Connect wallet first!','error'); return; }
+      isClaiming=true;
+      const btn=$('claimWelcomeBtn');
+      btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Claiming...';
+      $('welcomeProgressWrap').style.display='block';
+      $('welcomeProgressFill').style.width='20%';
+      $('welcomeProgressText').textContent='⏳ Preparing Welcome NFT...';
+      try {
+        $('welcomeProgressFill').style.width='50%';
+        $('welcomeProgressText').textContent='⏳ Uploading to IPFS...';
+        const metadataUrl=await getWelcomeMetadataUrl();
+        $('welcomeProgressFill').style.width='75%';
+        $('welcomeProgressText').textContent='⏳ Minting Welcome NFT...';
+        const tx=await nftContract.claimWelcomeNFT(metadataUrl);
+        await tx.wait();
+        $('welcomeProgressFill').style.width='100%';
+        $('welcomeProgressText').textContent='✅ Welcome NFT claimed!';
+        $('welcomeCard').style.display='none';
+        showToast('🎉 Welcome NFT claimed successfully!','success');
+        fireConfetti();
+        loadGallery();
+      } catch(e){
+        let msg=e.message;
+        if(msg.includes('user rejected')) msg='Transaction rejected';
+        if(msg.includes('Already claimed')) msg='Already claimed!';
+        showToast('❌ '+msg,'error');
+        $('welcomeProgressText').textContent='❌ '+msg;
+      } finally {
+        isClaiming=false;
+        btn.disabled=false; btn.innerHTML='<i class="fas fa-gift"></i> Claim Welcome NFT';
+        setTimeout(()=>{ $('welcomeProgressWrap').style.display='none'; },3000);
+      }
+    });
+
+    // CONNECT WALLET
+    connectBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if(isConnected){ disconnectWallet(); return; }
+      walletOptions.classList.toggle('show');
+    });
+    document.addEventListener('click', function(e){
+      if(!e.target.closest('.header-controls')&&!e.target.closest('.wallet-options')) walletOptions.classList.remove('show');
+    });
 
     async function connectWallet(type){
+      walletOptions.classList.remove('show');
+      connectBtn.innerHTML='<span class="spinner"></span> Connecting...';
+      connectBtn.disabled=true;
       try {
-        if(!window.ethereum) throw new Error("No EIP-1193 provider found");
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner(); userAddress = await signer.getAddress();
-        nftContract = new ethers.Contract(CONFIG.nftContract, NFT_ABI, signer);
-        marketContract = new ethers.Contract(CONFIG.marketContract, MARKET_ABI, signer);
-        isConnected = true;
-        $('connectBtn').innerHTML = userAddress.slice(0,6) + '...' + userAddress.slice(-4);
-        $('connectBtn').classList.add('connected');
-        if($('imageFile').files[0] || isCanvasDirty) $('mintBtn').disabled = false;
-        showToast('Secure handshake accepted', 'success');
-        loadGallery();
-      } catch(e){ showToast(e.message, 'error'); }
-    }
-    function disconnect(){ isConnected=false; $('connectBtn').innerHTML='<i class="fas fa-wallet"></i> Connect Wallet'; $('connectBtn').classList.remove('connected'); $('mintBtn').disabled=true; }
+        let ep=null;
+        if(type==='coinbase'&&window.ethereum&&window.ethereum.isCoinbaseWallet) ep=window.ethereum;
+        else if(type==='trust'&&window.ethereum&&window.ethereum.isTrust) ep=window.ethereum;
+        else if(window.ethereum) ep=window.ethereum;
+        else throw new Error('No Web3 wallet detected! Please install a wallet.');
 
-    // RENDER GALLERY & MARKET
-    async function loadGallery(){
-      if(!isConnected) return;
-      $('nftGrid').innerHTML = '<div class="empty-state">Indexing blockchain assets...</div>';
-      try {
-        const total = await readNftContract.totalSupply(); let html = '';
-        for(let i=0; i<Math.min(Number(total), 20); i++){
-          const owner = await readNftContract.ownerOf(i);
-          if(owner.toLowerCase() === userAddress.toLowerCase()){
-            html += `<div class="nft-card"><img src="https://via.placeholder.com/200?text=Asset+${i}"/><div class="nft-info"><span class="nft-id">#${i}</span><div class="nft-name">LitVM Layer Asset</div></div></div>`;
+        const chainId=await ep.request({method:'eth_chainId'});
+        if(parseInt(chainId)!==CONFIG.chainId){
+          try { await ep.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+CONFIG.chainId.toString(16)}]}); }
+          catch(se){
+            if(se.code===4902){
+              await ep.request({method:'wallet_addEthereumChain',params:[{chainId:'0x'+CONFIG.chainId.toString(16),chainName:'LitVM LiteForge',rpcUrls:[CONFIG.rpcUrl],nativeCurrency:{name:'zkLTC',symbol:'zkLTC',decimals:18},blockExplorerUrls:['https://liteforge.explorer.caldera.xyz']}]});
+            } else throw se;
           }
         }
-        $('nftGrid').innerHTML = html || '<div class="empty-state">No matching cryptographic records.</div>';
-      } catch(e){ $('nftGrid').innerHTML = 'Error compiling data.'; }
+        provider=new ethers.providers.Web3Provider(ep);
+        await provider.send('eth_requestAccounts',[]);
+        signer=provider.getSigner();
+        userAddress=await signer.getAddress();
+        nftContract=new ethers.Contract(CONFIG.nftContract,NFT_ABI,signer);
+        marketContract=new ethers.Contract(CONFIG.marketContract,MARKET_ABI,signer);
+        isConnected=true;
+        connectBtn.innerHTML='<i class="fas fa-check-circle"></i> '+truncate(userAddress)+' ✕';
+        connectBtn.classList.add('connected');
+        connectBtn.disabled=false;
+        copyBtn.style.display='flex';
+        showToast('Wallet connected!','success');
+        showStatus('✅ Wallet connected!');
+        loadGallery();
+        loadMarket();
+        checkWelcomeStatus();
+        ep.on('accountsChanged',accounts=>{ if(accounts.length===0) disconnectWallet(); else connectWallet(type); });
+        ep.on('chainChanged',()=>window.location.reload());
+      } catch(e){
+        showToast('Connection failed: '+e.message,'error');
+        connectBtn.innerHTML='<i class="fas fa-wallet"></i> Connect Wallet';
+        connectBtn.disabled=false;
+        connectBtn.classList.remove('connected');
+      }
     }
 
-    async function loadMarket(){
-      $('marketGrid').innerHTML = '<div class="empty-state">Synchronizing state machine...</div>';
+    function disconnectWallet(){
+      userAddress=null; isConnected=false; signer=null; nftContract=null; marketContract=null; isApproved=false;
+      connectBtn.innerHTML='<i class="fas fa-wallet"></i> Connect Wallet';
+      connectBtn.classList.remove('connected');
+      copyBtn.style.display='none';
+      $('mintBtn').disabled=true;
+      $('welcomeCard').style.display='none';
+      $('nftGrid').innerHTML=`<div class="wallet-required" style="grid-column:span 2"><span style="font-size:36px;display:block;margin-bottom:8px">🔗</span><p style="color:var(--text-muted);font-size:13px;font-weight:600">Connect wallet first</p></div>`;
+      showToast('Wallet disconnected','info');
+    }
+
+    // APPROVAL
+    async function checkApprovalStatus(){
+      if(!isConnected||!userAddress) return false;
+      try { isApproved=await nftContract.isApprovedForAll(userAddress,CONFIG.marketContract); return isApproved; } catch(e){ return false; }
+    }
+    async function approveMarketplace(){
+      if(!isConnected){ showToast('Connect wallet first!','error'); return false; }
       try {
-        const [listings] = await readMarketContract.getActiveListings();
-        let html = '';
-        listings.forEach((l, index) => {
-          if(l.active) html += `<div class="nft-card"><img src="https://via.placeholder.com/200?text=Token+${l.tokenId}"/><div class="nft-info"><div class="nft-name">Value: ${ethers.utils.formatEther(l.price)} zkLTC</div></div></div>`;
-        });
-        $('marketGrid').innerHTML = html || '<div class="empty-state">Order book is empty.</div>';
-      } catch(e){ $('marketGrid').innerHTML = 'Sync failed.'; }
+        showToast('⏳ Approving marketplace...','info');
+        const tx=await nftContract.setApprovalForAll(CONFIG.marketContract,true);
+        await tx.wait();
+        isApproved=true;
+        showToast('✅ Marketplace approved!','success');
+        return true;
+      } catch(e){
+        let msg=e.message;
+        if(msg.includes('user rejected')) msg='Approval rejected';
+        showToast('❌ '+msg,'error');
+        return false;
+      }
     }
 
-    // CANVAS CODE LOGIC
-    const drawCanvas = $('drawCanvas'); const ctx = drawCanvas.getContext('2d');
-    let isDrawing = false, currentTool = 'pencil', lastX = 0, lastY = 0;
-    ctx.fillStyle = '#020205'; ctx.fillRect(0, 0, 500, 500);
+    // GALLERY
+    async function loadGallery(){
+      if(!isConnected||!userAddress){
+        $('nftGrid').innerHTML=`<div class="wallet-required" style="grid-column:span 2"><span style="font-size:36px;display:block;margin-bottom:8px">🔗</span><p style="color:var(--text-muted);font-size:13px;font-weight:600">Connect wallet first</p></div>`;
+        return;
+      }
+      try {
+        $('nftGrid').innerHTML=Array(4).fill(`<div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-text"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>`).join('');
+        const total=await readNftContract.totalSupply();
+        const myNfts=[];
+        for(let i=0;i<Number(total);i++){
+          try {
+            const owner=await readNftContract.ownerOf(i);
+            if(owner.toLowerCase()===userAddress.toLowerCase()){
+              let img=`https://via.placeholder.com/300/7c3aed/ffffff?text=NFT+%23${i}`;
+              let name=`Portal NFT #${i}`;
+              try {
+                let uri=await readNftContract.tokenURI(i);
+                if(uri.startsWith('ipfs://')) uri=uri.replace('ipfs://','https://ipfs.io/ipfs/');
+                const r=await fetch(uri,{signal:AbortSignal.timeout(5000)});
+                if(r.ok){ const m=await r.json(); if(m.image) img=m.image.startsWith('ipfs://')?m.image.replace('ipfs://','https://ipfs.io/ipfs/'):m.image; if(m.name) name=m.name; }
+              } catch(e){}
+              myNfts.push({id:i,name,img});
+            }
+          } catch(e){}
+        }
+        $('galleryCount').textContent=myNfts.length+' NFT';
+        if(myNfts.length===0){ $('nftGrid').innerHTML=`<div class="empty-state" style="grid-column:span 2"><span class="big-icon">🖼️</span><p>You don't have any NFTs yet</p></div>`; return; }
+        $('nftGrid').innerHTML=myNfts.map(nft=>`
+          <div class="nft-card">
+            <img src="${nft.img}" onerror="this.src='https://via.placeholder.com/300/7c3aed/ffffff?text=Error'" />
+            <div class="info">
+              <span class="token-id">#${nft.id}</span>
+              <div class="name">${nft.name}</div>
+              <div class="card-actions">
+                <button class="btn btn-list btn-sm" onclick="openListModal(${nft.id},'${nft.name}','${nft.img}')">🏷️ Sell</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch(e){ $('nftGrid').innerHTML=`<div class="empty-state" style="grid-column:span 2"><span class="big-icon">⚠️</span><p>Failed to load gallery</p></div>`; }
+    }
 
-    function setTool(t){ currentTool = t; document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active')); }
-    function clearCanvasConfirm(){ ctx.fillStyle = '#020205'; ctx.fillRect(0,0,500,500); isCanvasDirty = false; }
-    
-    drawCanvas.addEventListener('mousedown', (e) => { isDrawing = true; const r=drawCanvas.getBoundingClientRect(); lastX=(e.clientX-r.left)*(500/r.width); lastY=(e.clientY-r.top)*(500/r.height); });
-    drawCanvas.addEventListener('mousemove', (e) => {
-      if(!isDrawing) return; const r=drawCanvas.getBoundingClientRect();
-      const x=(e.clientX-r.left)*(500/r.width); const y=(e.clientY-r.top)*(500/r.height);
-      ctx.strokeStyle = currentTool==='eraser'?'#020205':$('canvasColor').value;
-      ctx.lineWidth = $('canvasSize').value; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
-      lastX = x; lastY = y; isCanvasDirty = true;
+    // MARKETPLACE
+    async function loadMarket(){
+      try {
+        $('marketGrid').innerHTML=`<div class="empty-state"><span class="big-icon">⏳</span><p>Loading...</p></div>`;
+        const [listings,ids]=await readMarketContract.getActiveListings();
+        $('marketCount').textContent=listings.length+' listing';
+        if(listings.length===0){ $('marketGrid').innerHTML=`<div class="empty-state"><span class="big-icon">🏪</span><p>No NFTs listed yet</p></div>`; return; }
+        let html='';
+        for(let i=0;i<listings.length;i++){
+          const l=listings[i]; const lid=Number(ids[i]); const tokenId=Number(l.tokenId);
+          const price=ethers.utils.formatEther(l.price);
+          let img=`https://via.placeholder.com/400/7c3aed/ffffff?text=NFT+%23${tokenId}`;
+          let name=`Portal NFT #${tokenId}`;
+          try {
+            let uri=await readNftContract.tokenURI(tokenId);
+            if(uri.startsWith('ipfs://')) uri=uri.replace('ipfs://','https://ipfs.io/ipfs/');
+            const r=await fetch(uri,{signal:AbortSignal.timeout(5000)});
+            if(r.ok){ const m=await r.json(); if(m.image) img=m.image.startsWith('ipfs://')?m.image.replace('ipfs://','https://ipfs.io/ipfs/'):m.image; if(m.name) name=m.name; }
+          } catch(e){}
+          const isMine=userAddress&&l.seller.toLowerCase()===userAddress.toLowerCase();
+          html+=`
+            <div class="market-card">
+              <img src="${img}" onerror="this.src='https://via.placeholder.com/400/7c3aed/ffffff?text=Error'" />
+              <div class="market-info">
+                <div class="market-name">${name}</div>
+                <div class="market-seller">Seller: ${truncate(l.seller)}</div>
+                <div class="market-price">${price} <span>zkLTC</span></div>
+                <div class="market-actions">
+                  ${isMine?`<button class="btn btn-cancel btn-sm" onclick="cancelListing(${lid})">❌ Cancel</button>`:`<button class="btn btn-buy btn-sm" onclick="buyNFT(${lid},'${price}')">🛒 Buy Now</button>`}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        $('marketGrid').innerHTML=html;
+      } catch(e){ $('marketGrid').innerHTML=`<div class="empty-state"><span class="big-icon">⚠️</span><p>Failed to load marketplace</p></div>`; }
+    }
+
+    // LIST MODAL
+    function openListModal(tokenId,name,img){
+      if(!isConnected){ showToast('Connect wallet first!','error'); return; }
+      pendingListData={tokenId,name,img};
+      $('modalImg').src=img; $('modalName').textContent=name; $('modalId').textContent='Token #'+tokenId;
+      $('listPrice').value=''; $('listModal').classList.add('show'); $('approveStatus').textContent='';
+      checkApprovalStatus().then(approved=>{
+        if(approved){ $('approveBtn').style.display='none'; $('confirmListBtn').style.display='block'; $('approveStatus').textContent='✅ Marketplace already approved!'; }
+        else { $('approveBtn').style.display='block'; $('confirmListBtn').style.display='none'; $('approveStatus').textContent='⚠️ Need to approve marketplace first'; }
+      });
+    }
+    function closeListModal(){ $('listModal').classList.remove('show'); $('approveBtn').style.display='block'; $('confirmListBtn').style.display='none'; $('approveBtn').disabled=false; $('approveBtn').innerHTML='🔓 Approve & List'; }
+    async function approveAndList(){
+      $('approveBtn').disabled=true; $('approveBtn').innerHTML='<span class="spinner"></span> Approving...';
+      const success=await approveMarketplace();
+      if(success){ $('approveBtn').style.display='none'; $('confirmListBtn').style.display='block'; $('approveStatus').textContent='✅ Approved! Click "List Now"'; }
+      else { $('approveBtn').disabled=false; $('approveBtn').innerHTML='🔓 Approve & List'; $('approveStatus').textContent='❌ Approval failed'; }
+    }
+    async function confirmList(){
+      const price=parseFloat($('listPrice').value);
+      if(!price||price<=0){ showToast('Enter a valid price!','error'); return; }
+      const approved=await checkApprovalStatus();
+      if(!approved){ showToast('Approve marketplace first!','error'); return; }
+      try {
+        $('confirmListBtn').disabled=true; $('confirmListBtn').innerHTML='<span class="spinner"></span> Listing...';
+        const priceWei=ethers.utils.parseEther(price.toString());
+        const tx=await marketContract.listNFT(CONFIG.nftContract,pendingListData.tokenId,priceWei);
+        await tx.wait();
+        closeListModal();
+        showToast(`✅ NFT listed for ${price} zkLTC!`,'success');
+        fireConfetti(); loadGallery(); loadMarket();
+      } catch(e){
+        let msg=e.message;
+        if(msg.includes('user rejected')) msg='Transaction rejected';
+        showToast('❌ '+msg,'error');
+      } finally { $('confirmListBtn').disabled=false; $('confirmListBtn').innerHTML='List Now'; }
+    }
+
+    // BUY & CANCEL
+    async function buyNFT(listingId,priceEth){
+      if(!isConnected){ showToast('Connect wallet first!','error'); return; }
+      try {
+        showToast('⏳ Buying NFT...','info');
+        const priceWei=ethers.utils.parseEther(priceEth);
+        const tx=await marketContract.buyNFT(listingId,{value:priceWei});
+        await tx.wait();
+        showToast('🎉 NFT purchased!','success'); fireConfetti(); loadMarket(); loadGallery();
+      } catch(e){
+        let msg=e.message;
+        if(msg.includes('user rejected')) msg='Transaction rejected';
+        if(msg.includes('insufficient funds')) msg='Insufficient balance!';
+        showToast('❌ '+msg,'error');
+      }
+    }
+    async function cancelListing(listingId){
+      if(!isConnected){ showToast('Connect wallet first!','error'); return; }
+      try {
+        showToast('⏳ Canceling...','info');
+        const tx=await marketContract.cancelListing(listingId);
+        await tx.wait();
+        showToast('✅ Listing canceled!','success'); loadMarket(); loadGallery();
+      } catch(e){
+        let msg=e.message;
+        if(msg.includes('user rejected')) msg='Transaction rejected';
+        showToast('❌ '+msg,'error');
+      }
+    }
+
+    // HISTORY
+    function loadHistory(){ try{ history=JSON.parse(localStorage.getItem('portalNftHistory'))||[]; }catch(e){ history=[]; } renderHistory(); }
+    function saveHistory(){ try{ localStorage.setItem('portalNftHistory',JSON.stringify(history)); }catch(e){} renderHistory(); }
+    function addHistory(name,txHash){ history.unshift({name,txHash,time:Date.now()}); if(history.length>50) history.pop(); saveHistory(); }
+    function renderHistory(){
+      if(history.length===0){ $('historyList').innerHTML=`<div style="color:var(--text-muted);font-size:12px;text-align:center;padding:12px">No mint history yet</div>`; return; }
+      $('historyList').innerHTML=history.map(h=>`<div class="history-item"><span class="h-name">${h.name}</span><span class="h-time">${formatTime(h.time)}</span><a href="${CONFIG.explorerUrl}${h.txHash}" target="_blank" class="h-link">View</a></div>`).join('');
+    }
+
+    // IMAGE PREVIEW
+    $('imageFile').addEventListener('change', function(e){
+      const file=e.target.files[0];
+      if(file){
+        const reader=new FileReader();
+        reader.onload=ev=>{ $('previewImg').src=ev.target.result; $('previewImg').style.display='block'; $('uploadArea').innerHTML='<span class="icon">✅</span>'+file.name; if(userAddress) $('mintBtn').disabled=false; };
+        reader.readAsDataURL(file);
+      }
     });
-    window.addEventListener('mouseup', () => isDrawing = false);
+
+    // MINT
+    $('mintBtn').addEventListener('click', async()=>{
+      if(isMinting) return;
+      const name=$('nftName').value.trim()||'Portal NFT';
+      const desc=$('nftDesc').value.trim()||'NFT from LitVM Testnet';
+      const file=$('imageFile').files[0];
+      if(!file){ showToast('Select an image first!','error'); return; }
+      if(!userAddress){ showToast('Connect wallet first!','error'); return; }
+      isMinting=true; $('mintBtn').disabled=true;
+      $('successBox').style.display='none'; $('twitterBtn').style.display='none';
+      hideProgress(); showStatus('');
+      try {
+        setProgress(20,'⏳ Uploading image to IPFS...');
+        const imageUrl=await uploadToIPFS(file);
+        setProgress(55,'⏳ Uploading metadata...');
+        const metadataUrl=await uploadMetadata(name,desc,imageUrl);
+        setProgress(80,'⏳ Minting to blockchain...');
+        let gasLimit=3000000;
+        try{ const g=await nftContract.estimateGas.mint(userAddress,metadataUrl); gasLimit=g.mul(120).div(100).toNumber(); if(gasLimit<100000) gasLimit=3000000; }catch(e){}
+        const tx=await nftContract.mint(userAddress,metadataUrl,{gasLimit});
+        await tx.wait();
+        setProgress(100,'✅ Done!');
+        lastTxHash=tx.hash; lastNftName=name;
+        addHistory(name,tx.hash);
+        $('successBox').style.display='block';
+        $('txDisplay').innerHTML=`✅ Success! <a href="${CONFIG.explorerUrl}${tx.hash}" target="_blank" class="tx-link">View on Explorer →</a>`;
+        $('twitterBtn').style.display='block';
+        showToast('🎉 NFT minted successfully!','success');
+        fireConfetti();
+        $('nftName').value=''; $('nftDesc').value=''; $('imageFile').value='';
+        $('previewImg').style.display='none';
+        $('uploadArea').innerHTML='<span class="icon">📁</span>Tap to select image';
+        $('mintBtn').disabled=true;
+        loadGallery();
+      } catch(e){
+        hideProgress();
+        let msg=e.message;
+        if(msg.includes('insufficient funds')) msg='Insufficient balance!';
+        else if(msg.includes('user rejected')) msg='Transaction rejected.';
+        showToast('❌ '+msg,'error'); showStatus('❌ '+msg,true);
+      } finally {
+        isMinting=false;
+        if(userAddress&&$('imageFile').files[0]) $('mintBtn').disabled=false;
+        setTimeout(hideProgress,3000);
+      }
+    });
+
+    // SHARE X
+    $('twitterBtn').addEventListener('click',()=>{
+      if(!lastTxHash) return;
+      const text=encodeURIComponent(`🎉 Just minted "${lastNftName}" on Portal NFT!\n\n🔗 TX: ${CONFIG.explorerUrl}${lastTxHash}\n\n🚀 Mint yours: ${window.location.href}\n\n#PortalNFT #LitVM #Web3 #NFT`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank','width=600,height=400');
+    });
+
+    // CANVAS
+    const drawCanvas=$('drawCanvas');
+    const ctx=drawCanvas.getContext('2d');
+    let isDrawing=false, currentTool='pencil', lastX=0, lastY=0;
+    let historyCanvas=[], historyIndex=-1;
+    ctx.fillStyle='#1a1a2e'; ctx.fillRect(0,0,500,500); saveCanvasState();
+
+    function setTool(tool){
+      currentTool=tool;
+      document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+      const btn=document.querySelector(`.tool-btn[data-tool="${tool}"]`);
+      if(btn) btn.classList.add('active');
+      drawCanvas.style.cursor=tool==='eraser'?'cell':'crosshair';
+      $('canvasStatus').textContent=`🛠️ Tool: ${tool}`;
+    }
+
+    $('canvasSize').addEventListener('input',function(){ $('sizeLabel').textContent=this.value; });
+
+    function getCanvasCoords(e){
+      const rect=drawCanvas.getBoundingClientRect();
+      const scaleX=drawCanvas.width/rect.width; const scaleY=drawCanvas.height/rect.height;
+      const clientX=e.touches?e.touches[0].clientX:e.clientX;
+      const clientY=e.touches?e.touches[0].clientY:e.clientY;
+      return{x:(clientX-rect.left)*scaleX,y:(clientY-rect.top)*scaleY};
+    }
+
+    function startDraw(e){
+      e.preventDefault(); isDrawing=true;
+      const pos=getCanvasCoords(e); lastX=pos.x; lastY=pos.y;
+      if(currentTool==='fill'){ floodFill(Math.round(pos.x),Math.round(pos.y),$('canvasColor').value); saveCanvasState(); isDrawing=false; return; }
+      if(currentTool==='text'){
+        const text=prompt('✍️ Enter text:','NFT Art!');
+        if(text){ ctx.font=`${Math.max(parseInt($('canvasSize').value)*6,16)}px Arial`; ctx.fillStyle=$('canvasColor').value; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(text,pos.x,pos.y); saveCanvasState(); }
+        isDrawing=false; return;
+      }
+    }
+
+    function draw(e){
+      e.preventDefault(); if(!isDrawing) return;
+      const pos=getCanvasCoords(e);
+      if(currentTool==='pencil'||currentTool==='eraser'){
+        ctx.strokeStyle=currentTool==='eraser'?'#1a1a2e':$('canvasColor').value;
+        ctx.lineWidth=parseInt($('canvasSize').value); ctx.lineCap='round'; ctx.lineJoin='round';
+        ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(pos.x,pos.y); ctx.stroke();
+        lastX=pos.x; lastY=pos.y;
+      }
+    }
+
+    function endDraw(e){
+      if(!isDrawing) return; isDrawing=false;
+      if(['rect','circle','triangle'].includes(currentTool)){
+        const pos=getCanvasCoords(e);
+        ctx.fillStyle=$('canvasColor').value; ctx.strokeStyle=$('canvasColor').value;
+        ctx.lineWidth=parseInt($('canvasSize').value);
+        const x=Math.min(lastX,pos.x); const y=Math.min(lastY,pos.y);
+        const w=Math.abs(lastX-pos.x); const h=Math.abs(lastY-pos.y);
+        ctx.beginPath();
+        if(currentTool==='rect') ctx.rect(x,y,w,h);
+        else if(currentTool==='circle'){ const r=Math.sqrt(w*w+h*h)/2; ctx.arc((lastX+pos.x)/2,(lastY+pos.y)/2,r,0,Math.PI*2); }
+        else if(currentTool==='triangle'){ ctx.moveTo((lastX+pos.x)/2,y); ctx.lineTo(x,y+h); ctx.lineTo(pos.x,y+h); ctx.closePath(); }
+        ctx.fill(); ctx.stroke(); saveCanvasState();
+      }
+      if(['pencil','eraser'].includes(currentTool)) saveCanvasState();
+    }
+
+    drawCanvas.addEventListener('mousedown',startDraw);
+    drawCanvas.addEventListener('mousemove',draw);
+    drawCanvas.addEventListener('mouseup',endDraw);
+    drawCanvas.addEventListener('mouseleave',endDraw);
+    drawCanvas.addEventListener('touchstart',startDraw,{passive:false});
+    drawCanvas.addEventListener('touchmove',draw,{passive:false});
+    drawCanvas.addEventListener('touchend',endDraw,{passive:false});
+
+    function floodFill(startX,startY,fillColor){
+      const imageData=ctx.getImageData(0,0,drawCanvas.width,drawCanvas.height);
+      const data=imageData.data; const width=drawCanvas.width; const height=drawCanvas.height;
+      const targetColor=getPixelColor(data,startX,startY,width);
+      const fill=hexToRgb(fillColor);
+      if(colorsMatch(targetColor,fill)) return;
+      const queue=[[startX,startY]]; const visited=new Set();
+      while(queue.length>0){
+        const [x,y]=queue.shift(); const key=`${x},${y}`;
+        if(visited.has(key)) continue;
+        if(x<0||x>=width||y<0||y>=height) continue;
+        if(!colorsMatch(getPixelColor(data,x,y,width),targetColor)) continue;
+        visited.add(key); setPixelColor(data,x,y,width,fill);
+        queue.push([x+1,y],[x-1,y],[x,y+1],[x,y-1]);
+      }
+      ctx.putImageData(imageData,0,0);
+    }
+    function getPixelColor(data,x,y,width){ const idx=(y*width+x)*4; return[data[idx],data[idx+1],data[idx+2],data[idx+3]]; }
+    function setPixelColor(data,x,y,width,color){ const idx=(y*width+x)*4; data[idx]=color.r; data[idx+1]=color.g; data[idx+2]=color.b; data[idx+3]=255; }
+    function colorsMatch(c1,c2){ return c1[0]===c2.r&&c1[1]===c2.g&&c1[2]===c2.b; }
+    function hexToRgb(hex){ const r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); return r?{r:parseInt(r[1],16),g:parseInt(r[2],16),b:parseInt(r[3],16)}:{r:0,g:0,b:0}; }
+    function saveCanvasState(){ const data=drawCanvas.toDataURL(); historyCanvas=historyCanvas.slice(0,historyIndex+1); historyCanvas.push(data); if(historyCanvas.length>30) historyCanvas.shift(); historyIndex=historyCanvas.length-1; }
+    function undoCanvas(){ if(historyIndex>0){ historyIndex--; restoreCanvasState(historyCanvas[historyIndex]); } }
+    function redoCanvas(){ if(historyIndex<historyCanvas.length-1){ historyIndex++; restoreCanvasState(historyCanvas[historyIndex]); } }
+    function restoreCanvasState(data){ const img=new Image(); img.onload=()=>{ ctx.clearRect(0,0,drawCanvas.width,drawCanvas.height); ctx.drawImage(img,0,0); }; img.src=data; }
+    function clearCanvasConfirm(){ if(confirm('🗑️ Clear all drawing?')){ ctx.fillStyle='#1a1a2e'; ctx.fillRect(0,0,drawCanvas.width,drawCanvas.height); saveCanvasState(); showToast('Canvas cleared','info'); } }
 
     function useCanvasForMint(){
-      if(!isCanvasDirty){ showToast('Canvas contains no data paths', 'error'); return; }
-      drawCanvas.toBlob(b => {
-        const file = new File([b], 'vector.png', {type:'image/png'});
-        const dt = new DataTransfer(); dt.items.add(file); $('imageFile').files = dt.files;
-        $('uploadArea').innerText = "✅ Attached: vector.png";
-        if(isConnected) $('mintBtn').disabled = false;
-        showToast('Payload targeted to compiler assembly');
+      const imageData=ctx.getImageData(0,0,drawCanvas.width,drawCanvas.height);
+      const data=imageData.data; let isEmpty=true;
+      for(let i=0;i<data.length;i+=4){ if(data[i]!==26||data[i+1]!==26||data[i+2]!==46){ isEmpty=false; break; } }
+      if(isEmpty){ showToast('⚠️ Canvas is empty! Draw something first.','error'); return; }
+      drawCanvas.toBlob(blob=>{
+        if(!blob){ showToast('❌ Failed to get image','error'); return; }
+        const file=new File([blob],'nft-canvas.png',{type:'image/png'});
+        const dt=new DataTransfer(); dt.items.add(file);
+        $('imageFile').files=dt.files;
+        $('imageFile').dispatchEvent(new Event('change'));
+        showToast('✅ Canvas ready for mint!','success');
+        $('canvasStatus').textContent='✅ Image ready! Scroll down to mint.';
+        $('nftName').scrollIntoView({behavior:'smooth'});
       });
     }
 
-    $('imageFile').addEventListener('change', (e) => { if(e.target.files[0]) { $('uploadArea').innerText = e.target.files[0].name; if(isConnected) $('mintBtn').disabled = true; } });
-
-    // CORE MINT METHOD
-    $('mintBtn').addEventListener('click', async () => {
-      if(isMinting) return; const file = $('imageFile').files[0]; if(!file) return;
-      isMinting = true; $('mintBtn').disabled = true;
-      $('progressWrap').style.display = 'block'; $('progressFill').style.width = '30%'; $('progressText').innerText = 'Uploading raw binary layers...';
-      try {
-        const img = await uploadToIPFS(file);
-        $('progressFill').style.width = '60%'; $('progressText').innerText = 'Sealing metadata schemas...';
-        const meta = await uploadMetadata($('nftName').value || 'OmniHub Asset', $('nftDesc').value || 'Engineered proof', img);
-        $('progressFill').style.width = '85%'; $('progressText').innerText = 'Awaiting block confirm...';
-        const tx = await nftContract.mint(userAddress, meta, { gasLimit: 2000000 });
-        await tx.wait();
-        $('progressFill').style.width = '100%'; $('progressText').innerText = 'State change updated.';
-        showToast('Deployment executed successfully', 'success');
-        loadGallery();
-      } catch(e){ showToast(e.message, 'error'); }
-      finally { isMinting = false; $('mintBtn').disabled = false; setTimeout(() => $('progressWrap').style.display='none', 2000); }
-    });
+    // INIT
+    (async function init(){
+      loadHistory();
+      loadMarket();
+      setTool('pencil');
+      if(window.ethereum){
+        try {
+          const accounts=await window.ethereum.request({method:'eth_accounts'});
+          if(accounts.length>0){
+            let type='metamask';
+            if(window.ethereum.isCoinbaseWallet) type='coinbase';
+            else if(window.ethereum.isTrust) type='trust';
+            await connectWallet(type);
+          }
+        } catch(e){ console.warn('Auto-connect failed:',e); }
+      }
+    })();
   </script>
 </body>
-</html>
+          </html>
