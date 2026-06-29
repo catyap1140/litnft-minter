@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal NFT - Web3 Creative Studio</title>
-  <link rel="icon" href="1000009048.png" type="image/png" />
+  
+  <link rel="icon" href="./1000009048.png?v=2" type="image/png" />
+  <link rel="shortcut icon" href="./1000009048.png?v=2" type="image/png" />
+  <link rel="apple-touch-icon" href="./1000009048.png?v=2" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -104,13 +107,19 @@
 
     .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
     
-    /* Trik CSS Masking Logo */
+    /* Perbaikan CSS Masking untuk Mobile Browser */
     .logo-img-mask {
       width: 42px; 
       height: 42px;
       background-color: var(--primary);
-      -webkit-mask: url('1000009048.png') no-repeat center / contain;
-      mask: url('1000009048.png') no-repeat center / contain;
+      -webkit-mask-image: url('./1000009048.png');
+      -webkit-mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-image: url('./1000009048.png');
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
       transition: background-color 0.3s ease;
     }
 
@@ -244,7 +253,6 @@
       border-radius: var(--radius-md); overflow: hidden;
       position: relative; cursor: crosshair; touch-action: none;
     }
-    /* Let the canvas background be fully transparent so the CSS bg shows through */
     #drawCanvas { display: block; width: 100%; height: 100%; object-fit: contain; }
 
     /* Form Elements */
@@ -760,7 +768,6 @@
     const ctx = canvas.getContext('2d');
     let isDrawing = false, currentTool = 'pencil', lastX = 0, lastY = 0;
     
-    // Set background to transparent so it follows theme
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     function setTool(tool) {
@@ -826,7 +833,7 @@
         for (let x = 0; x < width; x += blockSize) {
           const i = (y * width + x) * 4;
           const r = imgData[i]; const g = imgData[i + 1]; const b = imgData[i + 2]; const a = imgData[i + 3];
-          if (a > 0) { // Only capture non-transparent pixels
+          if (a > 0) {
             const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
             gridData.push(`[${x/blockSize},${y/blockSize},"${hex}"]`);
           }
@@ -966,6 +973,12 @@
       }
       $('nftGrid').innerHTML = skeletonHTML;
       try {
+        let listedTokenIds = [];
+        try {
+          const [listings] = await readMarketContract.getActiveListings();
+          listedTokenIds = listings.map(l => Number(l.tokenId));
+        } catch(e) { console.warn('Gagal load daftar market aktif'); }
+
         const total = await readNftContract.totalSupply(); const myNfts = [];
         for(let i=0; i<Number(total); i++) {
           try {
@@ -977,14 +990,19 @@
         $('galleryCount').textContent = `${myNfts.length} Items`;
         if(myNfts.length === 0) { $('nftGrid').innerHTML = `<div class="empty-state"><i class="fas fa-image empty-icon"></i><h3 class="empty-text">No NFTs Found</h3><p class="empty-sub">Head over to the Studio to create your first asset.</p></div>`; return; }
         
-        $('nftGrid').innerHTML = myNfts.map(n => `
+        $('nftGrid').innerHTML = myNfts.map(n => {
+          const isListed = listedTokenIds.includes(n.id);
+          return `
           <div class="nft-card">
             <div class="nft-img-wrap"><span class="nft-badge">#${n.id}</span><img src="${n.img}" alt="${n.name}" onerror="this.src='https://via.placeholder.com/400/16251D/22C55E?text=Error'"/></div>
             <div class="nft-info"><div class="nft-title">${n.name}</div><div class="nft-owner">Owned by You</div>
-              <button class="btn btn-outline" style="margin-top:auto;" onclick="openListModal(${n.id}, '${n.name.replace(/'/g, "\\'")}', '${n.img}')">List on Market</button>
+              ${isListed 
+                ? `<button class="btn btn-outline" style="margin-top:auto; border-color: var(--border-color); color: var(--text-muted); cursor: not-allowed;" disabled><i class="fas fa-check"></i> Listed on Market</button>` 
+                : `<button class="btn btn-outline" style="margin-top:auto;" onclick="openListModal(${n.id}, '${n.name.replace(/'/g, "\\'")}', '${n.img}')">List on Market</button>`
+              }
             </div>
           </div>
-        `).join('');
+        `}).join('');
       } catch(e) { $('nftGrid').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle empty-icon" style="color:var(--danger)"></i><h3 class="empty-text">Failed to load</h3></div>`; }
     }
 
