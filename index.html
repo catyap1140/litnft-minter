@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal NFT - Web3 Creative Studio</title>
+  <link rel="icon" href="1000009048.png" type="image/png" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -108,8 +109,8 @@
       width: 42px; 
       height: 42px;
       background-color: var(--primary);
-      -webkit-mask: url('1000008981.png') no-repeat center / contain;
-      mask: url('1000008981.png') no-repeat center / contain;
+      -webkit-mask: url('1000009048.png') no-repeat center / contain;
+      mask: url('1000009048.png') no-repeat center / contain;
       transition: background-color 0.3s ease;
     }
 
@@ -440,7 +441,7 @@
         <div class="studio-layout">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title"><i class="fas fa-paint-brush"></i> Pixel Canvas</h3>
+              <h3 class="card-title"><i class="fas fa-paint-brush"></i> Panel Canvas</h3>
               <span class="badge">On-Chain Art</span>
             </div>
             
@@ -451,8 +452,16 @@
               </div>
               
               <div class="tool-group">
-                <input type="color" id="canvasColor" value="#22C55E" title="Color Picker" />
-                <input type="range" id="canvasSize" min="1" max="20" value="4" title="Brush Size" />
+                <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+                  <span style="font-size: 9px; color: var(--text-secondary); font-family: var(--font-display);">Pen</span>
+                  <input type="color" id="canvasColor" value="#22C55E" title="Pen Color" />
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+                  <span style="font-size: 9px; color: var(--text-secondary); font-family: var(--font-display);">Bg</span>
+                  <input type="color" id="canvasBgColor" value="#0F1E16" title="Background Color" oninput="changeCanvasBg(this.value)" />
+                </div>
+                
+                <input type="range" id="canvasSize" min="1" max="20" value="4" title="Brush Size" style="margin-left: 8px;" />
               </div>
               
               <div class="tool-group">
@@ -461,7 +470,7 @@
             </div>
             
             <div class="canvas-container" style="margin-top: 16px;">
-              <canvas id="drawCanvas" width="500" height="500"></canvas>
+              <canvas id="drawCanvas" width="500" height="500" style="background-color: #0F1E16;"></canvas>
             </div>
             
             <button class="btn btn-outline" onclick="useCanvasForMint()" style="margin-top:16px;">
@@ -803,6 +812,10 @@
       if(confirm('Clear the entire canvas?')) { ctx.clearRect(0, 0, canvas.width, canvas.height); }
     }
 
+    function changeCanvasBg(color) {
+      document.getElementById('drawCanvas').style.backgroundColor = color;
+    }
+
     // --- GRID DATA PARSER LOGIC ---
     function exportGridData() {
       const width = canvas.width; const height = canvas.height;
@@ -845,11 +858,10 @@
 
     // --- MINTING LOGIC ---
     function useCanvasForMint() {
-      // Create a temporary canvas to add a background color so transparent pixels aren't black
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
       const tCtx = tempCanvas.getContext('2d');
-      tCtx.fillStyle = document.body.classList.contains('light-mode') ? '#FFFFFF' : '#0F1E16';
+      tCtx.fillStyle = canvas.style.backgroundColor || (document.body.classList.contains('light-mode') ? '#FFFFFF' : '#0F1E16');
       tCtx.fillRect(0,0,tempCanvas.width,tempCanvas.height);
       tCtx.drawImage(canvas, 0, 0);
 
