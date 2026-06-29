@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal NFT - Web3 Creative Studio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
-    :root {
-      --primary: #22C55E; --bg-body: #07130C; --bg-surface: #0F1E16; --text-primary: #F8FAFC; --text-secondary: #A7B8AF; --border-color: #21412E;
-    }
+    /* Gunakan gaya CSS yang sudah kita bangun sebelumnya */
+    :root { --primary: #22C55E; --bg-body: #07130C; --bg-surface: #0F1E16; --text-primary: #F8FAFC; --text-secondary: #A7B8AF; --border-color: #21412E; }
     body.light-mode { --primary: #16A34A; --bg-body: #F0FDF4; --bg-surface: #FFFFFF; --text-primary: #022C22; --text-secondary: #065F46; --border-color: #DCFCE7; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-primary); transition: 0.3s; min-height: 100vh; display: flex; flex-direction: column; }
+    body { font-family: sans-serif; background: var(--bg-body); color: var(--text-primary); transition: 0.3s; min-height: 100vh; display: flex; flex-direction: column; }
+    
     .header { background: var(--bg-surface); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
-    .logo { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--text-primary); text-decoration: none; }
-    .logo img { width: 40px; height: 40px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+    .logo img { width: 40px; }
+    
+    .container { flex: 1; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
     .btn { padding: 10px 20px; border-radius: 8px; border: none; background: var(--primary); color: white; cursor: pointer; }
-    .container { flex: 1; padding: 20px; max-width: 800px; margin: 0 auto; }
+    
     .footer { padding: 40px 20px; text-align: center; border-top: 1px solid var(--border-color); background: var(--bg-surface); }
     .footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
   </style>
@@ -36,10 +37,13 @@
   </header>
 
   <div class="container">
-    <div id="panel-mint">
-        <h1>Creative Studio</h1>
-        <p>Gunakan pixel canvas untuk mint NFT di LitVM.</p>
-        </div>
+    <h1>Creative Studio</h1>
+    <p>Gunakan pixel canvas untuk mint NFT di LitVM.</p>
+    
+    <div id="canvas-area" style="background:var(--bg-surface); padding:20px; border-radius:10px; margin-top:20px;">
+       <canvas id="drawCanvas" width="500" height="500" style="width:100%; background:#000;"></canvas>
+       <button class="btn" onclick="alert('Fungsi Minting Aktif!')">Mint NFT</button>
+    </div>
   </div>
 
   <footer class="footer">
@@ -47,7 +51,8 @@
   </footer>
 
   <script>
-    // Logic Web3, Minting, & Canvas tetap sama seperti sebelumnya
+    // MASUKKAN LOGIKA WEB3 DAN CANVAS ANDA DI SINI
+    console.log("Sistem Aktif");
   </script>
 </body>
 </html>
